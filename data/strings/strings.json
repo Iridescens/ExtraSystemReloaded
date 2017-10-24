@@ -1,0 +1,36 @@
+{
+	"ResourceName":{
+		"supplies":"Supplies",
+		"volatiles":"Volatiles",
+		"ore":"ore",
+		"rare_ore":"Rare ore",
+		"metals":"Metals",
+		"rare_metals":"Rare metals",
+		"heavy_machinery":"Heavy machinery",
+	},
+	"AbilityName":{
+		"Durability":"Durability",
+		"WeaponProficiency":"WeaponProficiency",
+		"Logistics":"Logistics",
+		"Flexibility":"Mobility",
+		"Technology":"Technology",
+	},
+	"Options":{
+		"leave":"Leave",
+		"back":"Back",
+		"confirm":"Confirm",
+		"cancel":"Cancel",
+		"previouspage":"Previous Page",
+		"nextpage":"Next Page",
+	},
+	"QualityName":{
+		"inferior":"(inferior)",
+		"rough":"(rough)",
+		"crude":"(crude)",
+		"normal":"(normal)",
+		"good":"(good)",
+		"superior":"(superior)",
+		"perfect":"(perfect)",
+		"s_perfect":"(super perfect)",
+	}
+}

@@ -1,0 +1,12 @@
+{
+	"masterVersionFile":"https://bitbucket.org/Originem/truths-mod-version/downloads/extrasystem.version",
+	"modName":"Extra System",
+	"modThreadId":18100,
+	"modVersion":
+	{
+		"major":0,
+		"minor":2,
+		"patch":0
+	},
+	"starsectorVersion":".7.1a"
+}

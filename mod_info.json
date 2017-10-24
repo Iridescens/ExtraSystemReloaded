@@ -1,0 +1,10 @@
+{
+    "id": "extra_system",
+    "name": "Extra System",
+    "author": "Created by Truth.",
+    "version": "0.2.0a",
+    "description": "Add some extra systems by pressing ctrl + q.",
+    "gameVersion": "0.7.2a",
+    "jars": ["jars/ExtraSystemCore.jar"],
+    "modPlugin": "data.scripts.Es_ModPlugin"
+}

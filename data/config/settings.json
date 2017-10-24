@@ -1,0 +1,14 @@
+{
+	"upgradeAlwaysSucceed":true,
+	"baseFailureMinFactor":0.4,
+	"upgradeCostMaxFactor":0.5,
+	"upgradeCostMinFactor":0.1,
+	"dividingRatio":60.0,
+	"enableAchievements":false,
+	"enabledAIUpgrade":false,
+	"graphics":{			
+		"Achievements":{
+			"core":"graphics/achievements/Es_Achievement_core.png",
+		}
+	}
+}
