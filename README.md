@@ -9,22 +9,24 @@ Upgrade has about 40% (configurable) chance of success at the minimum.
 
 -What is decided by the abilities-
 
-The efficiency-
-		Frigate:100% Destroyer:80% Cruiser:60% Capital Ship:40%
+The upgrade efficiency step are
+	Frigate:10% Destroyer:8% Cruiser:6% Capital Ship:4%
+With a total of steps
+	Frigate:10 Destroyer:15 Cruiser:20 Capital Ship:25
 +You can control how many resources you wish to spend with dividingRatio parameter (Better is cheaper). 'Cause u know, the original costs are outrageous.
 +upgradeCostMaxFactor and upgradeCostMinFactor (the latter will have much more impact on the cost to upgrade)
 
 Durability:
-	Hullpoints, armor, weapon health, engine health
+	Hullpoints, armor, weapon health, engine health up to 50%
   +Now with EMP resistance up to 40% on Q=1
 WeaponProficiency:
-	Weapon range, weapon damage, rate of fire
+	Weapon range, weapon damage, rate of fire up to 15%
 Logistics:
 	CR per deployment, weapon ammo, crew, ship repair rate, CR recovery, fuel use
   +Now less SuppliesPerMonth and SuppliesToRecover up to 15% at Q=1
 Mobility:
-	Max speed, acceleration, deceleration, max turn rate, turn acceleration
+	Max speed up to 33%, acceleration, deceleration, max turn rate, turn acceleration up to 50%
   +Burn level up to +20% at Q=1
 Technology:
-	Flux capacity and disspation, weapon flux cost, shield efficiency
-  +Now with PhaseCloak improvements!
+	Flux capacity and disspation up to 33%, weapon flux cost, shield efficiency up to 15%
+  +Now with PhaseCloak improvements up to 25% flux savings!
