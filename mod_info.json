@@ -2,7 +2,7 @@
     "id": "extra_system_reloaded",
     "name": "Extra System Reloaded",
     "author": "Created by Originem. Reloaded by Iridescens",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "Add some extra systems by pressing ctrl + q. Now with phase, EMP resist and burnlevel improvements. Also pauses after leaving the dialog.",
     "gameVersion": "0.8.1a",
     "jars": ["jars/ExtraSystemCore.jar"],
