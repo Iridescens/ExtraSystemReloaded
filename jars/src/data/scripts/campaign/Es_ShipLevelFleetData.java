@@ -12,10 +12,15 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
+
 public class Es_ShipLevelFleetData implements Buff{
 	private static final String Es_LEVEL_FUNCTION_ID = "Es_ShipLevelUp";	
 	private static final String Es_LEVEL_SHIPLIST_ID = "Es_LEVEL_SHIPLIST";	
-	private static final String Es_LEVEL_SHIPLMAP_ID = "Es_LEVEL_SHIPMAP";	
+	private static final String Es_LEVEL_SHIPLMAP_ID = "Es_LEVEL_SHIPMAP";
+	private static final boolean QUALITYENABLED = Global.getSettings().getBoolean("useShipIdForQualityCalculation");
+	private static final float USERQUALITY = Global.getSettings().getFloat("baseQuality");
 	public static Map<String, int[]>ShipLevel_DATA;//е…Ёе±Ђи€°и€№жЎЈжЎ€
 	public static Map<String,Float>uppedFleetMemberAPIs ;//и®°еЅ•ж‰Ђжњ‰и€№зљ„е“ЃиґЁ
 	private final IntervalUtil interval = new IntervalUtil(1f, 1f);
@@ -123,13 +128,17 @@ public class Es_ShipLevelFleetData implements Buff{
 					member.getStats().getBallisticWeaponFluxCostMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
 					member.getStats().getMissileWeaponFluxCostMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
 					member.getStats().getEnergyWeaponFluxCostMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
-					if(member.getHullSpec().getShieldType()==ShieldType.FRONT ||
-							member.getHullSpec().getShieldType()==ShieldType.OMNI){
+//					if(member!=null && member.getHullSpec() != null)
+//						  Global.getLogger(Es_ShipLevelFleetData.class).log(Level.INFO,member.getHullSpec().getShieldType()); 
+					if(member.getHullSpec() != null && 
+							(member.getHullSpec().getShieldType()==ShieldType.FRONT || 
+							 member.getHullSpec().getShieldType()==ShieldType.OMNI)) {
 						member.getStats().getShieldDamageTakenMult().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
 						member.getStats().getShieldUpkeepMult().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
 						member.getStats().getShieldUnfoldRateMult().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*5f);
 					}
-					else if(member.getHullSpec().getShieldType()==ShieldType.PHASE){
+					else if(member.getHullSpec() != null && 
+							member.getHullSpec().getShieldType()==ShieldType.PHASE) {
 						member.getStats().getPhaseCloakActivationCostBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2.5f);
 						member.getStats().getPhaseCloakCooldownBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2.5f);
 						member.getStats().getPhaseCloakUpkeepCostBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2f);
@@ -170,23 +179,26 @@ public class Es_ShipLevelFleetData implements Buff{
 		return AbilityLevel;
 	}
 	private float getQuality(FleetMemberAPI member){
-		String id = member.getId();
-		char[] ids = id.toCharArray();
-		float sum = 0f;
-		for (int i = 0; i < ids.length; i++) 
-		{
-			sum += (float)ids[i];
-			if (i%2 ==0) {
-				sum*=(float)ids[i];
-			}else {
-				sum/=(float)ids[i];
+		if(QUALITYENABLED){
+			String id = member.getId();
+			char[] ids = id.toCharArray();
+			float sum = 0f;
+			for (int i = 0; i < ids.length; i++) 
+			{
+				sum += (float)ids[i];
+				if (i%2 ==0) {
+					sum*=(float)ids[i];
+				}else {
+					sum/=(float)ids[i];
+				}
 			}
+			while(sum>1f){
+				sum/=10f;
+			}
+			sum += 0.5f;
+			return sum;
 		}
-		while(sum>1f){
-			sum/=10f;
-		}
-		sum += 0.5f;
-		return sum;
+		else return ( ((USERQUALITY >= 0f) && (USERQUALITY <= 1.5f)) ? USERQUALITY : 1.0f);
 	}
 
 }

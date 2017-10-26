@@ -73,12 +73,12 @@ public class Es_ShipTotalFunctionPlugin implements InteractionDialogPlugin {
 			Global.getSector().addTransientScript(new Es_GameSetPausePlugin());
 			return;
 		}else if (option == OptionId.INIT) {
-			addText("Welcome to ExtraSystem!");
+			addText("Welcome to ExtraSystem Reloaded!");
 			addText("Choose the function you want.");
 			options.addOption("ShipLevel System", OptionId.LEVEL);
 			options.addOption("OrderShip System", OptionId.TRADE);
 			options.addOption("Show Achievements", OptionId.ACHIEVELIST);
-			if(ACHIEVEMENTSENABLED){
+			if(!ACHIEVEMENTSENABLED){
 				options.setEnabled(OptionId.ACHIEVELIST, false);
 			}
 			options.setEnabled(OptionId.TRADE, false);
