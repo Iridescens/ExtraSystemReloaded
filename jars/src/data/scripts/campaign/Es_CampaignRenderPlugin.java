@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
 import org.lwjgl.opengl.Display;
 
 import com.fs.starfarer.api.EveryFrameScript;
@@ -91,7 +92,7 @@ public class Es_CampaignRenderPlugin implements EveryFrameScript{
 			return;
 		}
 		AchievementInfo info = AchievementData.getAchievementInfo(achievementID);
-		if (info.isDone()==true) {
+		if (info.isDone()) {
 			return;
 		}
 		AchievementAnimationUnit unit = info.getUnit();
@@ -99,8 +100,8 @@ public class Es_CampaignRenderPlugin implements EveryFrameScript{
 		info.setDone(true);
 		CampaignUIAPI ui = Global.getSector().getCampaignUI();
 		String name = info.getName();
-		ui.addMessage(info.getTooltip2(),info.getTooltip2(),Color.green);
-		ui.addMessage(info.getTooltip1());
-		ui.addMessage("Achievement Unlock: "+name, name, Color.yellow);
+		ui.addMessage(new MessageIntel(info.getTooltip2(), Color.green));
+		ui.addMessage(new MessageIntel(info.getTooltip1()));
+		ui.addMessage(new MessageIntel("Achievement Unlock: "+name,  Color.yellow));
 	}
 }

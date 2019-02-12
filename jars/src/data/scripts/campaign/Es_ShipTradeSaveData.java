@@ -130,13 +130,13 @@ public class Es_ShipTradeSaveData {
 			this.orderFormId = formid;
 		}
 		public void advance(){//前进
-			if (this.isFinished=false) {				
+			if (!this.isFinished) {
 				this.buytime+=1;
 			}
-			if (this.isToDeliver==false && this.buytime>=this.prepareTime) {
+			if (!this.isToDeliver && this.buytime>=this.prepareTime) {
 				this.buytime = 0;
 				this.isToDeliver = true;
-			}else if (this.isFinished==false && this.buytime>=this.deliverTime) {
+			}else if (!this.isFinished && this.buytime>=this.deliverTime) {
 				this.isFinished = true;
 			}
 		}
@@ -168,7 +168,7 @@ public class Es_ShipTradeSaveData {
 			List<FleetMemberAPI>falseMemberAPIs = new ArrayList<>();
 			List<FleetMemberAPI>trueMemberAPIs = new ArrayList<>();
 			for (FactionAPI factionAPI :Global.getSector().getAllFactions()) {//各势力船只
-				CampaignFleetAPI fleet = FleetFactory.createGenericFleet(factionAPI.getId(), "nothing", 1.5f, (int) ((float)Math.random()*500f+500f));
+				CampaignFleetAPI fleet = FleetFactory.createGenericFleet(factionAPI.getId(), "nothing", 1.5f, (int) ((float)Math.random()*50f+50f)); // ->500
 				for (FleetMemberAPI fleetMemberAPI : fleet.getFleetData()
 						.getMembersListCopy()) {
 					falseMemberAPIs.add(fleetMemberAPI);//加入总体fleetmember
