@@ -168,7 +168,7 @@ public class Es_ShipTradeSaveData {
 			List<FleetMemberAPI>falseMemberAPIs = new ArrayList<>();
 			List<FleetMemberAPI>trueMemberAPIs = new ArrayList<>();
 			for (FactionAPI factionAPI :Global.getSector().getAllFactions()) {//各势力船只
-				CampaignFleetAPI fleet = FleetFactory.createGenericFleet(factionAPI.getId(), "nothing", 1.5f, (int) ((float)Math.random()*50f+50f)); // ->500
+				CampaignFleetAPI fleet = FleetFactory.createGenericFleet(factionAPI.getId(), "nothing", 1.5f, 20 ); // ->500 // (int)((float)Math.random()*500f+500f)
 				for (FleetMemberAPI fleetMemberAPI : fleet.getFleetData()
 						.getMembersListCopy()) {
 					falseMemberAPIs.add(fleetMemberAPI);//加入总体fleetmember
@@ -192,19 +192,19 @@ public class Es_ShipTradeSaveData {
 				fleetMemberAPI.getRepairTracker().setCR(1f);
 				if (fleetMemberAPI.getHullSpec().getHullSize() == HullSize.FRIGATE) {
 					fleet_F.getFleetData().addFleetMember(fleetMemberAPI);
-					Ship_BaseValue_MAP.put(fleetMemberAPI, fleetMemberAPI.getHullSpec().getBaseValue()* (float)Math.random()*0.4f+0.8f);
+					Ship_BaseValue_MAP.put(fleetMemberAPI, fleetMemberAPI.getHullSpec().getBaseValue()* ((float)Math.random()*0.4f+0.8f));
 					marketOPsize+=fleetMemberAPI.getFleetPointCost();
 				} else if (fleetMemberAPI.getHullSpec().getHullSize() == HullSize.DESTROYER) {
 					fleet_D.getFleetData().addFleetMember(fleetMemberAPI);
-					Ship_BaseValue_MAP.put(fleetMemberAPI, fleetMemberAPI.getHullSpec().getBaseValue()* (float)Math.random()*0.4f+0.8f);
+					Ship_BaseValue_MAP.put(fleetMemberAPI, fleetMemberAPI.getHullSpec().getBaseValue()* ((float)Math.random()*0.4f+0.8f));
 					marketOPsize+=fleetMemberAPI.getFleetPointCost();
 				} else if (fleetMemberAPI.getHullSpec().getHullSize() == HullSize.CRUISER) {
 					fleet_C.getFleetData().addFleetMember(fleetMemberAPI);
-					Ship_BaseValue_MAP.put(fleetMemberAPI, fleetMemberAPI.getHullSpec().getBaseValue()* (float)Math.random()*0.4f+0.8f);
+					Ship_BaseValue_MAP.put(fleetMemberAPI, fleetMemberAPI.getHullSpec().getBaseValue()* ((float)Math.random()*0.4f+0.8f));
 					marketOPsize+=fleetMemberAPI.getFleetPointCost();
 				} else if (fleetMemberAPI.getHullSpec().getHullSize() == HullSize.CAPITAL_SHIP) {
 					fleet_CS.getFleetData().addFleetMember(fleetMemberAPI);
-					Ship_BaseValue_MAP.put(fleetMemberAPI, fleetMemberAPI.getHullSpec().getBaseValue()* (float)Math.random()*0.4f+0.8f);
+					Ship_BaseValue_MAP.put(fleetMemberAPI, fleetMemberAPI.getHullSpec().getBaseValue()* ((float)Math.random()*0.4f+0.8f));
 					marketOPsize+=fleetMemberAPI.getFleetPointCost();
 				}
 			}

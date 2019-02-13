@@ -53,22 +53,22 @@ public class Es_ModPlugin extends BaseModPlugin
     			Global.getSector().getPersistentData().put(Es_LEVEL_SHIPLMAP_ID ,new HashMap<>());
     			Es_ShipLevelFleetData.loadagain();
     		}
-            if (Global.getSector().getPersistentData().get(SHIP_TRADE_SAVE_ID)==null) {
-            	Es_ShipTradeSaveData data = new Es_ShipTradeSaveData();
-            	Global.getSector().getPersistentData().put(SHIP_TRADE_SAVE_ID, data);
-            	data.init();
-    		}
+//            if (Global.getSector().getPersistentData().get(SHIP_TRADE_SAVE_ID)==null) {
+//            	Es_ShipTradeSaveData data = new Es_ShipTradeSaveData();
+//            	Global.getSector().getPersistentData().put(SHIP_TRADE_SAVE_ID, data);
+//            	data.init();
+//    		}
 		}else {			
 			if (Global.getSector().getPersistentData().get(Es_LEVEL_SHIPLIST_ID)==null ||Global.getSector().getPersistentData().get(Es_LEVEL_SHIPLMAP_ID)==null ) {
 				Global.getSector().getPersistentData().put(Es_LEVEL_SHIPLIST_ID ,new HashMap<>());
 				Global.getSector().getPersistentData().put(Es_LEVEL_SHIPLMAP_ID ,new HashMap<>());
 			}
-			Es_ShipTradeSaveData data = (Es_ShipTradeSaveData) Global.getSector().getPersistentData().get(SHIP_TRADE_SAVE_ID);
-			if (data==null) {
-				data = new Es_ShipTradeSaveData();
-				Global.getSector().getPersistentData().put(SHIP_TRADE_SAVE_ID, data);
-			}
-			data.init();
+//			Es_ShipTradeSaveData data = (Es_ShipTradeSaveData) Global.getSector().getPersistentData().get(SHIP_TRADE_SAVE_ID);
+//			if (data==null) {
+//				data = new Es_ShipTradeSaveData();
+//				Global.getSector().getPersistentData().put(SHIP_TRADE_SAVE_ID, data);
+//			}
+//			data.init();
 			Es_ShipLevelFleetData.loadagain();
 		}
 	}
