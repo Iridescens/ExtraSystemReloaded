@@ -311,7 +311,7 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 			if ((float)Math.random()<possibility) {
 				// ж №жЌ®Indexж–ЅеЉ 
 					buff.getLevelIndex()[Index]+=1;//з­‰зє§еЉ 1
-					Global.getSoundPlayer().playSound("ui_char_increase_skill", 1f, 1f, new Vector2f(), new Vector2f());
+					Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);
 					addText(TextTip.Congratulation, Color.yellow);
 			}else {
 				addText(TextTip.Failure, Color.red);
