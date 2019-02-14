@@ -102,6 +102,6 @@ public class Es_CampaignRenderPlugin implements EveryFrameScript{
 		String name = info.getName();
 		ui.addMessage(new MessageIntel(info.getTooltip2(), Color.green));
 		ui.addMessage(new MessageIntel(info.getTooltip1()));
-		ui.addMessage(new MessageIntel("Achievement Unlock: "+name,  Color.yellow));
+		ui.addMessage(new MessageIntel("Achievement Unlocked: "+name,  Color.yellow));
 	}
 }

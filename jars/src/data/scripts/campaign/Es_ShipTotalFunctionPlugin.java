@@ -95,7 +95,8 @@ public class Es_ShipTotalFunctionPlugin implements InteractionDialogPlugin {
 				if (info.isDone()) {
 					addText("**"+info.getName()+"**");
 					addText("Conditions:");
-					addText(info.getTooltip2(),Color.green);
+					appendText(info.getTooltip2());
+					textPanel.highlightLastInLastPara(info.getTooltip2(),Color.green);
 					addText(info.getTooltip1(),Color.yellow);
 					addText("");
 				}

@@ -33,17 +33,17 @@ public class Es_BaseAchievementsUnlockPlugin implements EveryFrameScript {
 		boolean condition_credits[] = (boolean[]) conditionData.get(ACHIEVEMENT_CREDITS_ID);
 		
 		float credits = fleet.getCargo().getCredits().get();
-		if (!condition_credits[0] && credits >= 10000f) {
-			Global.getSector().getPersistentData().put("Es_tenthousandcredits", true);
+		if (!condition_credits[0] && credits >= 50000f) {
+			Global.getSector().getPersistentData().put("Es_creditLevel1", true);
 			condition_credits[0]=true;
-		}else if (!condition_credits[1] && credits >= 20000f) {
-			Global.getSector().getPersistentData().put("Es_twentythousandcredits", true);
+		}else if (!condition_credits[1] && credits >= 100000f) {
+			Global.getSector().getPersistentData().put("Es_creditLevel2", true);
 			condition_credits[1]=true;
-		}else if (!condition_credits[2] && credits >= 50000f) {
-			Global.getSector().getPersistentData().put("Es_fiftythousandcredits", true);
+		}else if (!condition_credits[2] && credits >= 1000000f) {
+			Global.getSector().getPersistentData().put("Es_creditLevel3", true);
 			condition_credits[2]=true;
-		}else if (!condition_credits[3] && credits >= 100000f) {
-			Global.getSector().getPersistentData().put("Es_onehundredthousandcredits", true);
+		}else if (!condition_credits[3] && credits >= 10000000f) {
+			Global.getSector().getPersistentData().put("Es_creditLevel4", true);
 			condition_credits[3]=true;
 		}
 		

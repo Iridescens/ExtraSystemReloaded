@@ -375,9 +375,9 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 				max=(int)HULLSIZE_TO_MAXLEVEL.get(hullSize);
 				int levelnow=option_SkillValue.containsKey(optionId)?option_SkillValue.get(optionId):0;
 				if (levelnow>=max) {
-					options.addOption(data[i]+"("+level+") (Full)", optionId,tooltips[i]);
+					options.addOption(data[i]+" ("+level+") (Full)", optionId,tooltips[i]);
 				}else {
-					options.addOption(data[i]+"("+level+")", optionId,tooltips[i]);
+					options.addOption(data[i]+" ("+level+")", optionId,tooltips[i]);
 				}
 			}
 			addText(TextTip.quality1);
@@ -512,7 +512,7 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 			if (arg == 1.5f) {
 				text = Global.getSettings().getString("QualityName", "s_perfect");				
 			}else {
-				text = "(Are you Cheated)";				
+				text = "(WTF?!)";
 			}
 		}
 		return text;

@@ -1,7 +1,6 @@
 id,name,iconPath,tooltip1,tooltip2
 Es_niceboat,NICE BOAT,graphics/achievements/Achievement_niceboat.png,"You have a nice boat now, and forever.","*Have the ship ""Hermes (D)""."
-Es_tenthousandcredits,Sufficient Expenditure,graphics/achievements/Achievement_tenthousandcredits.png,"Fleet will be on track, and you will be the commander.",*Gain 10000 credits.
-Es_twentythousandcredits,Initial Capital,graphics/achievements/Achievement_twentythousandcredits.png,Trade will be on track. Sometimes trade is a nice work.,*Gain 20000 credits.
-Es_fiftythousandcredits,Trader,graphics/achievements/Achievement_fiftythousandcredits.png,Money will be on track. I need more.,*Gain 50000 credits.
-Es_onehundredthousandcredits,Fabulously Wealthy,graphics/achievements/Achievement_onehundredthousandcredits.png,Much more will be on track. Endless desire!,*Gain 100000 credits.
-,,,,
+Es_creditLevel1,Sufficient Savings,graphics/achievements/Achievement_fiftythousandcredits.png,"Fleet is on track, and you are the commander.","*Gain 50'000 credits."
+Es_creditLevel2,Initial Capital,graphics/achievements/Achievement_onehundredthousandcredits.png,Trade will be on track. Sometimes it is a nice work.,"*Gain 100'000 credits."
+Es_creditLevel3,Entrepreneur,graphics/achievements/Achievement_onemillioncredits.png,Money will be on track. I need more.,"*Gain 1'000'000 credits."
+Es_creditLevel4,Fabulously Wealthy,graphics/achievements/Achievement_tenmillioncredits.png,Much more will be on track. Endless desire!,"*Gain 10'000'000 credits."

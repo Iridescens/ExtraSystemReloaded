@@ -1,10 +1,10 @@
 package data.scripts.util;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,8 +25,8 @@ public class AchievementData {
 	private Map<String,AchievementInfo>achievementMaps;
 	private Map<String, Object>CustomData;
 	public AchievementData(){
-		achievementMaps = new HashMap<>();
-		CustomData = new HashMap<>();
+		achievementMaps = new LinkedHashMap<>();
+		CustomData = new LinkedHashMap<>();
 		try {
 			loadAndCheck();
 		} catch (IOException e) {

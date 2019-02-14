@@ -6,7 +6,7 @@
 	"upgradeCostMaxFactor":0.5,	
 	"upgradeCostMinFactor":0.05,	# bring this closer to 0, or even set to 0, if you think capitals are ridiculously expensive
 	"dividingRatio":20.0,	# higher is cheaper
-	"enableAchievements":false,
+	"enableAchievements":true,
 	"enabledAIUpgrade":false,	# do AI upgrade it's ships?
 	"graphics":{			
 		"Achievements":{
