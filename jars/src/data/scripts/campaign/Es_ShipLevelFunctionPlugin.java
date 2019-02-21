@@ -154,8 +154,9 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 		visual = dialog.getVisualPanel();
 		
 		sector = Global.getSector();
-		playerFleet = (CampaignFleetAPI) dialog.getInteractionTarget();
-		
+//		playerFleet = (CampaignFleetAPI) dialog.getInteractionTarget();
+		playerFleet = (CampaignFleetAPI) Global.getSector().getPlayerFleet();
+
 		try {
 			Es_sr_csvArray = Global.getSettings().loadCSV(Es_SR_FILE_PATH);
 		} catch (IOException | JSONException e) {

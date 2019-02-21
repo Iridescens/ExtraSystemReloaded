@@ -29,7 +29,7 @@ public class Es_ShipLevelFleetData implements Buff{
 	private float qualityFactor = 1f;
 	private boolean expired = false;
 	
-	private int AbilityLevel[] ={0,0,0,0,0};//е€†е€«еЇ№еє”0иЂђд№…гЂЃ1ж­¦е™ЁгЂЃ2еђЋе‹¤гЂЃ3жњєеЉЁгЂЃ4з§‘жЉЂ
+	private int[] AbilityLevel ={0,0,0,0,0};//е€†е€«еЇ№еє”0иЂђд№…гЂЃ1ж­¦е™ЁгЂЃ2еђЋе‹¤гЂЃ3жњєеЉЁгЂЃ4з§‘жЉЂ
 	private static final Map<HullSize, Float> mag = new HashMap<HullSize, Float>();//иѓЅеЉ›дёЉеЌ‡еЏ‚ж•°
 	static {
 		mag.put(HullSize.FRIGATE, 1f);//жЉ¤еЌ«и€°
@@ -68,7 +68,7 @@ public class Es_ShipLevelFleetData implements Buff{
 			if (uppedFleetMemberAPIs==null || ShipLevel_DATA ==null) {
 				return;
 			}
-			int args[] = getLevelIndex();
+			int[] args = getLevelIndex();
 			if(uppedFleetMemberAPIs.containsKey(member.getId())){
 				String tips = "----The ShipLevel System----\n" +
 						"Quality:"+ (float)Math.round(uppedFleetMemberAPIs.get(member.getId())*100)/100 + "\n" +
@@ -165,7 +165,9 @@ public class Es_ShipLevelFleetData implements Buff{
 		interval.advance(days);
         if (interval.intervalElapsed()) {
             if (lastMember != null) {
-                if (lastMember.getFleetData() == null && lastMember.getFleetData().getFleet() == null || lastMember.getFleetData().getFleet().isAIMode() ||
+                if ( lastMember.getFleetData() == null ||
+						lastMember.getFleetData().getFleet() == null ||
+						lastMember.getFleetData().getFleet().isAIMode() ||
                     !lastMember.getFleetData().getFleet().isAlive()) {
                     expired = true;
                     ShipLevel_DATA.remove(lastMember.getId());
