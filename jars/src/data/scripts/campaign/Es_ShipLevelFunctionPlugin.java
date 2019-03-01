@@ -1,37 +1,25 @@
 package data.scripts.campaign;
 
-import java.awt.Color;
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.BuffManagerAPI.Buff;
+import com.fs.starfarer.api.campaign.*;
+import com.fs.starfarer.api.campaign.CargoAPI.CargoItemType;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.combat.EngagementResultAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import data.scripts.util.Es_GameSetPausePlugin;
+import org.apache.log4j.Level;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.awt.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.log4j.Level;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.lwjgl.util.vector.Vector2f;
-
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.CargoAPI.CargoItemType;
-import com.fs.starfarer.api.campaign.CargoStackAPI;
-import com.fs.starfarer.api.campaign.FleetMemberPickerListener;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
-import com.fs.starfarer.api.campaign.OptionPanelAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
-import com.fs.starfarer.api.campaign.TextPanelAPI;
-import com.fs.starfarer.api.campaign.VisualPanelAPI;
-import com.fs.starfarer.api.campaign.BuffManagerAPI.Buff;
-import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.combat.EngagementResultAPI;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
-
-import data.scripts.campaign.Es_ShipTradeSaveData.TradeMarketData;
-import data.scripts.util.Es_GameSetPausePlugin;
 
 
 public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
@@ -470,7 +458,7 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 	}
 
 	
-	private static final String Es_LEVEL_FUNCTION_ID = "Es_ShipLevelUp";
+	public static final String Es_LEVEL_FUNCTION_ID = "Es_ShipLevelUp";
 	private void addText(String text) {
 		textPanel.addParagraph(text);
 	}
@@ -509,17 +497,15 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 			text = Global.getSettings().getString("QualityName", "superior");
 		}else if (isInside(arg, 1.4f, 1.5f)) {
 			text = Global.getSettings().getString("QualityName", "perfect");
-		}else {
-			if (arg == 1.5f) {
+		}else if (arg == 1.5f) {
 				text = Global.getSettings().getString("QualityName", "s_perfect");				
-			}else {
-				text = "(WTF?!)";
-			}
-		}
+		}else
+		    text = "(WTF?!)";
+
 		return text;
 	}
-	
-	private Color getQualityColor(float arg){
+
+    public static Color getQualityColor(float arg){
 		Color color;
 		if (isInside(arg, 0.5f, 0.65f)) {
 			color = Color.gray.darker();

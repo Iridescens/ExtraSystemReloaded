@@ -8,6 +8,8 @@ Upgrade has about 40% (configurable) chance of success at the minimum.
 +You can turn off failures in settings.json in data\config
 +baseFailureMinFactor is now there to lessen your losses.
 
++Upgrade subsystems on non-hostile planets with market.
+
 ---Mechanics---
 
 The efficiency step of upgrades are:
@@ -33,9 +35,10 @@ Technology:
 Flux capacity and disspation up to 33%; weapon flux cost, shield efficiency up to 15%
   +Now with PhaseCloak improvements up to 25% flux savings!
 
++Ship's quality can be upgraded! Seek markets with better industries.
+
 Coming next:
 -Adjustable efficiency steps and number of levels
--Fighter-hull upgrades (have yet to find out if it is possible since 0.8 changes)
+-Fighter-hull upgrades (maybe, unlikely)
 -More achievements
--Move in-game dialog to a station for Realism™
 -Make it possible to just buy upgrades without materials/commodities

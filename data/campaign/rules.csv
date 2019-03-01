@@ -3,18 +3,37 @@ id,trigger,conditions,script,text,options,notes
 ESMainDialog,PopulateOptions,"$hasMarket
 $menuState == main
 $tradeMode == OPEN
-RepairAvailable","SetShortcut ESMainMenu ""U"" true
-SetTextHighlights ExtraSystem",,"25:ESMainMenu:Consider upgrading your ships (ExtraSystem)",
-ESMainMenu,DialogOptionSelected,"$option==ESMainMenu","SetTooltip ESShipQuality ""Not ready yet!""
-SetEnabled ESShipQuality false","Welcome to ExtraSystem Reloaded!
+RepairAvailable","SetShortcut ESMainMenu ""U"" true",,"25:ESMainMenu:Consider upgrading your ships (ExtraSystem)",
+ESMainMenu,DialogOptionSelected,"$option==ESMainMenu","ShowDefaultVisual
+$menuState = ESMainMenu
+$ShipPageIndex = 0","Welcome to ExtraSystem Reloaded!
 Choose the function you want.","10:ESShipLevel:Enchance ship's performance
 15:ESShipQuality:Consider an overhaul to ship's hull
 90:ESDialogBack:Back
 99:ESDeleteUpgradesAll:Clear all ExtraSystem data",
-ESShipLevel,DialogOptionSelected,"$option==ESShipLevel","ES_Dialog ShipLevel",,,
-ESShipQuality,DialogOptionSelected,"$option==ESShipQuality","ES_Dialog ShipQuality",,,
+ESShipLevel,DialogOptionSelected,"$option==ESShipLevel","$menuState = ESShipLevel
+Es_ShipLevelDialog",,,
+ESShipQuality,DialogOptionSelected,"$option==ESShipQuality","$menuState = ESShipQuality
+Es_ShipQualityDialog $ShipPageIndex ShipList",,,
+ESShipQualityPREV,DialogOptionSelected,"$menuState==ESShipQuality
+$option==ESShipQualityPREV","$ShipPageIndex--
+Es_ShipQualityDialog $ShipPageIndex ShipList",,,
+ESShipQualityNEXT,DialogOptionSelected,"$menuState==ESShipQuality
+$option==ESShipQualityNEXT","$ShipPageIndex++
+Es_ShipQualityDialog $ShipPageIndex ShipList",,,
+ESShipQualityPicker,DialogOptionSelected,"$option!=ESShipQualityPREV
+$option!=ESShipQualityNEXT
+$option!=ESShipQualityApply
+$option!=ESMainMenu
+$option!=ESDialogBack
+$menuState==ESShipQuality","Es_ShipQualityDialog $ShipPageIndex ShipSelected $option
+$ShipSelectedId=$option",,,
+ESShipQualityApply,DialogOptionSelected,"$option==ESShipQualityApply","Es_ShipQualityDialog $ShipPageIndex ApplyUpgrade $ShipSelectedId",,,
 ,,,,,,
-ESDialogBack,DialogOptionSelected,"$option==ESDialogBack","$menuState = main 0
-FireAll PopulateOptions",,,
+ESDialogBack,DialogOptionSelected,"$option==ESDialogBack","ShowDefaultVisual
+$menuState = main 0
+FireAll PopulateOptions
+unset $ShipPageIndex
+unset $ShipSelectedId",,,
 ,,,,,,
 

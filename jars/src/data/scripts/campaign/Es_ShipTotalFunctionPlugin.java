@@ -1,31 +1,16 @@
 //Use to control Ctrl+q
 package data.scripts.campaign;
 
-import java.awt.Color;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.FleetMemberPickerListener;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
-import com.fs.starfarer.api.campaign.OptionPanelAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
-import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.TextPanelAPI;
-import com.fs.starfarer.api.campaign.VisualPanelAPI;
+import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.combat.BattleCreationContext;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
-
-import data.scripts.campaign.Es_ShipLevelFunctionPlugin.OptionId;
 import data.scripts.util.AchievementData;
 import data.scripts.util.AchievementInfo;
 import data.scripts.util.Es_GameSetPausePlugin;
+
+import java.awt.*;
+import java.util.Map;
 
 public class Es_ShipTotalFunctionPlugin implements InteractionDialogPlugin {
 	private static final String ACHIEVEMENT_ID = "AchievementData";
@@ -71,7 +56,6 @@ public class Es_ShipTotalFunctionPlugin implements InteractionDialogPlugin {
 		if (option == OptionId.LEAVE) {
 			dialog.dismiss();
 			Global.getSector().addTransientScript(new Es_GameSetPausePlugin());
-			return;
 		}else if (option == OptionId.INIT) {
 			addText("Welcome to ExtraSystem Reloaded!");
 			addText("Choose the function you want.");

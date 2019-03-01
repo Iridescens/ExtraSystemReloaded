@@ -1,19 +1,16 @@
 package data.scripts.campaign;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.BuffManagerAPI.Buff;
+import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.util.IntervalUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 
 //import org.lazywizard.lazylib.VectorUtils;
-
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.BuffManagerAPI.Buff;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.util.IntervalUtil;
-import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.Level;
 
 public class Es_ShipLevelFleetData implements Buff{
 	private static final String Es_LEVEL_FUNCTION_ID = "Es_ShipLevelUp";	
@@ -26,7 +23,7 @@ public class Es_ShipLevelFleetData implements Buff{
 	private final IntervalUtil interval = new IntervalUtil(1f, 1f);
 	private FleetMemberAPI lastMember = null;
 	private float hullSizeFactor = 1f;
-	private float qualityFactor = 1f;
+	private float qualityFactor = 0f;
 	private boolean expired = false;
 	
 	private int[] AbilityLevel ={0,0,0,0,0};//е€†е€«еЇ№еє”0иЂђд№…гЂЃ1ж­¦е™ЁгЂЃ2еђЋе‹¤гЂЃ3жњєеЉЁгЂЃ4з§‘жЉЂ
@@ -56,7 +53,9 @@ public class Es_ShipLevelFleetData implements Buff{
 		}else {
 			hullSizeFactor = 1f;
 		}
-		qualityFactor = getQuality(memberAPI);
+		if (qualityFactor == 0f){
+		    qualityFactor = getQuality(memberAPI);
+        }
 		uppedFleetMemberAPIs.put(memberAPI.getId(),qualityFactor);//е“ЃиґЁйљЏжњє
 		ShipLevel_DATA.put(memberAPI.getId(),this.getLevelIndex());
 	}

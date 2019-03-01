@@ -1,16 +1,13 @@
 package data.scripts.campaign;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.locks.Condition;
-
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-
 import data.scripts.util.AchievementData;
 import data.scripts.util.AchievementInfo;
+
+import java.util.Map;
 
 public class Es_BaseAchievementsUnlockPlugin implements EveryFrameScript {
 	private static final String ACHIEVEMENT_ID = "AchievementData";
@@ -30,7 +27,7 @@ public class Es_BaseAchievementsUnlockPlugin implements EveryFrameScript {
 		final AchievementData data =  (AchievementData) Global.getSector().getPersistentData().get(ACHIEVEMENT_ID);
 		final Map<String, Object> conditionData = data.getCustomData();
 		final CampaignFleetAPI fleet = Global.getSector().getPlayerFleet();
-		boolean condition_credits[] = (boolean[]) conditionData.get(ACHIEVEMENT_CREDITS_ID);
+		boolean[] condition_credits = (boolean[]) conditionData.get(ACHIEVEMENT_CREDITS_ID);
 		
 		float credits = fleet.getCargo().getCredits().get();
 		if (!condition_credits[0] && credits >= 50000f) {
