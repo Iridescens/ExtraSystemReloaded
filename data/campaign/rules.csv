@@ -6,7 +6,9 @@ $tradeMode == OPEN
 RepairAvailable","SetShortcut ESMainMenu ""U"" true",,"25:ESMainMenu:Consider upgrading your ships (ExtraSystem)",
 ESMainMenu,DialogOptionSelected,"$option==ESMainMenu","ShowDefaultVisual
 $menuState = ESMainMenu
-$ShipPageIndex = 0","Welcome to ExtraSystem Reloaded!
+$ShipPageIndex = 0
+SetEnabled ESDeleteUpgradesAll false
+SetTooltip ESDeleteUpgradesAll ""Not implemented yet!""","Welcome to ExtraSystem Reloaded!
 Choose the function you want.","10:ESShipLevel:Enchance ship's performance
 15:ESShipQuality:Consider an overhaul to ship's hull
 90:ESDialogBack:Back
