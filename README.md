@@ -9,6 +9,7 @@ Upgrade has about 40% (configurable) chance of success at the minimum.
 +baseFailureMinFactor is now there to lessen your losses.
 
 +Upgrade subsystems on non-hostile planets with market.
++Ship's quality can be upgraded! Seek markets with better industries.
 
 ---Mechanics---
 
@@ -35,7 +36,6 @@ Technology:
 Flux capacity and disspation up to 33%; weapon flux cost, shield efficiency up to 15%
   +Now with PhaseCloak improvements up to 25% flux savings!
 
-+Ship's quality can be upgraded! Seek markets with better industries.
 
 Coming next:
 -Adjustable efficiency steps and number of levels
