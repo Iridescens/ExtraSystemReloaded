@@ -15,8 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static java.lang.Math.pow;
-
 public class Es_ShipQualityDialog extends BaseCommandPlugin {
 
     private int ShipPageIndex;
@@ -30,6 +28,7 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
     private OptionPanelAPI options;
     private VisualPanelAPI visual;
 
+    private BuffManagerAPI.Buff buffmanager;
     private MarketAPI currMarket;
     private CampaignFleetAPI playerFleet;
     private List<FleetMemberAPI> ShipList;
@@ -68,15 +67,15 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
                         break;
                     }
                 }
-                BuffManagerAPI.Buff buffmanager = ShipSelected.getBuffManager().getBuff(Es_ShipLevelFunctionPlugin.Es_LEVEL_FUNCTION_ID);
+                buffmanager = ShipSelected.getBuffManager().getBuff(Es_ShipLevelFunctionPlugin.Es_LEVEL_FUNCTION_ID);
                 if (buffmanager instanceof Es_ShipLevelFleetData) {
-                    ;
-                }else {
-                    ShipSelected.getBuffManager().addBuff(new Es_ShipLevelFleetData(ShipSelected));
+                    ShipSelected.getBuffManager().removeBuff(buffmanager.getId());
                 }
+                ShipSelected.getBuffManager().addBuff(new Es_ShipLevelFleetData(ShipSelected));
+
                 shipQuality = Es_ShipLevelFleetData.uppedFleetMemberAPIs.get(ShipSelected.getId());
                 shipBaseValue = ShipSelected.getHullSpec().getBaseValue();
-                estimatedOverhaulCost = Math.round(shipBaseValue*(float)pow(shipQuality,2)/2*100f)/100f; //* (bonusQ()*0.5f/baseQualityStep); // pay more when bonusQ is higher
+                estimatedOverhaulCost = Math.round(shipBaseValue*(float)Math.pow(shipQuality,2)/2*100f)/100f; //* (bonusQ()*0.5f/baseQualityStep); // pay more when bonusQ is higher
             }
         }
         options = dialog.getOptionPanel();
@@ -135,6 +134,8 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
                     float newquality = Math.round((Es_ShipLevelFleetData.uppedFleetMemberAPIs.get(ShipSelectedId)+bonusQ())*100f)/100f; // qualityFactor + bonus
                     Es_ShipLevelFleetData.uppedFleetMemberAPIs.remove(ShipSelectedId);
                     Es_ShipLevelFleetData.uppedFleetMemberAPIs.put(ShipSelectedId,newquality);
+                    ShipSelected.getBuffManager().removeBuff(buffmanager.getId());
+                    ShipSelected.getBuffManager().addBuff(new Es_ShipLevelFleetData(ShipSelected));
                     playerFleet.getCargo().getCredits().subtract(estimatedOverhaulCost);
                     String text2 = "After some improvements here and there, your ship now has quality rating of "+newquality;
                     textPanel.addParagraph(text2);

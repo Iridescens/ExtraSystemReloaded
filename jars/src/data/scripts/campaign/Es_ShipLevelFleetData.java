@@ -53,15 +53,13 @@ public class Es_ShipLevelFleetData implements Buff{
 		}else {
 			hullSizeFactor = 1f;
 		}
-		if (qualityFactor == 0f){
-		    qualityFactor = getQuality(memberAPI);
-        }
-		uppedFleetMemberAPIs.put(memberAPI.getId(),qualityFactor);//е“ЃиґЁйљЏжњє
-		ShipLevel_DATA.put(memberAPI.getId(),this.getLevelIndex());
+		qualityFactor = getQuality(memberAPI);
+        ShipLevel_DATA.put(memberAPI.getId(),this.getLevelIndex());
+		uppedFleetMemberAPIs.put(memberAPI.getId(),qualityFactor);
 	}
-	
-	
-	
+
+
+
 	@Override
 	public void apply(FleetMemberAPI member) {
 			if (uppedFleetMemberAPIs==null || ShipLevel_DATA ==null) {
@@ -79,7 +77,7 @@ public class Es_ShipLevelFleetData implements Buff{
 						"----------------------------";
 				member.getStats().getMaxCombatReadiness().modifyFlat(Es_LEVEL_FUNCTION_ID, 0.00001f, tips);	
 			}
-			for (int i = 0; i < args.length; i++) {
+            for (int i = 0; i < args.length; i++) {
 				float level = (float)args[i]*qualityFactor;
 				switch (i) {
 				case 0://иЂђд№…
@@ -143,6 +141,8 @@ public class Es_ShipLevelFleetData implements Buff{
 						member.getStats().getPhaseCloakUpkeepCostBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2f);
 					}
 					break;
+
+// TODO -> getOrdnancePoints(MutableCharacterStatsAPI) - getShipOrdnancePointBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2.5f);
 				default:
 					break;
 				}
@@ -180,7 +180,14 @@ public class Es_ShipLevelFleetData implements Buff{
 		return AbilityLevel;
 	}
 	private float getQuality(FleetMemberAPI member){
-		if(QUALITYENABLED){
+        if(QUALITYENABLED){
+
+            if (uppedFleetMemberAPIs !=null){
+                if (uppedFleetMemberAPIs.containsKey(member.getId())){
+                    return uppedFleetMemberAPIs.get(member.getId());
+                }
+            }
+
 			String id = member.getId();
 			char[] ids = id.toCharArray();
 			float sum = 0f;
