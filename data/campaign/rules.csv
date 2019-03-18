@@ -17,6 +17,7 @@ ESShipLevel,DialogOptionSelected,"$option==ESShipLevel","$menuState = ESShipLeve
 Es_ShipLevelDialog",,,
 ESShipQuality,DialogOptionSelected,"$option==ESShipQuality","$menuState = ESShipQuality
 Es_ShipQualityDialog $ShipPageIndex ShipList",,,
+,,,,,,
 ESShipQualityPREV,DialogOptionSelected,"$menuState==ESShipQuality
 $option==ESShipQualityPREV","$ShipPageIndex--
 Es_ShipQualityDialog $ShipPageIndex ShipList",,,
@@ -26,6 +27,7 @@ Es_ShipQualityDialog $ShipPageIndex ShipList",,,
 ESShipQualityPicker,DialogOptionSelected,"$option!=ESShipQualityPREV
 $option!=ESShipQualityNEXT
 $option!=ESShipQualityApply
+$option!=ESShipQuality
 $option!=ESMainMenu
 $option!=ESDialogBack
 $menuState==ESShipQuality","Es_ShipQualityDialog $ShipPageIndex ShipSelected $option

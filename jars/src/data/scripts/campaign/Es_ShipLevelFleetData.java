@@ -30,11 +30,11 @@ public class Es_ShipLevelFleetData implements Buff{
 	private static final Map<HullSize, Float> mag = new HashMap<HullSize, Float>();//иѓЅеЉ›дёЉеЌ‡еЏ‚ж•°
 	static {
 		mag.put(HullSize.FRIGATE, 1f);//жЉ¤еЌ«и€°
-		mag.put(HullSize.DESTROYER, 0.8f);//й©±йЂђи€°
-		mag.put(HullSize.CRUISER, 0.6f);//е·Ўжґ‹и€°
+		mag.put(HullSize.DESTROYER, 0.666f);//й©±йЂђи€°
+		mag.put(HullSize.CRUISER, 0.533f);//е·Ўжґ‹и€°
 		mag.put(HullSize.CAPITAL_SHIP, 0.4f);//ж€�е€—и€°
 	}
-	private static final String[] ABILITIY_NAME ={Global.getSettings().getString("AbilityName", "Durability"),
+	private static final String[] ABILITY_NAME ={Global.getSettings().getString("AbilityName", "Durability"),
 			Global.getSettings().getString("AbilityName", "WeaponProficiency"),
 			Global.getSettings().getString("AbilityName", "Logistics"),
 			Global.getSettings().getString("AbilityName", "Flexibility"),
@@ -50,15 +50,27 @@ public class Es_ShipLevelFleetData implements Buff{
 		lastMember=memberAPI;
 		if (mag.containsKey(memberAPI.getHullSpec().getHullSize())) {			
 			hullSizeFactor = mag.get(memberAPI.getHullSpec().getHullSize());
-		}else {
-			hullSizeFactor = 1f;
 		}
 		qualityFactor = getQuality(memberAPI);
         ShipLevel_DATA.put(memberAPI.getId(),this.getLevelIndex());
 		uppedFleetMemberAPIs.put(memberAPI.getId(),qualityFactor);
 	}
 
+	public Es_ShipLevelFleetData(FleetMemberAPI memberAPI, float qualityForced, int[] AbilityLevelsForced) {
+		lastMember=memberAPI;
+		if (mag.containsKey(memberAPI.getHullSpec().getHullSize())) {
+			hullSizeFactor = mag.get(memberAPI.getHullSpec().getHullSize());
+		}
+		qualityFactor = qualityForced;
+		AbilityLevel = AbilityLevelsForced;
+		ShipLevel_DATA.put(memberAPI.getId(),this.getLevelIndex());
+		uppedFleetMemberAPIs.put(memberAPI.getId(),qualityFactor);
 
+	}
+
+	public float getQualityFactor(){
+		return qualityFactor;
+	}
 
 	@Override
 	public void apply(FleetMemberAPI member) {
@@ -69,11 +81,11 @@ public class Es_ShipLevelFleetData implements Buff{
 			if(uppedFleetMemberAPIs.containsKey(member.getId())){
 				String tips = "----The ShipLevel System----\n" +
 						"Quality:"+ (float)Math.round(uppedFleetMemberAPIs.get(member.getId())*100)/100 + "\n" +
-						ABILITIY_NAME[0] + ":" + args[0] + "\n" +
-						ABILITIY_NAME[1] + ":" +  args[1] + "\n" +
-						ABILITIY_NAME[2] + ":" +  args[2] + "\n" +
-						ABILITIY_NAME[3] + ":" +  args[3] + "\n" +
-						ABILITIY_NAME[4] + ":" +  args[4] + "\n" +
+						ABILITY_NAME[0] + ":" + args[0] + "\n" +
+						ABILITY_NAME[1] + ":" +  args[1] + "\n" +
+						ABILITY_NAME[2] + ":" +  args[2] + "\n" +
+						ABILITY_NAME[3] + ":" +  args[3] + "\n" +
+						ABILITY_NAME[4] + ":" +  args[4] + "\n" +
 						"----------------------------";
 				member.getStats().getMaxCombatReadiness().modifyFlat(Es_LEVEL_FUNCTION_ID, 0.00001f, tips);	
 			}

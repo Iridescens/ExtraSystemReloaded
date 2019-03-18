@@ -22,8 +22,9 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
     private FleetMemberAPI ShipSelected;
     private String ShipSelectedId;
     private int NumShipsPerPage = 5;
+    private int[] AbilityLevelTemp;
 
-//    private InteractionDialogAPI dialog;
+    //    private InteractionDialogAPI dialog;
     private TextPanelAPI textPanel;
     private OptionPanelAPI options;
     private VisualPanelAPI visual;
@@ -68,10 +69,14 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
                     }
                 }
                 buffmanager = ShipSelected.getBuffManager().getBuff(Es_ShipLevelFunctionPlugin.Es_LEVEL_FUNCTION_ID);
+
                 if (buffmanager instanceof Es_ShipLevelFleetData) {
-                    ShipSelected.getBuffManager().removeBuff(buffmanager.getId());
+//                    Es_ShipLevelFleetData buffTemp = (Es_ShipLevelFleetData)buffmanager;
+//                    ShipSelected.getBuffManager().removeBuff(buffmanager.getId());
+//                    ShipSelected.getBuffManager().addBuff(new Es_ShipLevelFleetData(ShipSelected,buffTemp.getQualityFactor(),buffTemp.getLevelIndex()));
+                } else {
+                    ShipSelected.getBuffManager().addBuff(new Es_ShipLevelFleetData(ShipSelected));
                 }
-                ShipSelected.getBuffManager().addBuff(new Es_ShipLevelFleetData(ShipSelected));
 
                 shipQuality = Es_ShipLevelFleetData.uppedFleetMemberAPIs.get(ShipSelected.getId());
                 shipBaseValue = ShipSelected.getHullSpec().getBaseValue();
@@ -133,13 +138,15 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
                 case "ApplyUpgrade":
                     float newquality = Math.round((Es_ShipLevelFleetData.uppedFleetMemberAPIs.get(ShipSelectedId)+bonusQ())*100f)/100f; // qualityFactor + bonus
                     Es_ShipLevelFleetData.uppedFleetMemberAPIs.remove(ShipSelectedId);
-                    Es_ShipLevelFleetData.uppedFleetMemberAPIs.put(ShipSelectedId,newquality);
+//                    Es_ShipLevelFleetData.uppedFleetMemberAPIs.put(ShipSelectedId,newquality);
+                    Es_ShipLevelFleetData buffTemp = (Es_ShipLevelFleetData)buffmanager;
                     ShipSelected.getBuffManager().removeBuff(buffmanager.getId());
-                    ShipSelected.getBuffManager().addBuff(new Es_ShipLevelFleetData(ShipSelected));
+                    ShipSelected.getBuffManager().addBuff(new Es_ShipLevelFleetData(ShipSelected,newquality,buffTemp.getLevelIndex()));
                     playerFleet.getCargo().getCredits().subtract(estimatedOverhaulCost);
                     String text2 = "After some improvements here and there, your ship now has quality rating of "+newquality;
                     textPanel.addParagraph(text2);
                     textPanel.highlightLastInLastPara(""+newquality, Es_ShipLevelFunctionPlugin.getQualityColor(newquality));
+                    options.addOption("Back to ShipQuality menu", "ESShipQuality");
                 default:
                     break;
 
