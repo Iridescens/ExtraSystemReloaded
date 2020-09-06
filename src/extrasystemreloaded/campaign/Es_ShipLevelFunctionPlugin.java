@@ -1,4 +1,4 @@
-package data.scripts.campaign;
+package extrasystemreloaded.campaign;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BuffManagerAPI.Buff;
@@ -8,7 +8,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import data.scripts.util.Es_GameSetPausePlugin;
+import extrasystemreloaded.util.Es_GameSetPausePlugin;
 import org.apache.log4j.Level;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -89,7 +89,7 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 	
 	private static final String Es_SR_FILE_PATH = "data/config/skill_resource_ratio.csv";//жЉЂиѓЅеЇ№еє”еЌ‡зє§иµ„жєђжЇ”дѕ‹
 	private static final String SHIP_TRADE_SAVE_ID = "Es_ShipTradeSaveData";
-	private static final float[] CARGO_BASEVALUE={100,30,10,75,30,200,150};//иЎҐз»™,ж°”зџї,зџїзџі,зЁЂжњ‰зџїзџі,й‡‘е±ћ,зЁЂжњ‰й‡‘е±ћ,й‡Ќећ‹е™Ёжў°зљ„еџєзЎЂд»·ж ј
+	private static final float[] CARGO_BASEVALUE={100,200,10,75,30,200,150};//supplies,volatiles,ore,rare_ore,metals,rare_metals,heavy_machinery
 	
 	private InteractionDialogAPI dialog;
 	private TextPanelAPI textPanel;

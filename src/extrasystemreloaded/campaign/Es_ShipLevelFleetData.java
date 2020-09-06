@@ -1,4 +1,4 @@
-package data.scripts.campaign;
+package extrasystemreloaded.campaign;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BuffManagerAPI.Buff;
@@ -72,6 +72,10 @@ public class Es_ShipLevelFleetData implements Buff{
 		return qualityFactor;
 	}
 
+	public float getHullSizeFactor(){
+		return hullSizeFactor;
+	}
+
 	@Override
 	public void apply(FleetMemberAPI member) {
 			if (uppedFleetMemberAPIs==null || ShipLevel_DATA ==null) {
@@ -93,57 +97,68 @@ public class Es_ShipLevelFleetData implements Buff{
 				float level = (float)args[i]*qualityFactor;
 				switch (i) {
 				case 0://иЂђд№…
-					member.getStats().getHullBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*5f);
-					member.getStats().getArmorBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*5f);
-					member.getStats().getWeaponHealthBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*5f);
-					member.getStats().getEngineHealthBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*5f);
+					member.getStats().getHullBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
+					member.getStats().getArmorBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
+					member.getStats().getWeaponHealthBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
+					member.getStats().getEngineHealthBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
 					member.getStats().getEmpDamageTakenMult().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*4f);
 					break;
 				case 1://ж­¦е™Ё
 					member.getStats().getBallisticWeaponRangeBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
 					member.getStats().getEnergyWeaponRangeBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
 					member.getStats().getMissileWeaponRangeBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
+
 					member.getStats().getBallisticWeaponDamageMult().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
 					member.getStats().getEnergyWeaponDamageMult().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
 					member.getStats().getMissileWeaponDamageMult().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
+
 					member.getStats().getBallisticRoFMult().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
 					member.getStats().getEnergyRoFMult().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
 					member.getStats().getMissileRoFMult().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
 					break;
 				case 2://еђЋе‹¤
-					member.getStats().getCRPerDeploymentPercent().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*0.5f);
+					member.getStats().getCRPerDeploymentPercent().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
+
 					member.getStats().getBallisticAmmoBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2f);
 					member.getStats().getEnergyAmmoBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2f);
 					member.getStats().getMissileAmmoBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2f);
-					member.getStats().getMinCrewMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1f);
-					member.getStats().getMaxCrewMod().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1f);
+
+					member.getStats().getMinCrewMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2f);
+					member.getStats().getMaxCrewMod().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2f);
+
 					member.getStats().getRepairRatePercentPerDay().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2.5f);
 					member.getStats().getBaseCRRecoveryRatePercentPerDay().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2.5f);
+
 					member.getStats().getFuelUseMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2.5f);
-					member.getStats().getSuppliesPerMonth().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
-					member.getStats().getSuppliesToRecover().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
+
+					member.getStats().getSuppliesPerMonth().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2f);
+					member.getStats().getSuppliesToRecover().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2f);
 					break;
 				case 3://жњєеЉЁ
-					member.getStats().getMaxSpeed().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3.33f);
-					member.getStats().getAcceleration().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*5f);
-					member.getStats().getDeceleration().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*5f);
-					member.getStats().getMaxTurnRate().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*5f);
-					member.getStats().getTurnAcceleration().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*5f);
+					member.getStats().getMaxSpeed().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2f);
+					member.getStats().getAcceleration().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
+					member.getStats().getDeceleration().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
+
+					member.getStats().getMaxTurnRate().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
+					member.getStats().getTurnAcceleration().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
+
 					member.getStats().getMaxBurnLevel().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2f);
 					break;
 				case 4://з§‘жЉЂ
-					member.getStats().getFluxCapacity().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3.33f);
-					member.getStats().getFluxDissipation().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3.33f);
+					member.getStats().getFluxCapacity().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2f);
+					member.getStats().getFluxDissipation().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2f);
+
 					member.getStats().getBallisticWeaponFluxCostMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
 					member.getStats().getMissileWeaponFluxCostMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
 					member.getStats().getEnergyWeaponFluxCostMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
+//
 //					if(member!=null && member.getHullSpec() != null)
 //						  Global.getLogger(Es_ShipLevelFleetData.class).log(Level.INFO,member.getHullSpec().getShieldType()); 
 					if(member.getHullSpec() != null && 
 							(member.getHullSpec().getShieldType()==ShieldType.FRONT || 
 							 member.getHullSpec().getShieldType()==ShieldType.OMNI)) {
 						member.getStats().getShieldDamageTakenMult().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
-						member.getStats().getShieldUpkeepMult().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
+						member.getStats().getShieldUpkeepMult().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2f);
 						member.getStats().getShieldUnfoldRateMult().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*5f);
 					}
 					else if(member.getHullSpec() != null && 

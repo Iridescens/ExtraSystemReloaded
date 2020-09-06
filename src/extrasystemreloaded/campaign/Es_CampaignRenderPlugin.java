@@ -1,21 +1,20 @@
-package data.scripts.campaign;
-
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
-import org.lwjgl.opengl.Display;
+package extrasystemreloaded.campaign;
 
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.GameState;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
+import com.fs.starfarer.api.impl.campaign.intel.MessageIntel;
+import extrasystemreloaded.util.AchievementAnimationUnit;
+import extrasystemreloaded.util.AchievementData;
+import extrasystemreloaded.util.AchievementInfo;
+import org.lwjgl.opengl.Display;
 
-import data.scripts.util.AchievementAnimationUnit;
-import data.scripts.util.AchievementData;
-import data.scripts.util.AchievementInfo;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import static org.lwjgl.opengl.GL11.*;
 
 public class Es_CampaignRenderPlugin implements EveryFrameScript{
@@ -81,7 +80,7 @@ public class Es_CampaignRenderPlugin implements EveryFrameScript{
 		glPopMatrix();
 		glPopAttrib();
 	}
-	/**
+	/*
 	 * Can be used only if the achievement's boolean is false for each achievement. Unlock
 	 * the Achievement and spawn the animation.
 	 * @param achievementID The id to record the achievement.

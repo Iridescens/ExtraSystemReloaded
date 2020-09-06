@@ -1,13 +1,13 @@
 //Use to control Ctrl+q
-package data.scripts.campaign;
+package extrasystemreloaded.campaign;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
-import data.scripts.util.AchievementData;
-import data.scripts.util.AchievementInfo;
-import data.scripts.util.Es_GameSetPausePlugin;
+import extrasystemreloaded.util.AchievementData;
+import extrasystemreloaded.util.AchievementInfo;
+import extrasystemreloaded.util.Es_GameSetPausePlugin;
 
 import java.awt.*;
 import java.util.Map;

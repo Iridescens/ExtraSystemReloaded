@@ -1,11 +1,11 @@
-package data.scripts.campaign;
+package extrasystemreloaded.campaign;
 
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import data.scripts.util.AchievementData;
-import data.scripts.util.AchievementInfo;
+import extrasystemreloaded.util.AchievementData;
+import extrasystemreloaded.util.AchievementInfo;
 
 import java.util.Map;
 

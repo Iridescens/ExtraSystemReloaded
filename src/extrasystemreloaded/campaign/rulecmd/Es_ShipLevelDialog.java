@@ -1,10 +1,11 @@
-package com.fs.starfarer.api.impl.campaign.rulecmd;
+package extrasystemreloaded.campaign.rulecmd;
 
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
-import data.scripts.campaign.Es_ShipLevelFunctionPlugin;
+import extrasystemreloaded.campaign.Es_ShipLevelFunctionPlugin;
 
 import java.util.List;
 import java.util.Map;

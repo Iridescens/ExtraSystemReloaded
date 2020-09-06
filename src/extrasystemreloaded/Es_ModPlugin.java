@@ -1,21 +1,16 @@
-package data.scripts;
-
-import java.io.IOException;
-import java.util.HashMap;
-
-import org.json.JSONArray;
-import org.json.JSONException;
+package extrasystemreloaded;
 
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.impl.campaign.NewGameDialogPluginImpl;
+import extrasystemreloaded.campaign.Es_BaseAchievementsUnlockPlugin;
+import extrasystemreloaded.campaign.Es_CampaignRenderPlugin;
+import extrasystemreloaded.campaign.Es_ExtraSystemController;
+import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
+import extrasystemreloaded.util.AchievementData;
+import org.json.JSONException;
 
-import data.scripts.campaign.Es_BaseAchievementsUnlockPlugin;
-import data.scripts.campaign.Es_CampaignRenderPlugin;
-import data.scripts.campaign.Es_ShipLevelFleetData;
-import data.scripts.campaign.Es_ExtraSystemController;
-import data.scripts.campaign.Es_ShipTradeSaveData;
-import data.scripts.util.AchievementData;
+import java.io.IOException;
+import java.util.HashMap;
 
 public class Es_ModPlugin extends BaseModPlugin
 {

@@ -1,21 +1,17 @@
-package data.scripts.util;
+package extrasystemreloaded.util;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.graphics.SpriteAPI;
+import extrasystemreloaded.achievements.AchievementUIBaseAnimation;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.graphics.SpriteAPI;
-
-import data.scripts.achievements.AchievementUIBaseAnimation;
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 public class AchievementData {

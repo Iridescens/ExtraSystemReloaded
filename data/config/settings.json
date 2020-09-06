@@ -12,5 +12,8 @@
 		"Achievements":{
 			"core":"graphics/achievements/Es_Achievement_core.png",
 		}
-	}
+	},
+	"ruleCommandPackages":[
+		"extrasystemreloaded.campaign.rulecmd",
+	]
 }

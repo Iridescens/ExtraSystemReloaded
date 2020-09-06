@@ -1,26 +1,23 @@
-package data.scripts.campaign;
-
-import java.awt.Color;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Level;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+package extrasystemreloaded.campaign;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
-import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetFactory;
-import com.fs.starfarer.api.util.IntervalUtil;
+import org.apache.log4j.Level;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Es_ShipTradeSaveData {
 	private static final String SHIP_TARDE_SAVE_ID = "Es_ShipTradeSaveData";
