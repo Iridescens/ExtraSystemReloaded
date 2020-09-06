@@ -16,9 +16,92 @@ import static extrasystemreloaded.campaign.Es_ShipLevelFunctionPlugin.*;
 
 public class ExtraSystemHM extends BaseHullMod {
 
-//    public void applyEffectsBeforeShipCreation(HullSize hullSize, MutableShipStatsAPI stats, String id) {
-//        stats.getHitStrengthBonus().modifyPercent(id, DMGBonus);
-//    }
+    @Override
+    public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
+        FleetMemberAPI fm = findShip(hullSize, stats);
+        Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) fm.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID);
+        int[] array = buff.getLevelIndex();
+
+        for (int i = 0; i < array.length; i++) {
+            float level = (float)array[i]*buff.getQualityFactor();
+            switch (i) {
+                case 0://иЂђд№…
+                    fm.getStats().getHullBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*3f);
+                    fm.getStats().getArmorBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*3f);
+                    fm.getStats().getWeaponHealthBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*3f);
+                    fm.getStats().getEngineHealthBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*3f);
+                    fm.getStats().getEmpDamageTakenMult().modifyPercent(Es_LEVEL_FUNCTION_ID, -buff.getHullSizeFactor()*level*4f);
+                    break;
+                case 1://ж­¦е™Ё
+                    fm.getStats().getBallisticWeaponRangeBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*1.5f);
+                    fm.getStats().getEnergyWeaponRangeBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*1.5f);
+                    fm.getStats().getMissileWeaponRangeBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*1.5f);
+
+                    fm.getStats().getBallisticWeaponDamageMult().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*1.5f);
+                    fm.getStats().getEnergyWeaponDamageMult().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*1.5f);
+                    fm.getStats().getMissileWeaponDamageMult().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*1.5f);
+
+                    fm.getStats().getBallisticRoFMult().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*1.5f);
+                    fm.getStats().getEnergyRoFMult().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*1.5f);
+                    fm.getStats().getMissileRoFMult().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*1.5f);
+                    break;
+                case 2://еђЋе‹¤
+                    fm.getStats().getCRPerDeploymentPercent().modifyPercent(Es_LEVEL_FUNCTION_ID, -buff.getHullSizeFactor()*level*1.5f);
+
+                    fm.getStats().getBallisticAmmoBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*2f);
+                    fm.getStats().getEnergyAmmoBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*2f);
+                    fm.getStats().getMissileAmmoBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*2f);
+
+                    fm.getStats().getMinCrewMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -buff.getHullSizeFactor()*level*2f);
+                    fm.getStats().getMaxCrewMod().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*2f);
+
+                    fm.getStats().getRepairRatePercentPerDay().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*2.5f);
+                    fm.getStats().getBaseCRRecoveryRatePercentPerDay().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*2.5f);
+
+                    fm.getStats().getFuelUseMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -buff.getHullSizeFactor()*level*2.5f);
+
+                    fm.getStats().getSuppliesPerMonth().modifyPercent(Es_LEVEL_FUNCTION_ID, -buff.getHullSizeFactor()*level*2f);
+                    fm.getStats().getSuppliesToRecover().modifyPercent(Es_LEVEL_FUNCTION_ID, -buff.getHullSizeFactor()*level*2f);
+                    break;
+                case 3://жњєеЉЁ
+                    fm.getStats().getMaxSpeed().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*2f);
+                    fm.getStats().getAcceleration().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*3f);
+                    fm.getStats().getDeceleration().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*3f);
+
+                    fm.getStats().getMaxTurnRate().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*3f);
+                    fm.getStats().getTurnAcceleration().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*3f);
+
+                    fm.getStats().getMaxBurnLevel().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*2f);
+                    break;
+                case 4://з§‘жЉЂ
+                    fm.getStats().getFluxCapacity().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*2f);
+                    fm.getStats().getFluxDissipation().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*2f);
+
+                    fm.getStats().getBallisticWeaponFluxCostMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -buff.getHullSizeFactor()*level*1.5f);
+                    fm.getStats().getMissileWeaponFluxCostMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -buff.getHullSizeFactor()*level*1.5f);
+                    fm.getStats().getEnergyWeaponFluxCostMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -buff.getHullSizeFactor()*level*1.5f);
+//
+//					if(member!=null && fm.getHullSpec() != null)
+//						  Global.getLogger(Es_ShipLevelFleetData.class).log(Level.INFO,fm.getHullSpec().getShieldType());
+                    if(fm.getHullSpec() != null &&
+                            (fm.getHullSpec().getShieldType()== ShieldAPI.ShieldType.FRONT ||
+                                    fm.getHullSpec().getShieldType()== ShieldAPI.ShieldType.OMNI)) {
+                        fm.getStats().getShieldDamageTakenMult().modifyPercent(Es_LEVEL_FUNCTION_ID, -buff.getHullSizeFactor()*level*1.5f);
+                        fm.getStats().getShieldUpkeepMult().modifyPercent(Es_LEVEL_FUNCTION_ID, -buff.getHullSizeFactor()*level*2f);
+                        fm.getStats().getShieldUnfoldRateMult().modifyPercent(Es_LEVEL_FUNCTION_ID, buff.getHullSizeFactor()*level*5f);
+                    }
+                    else if(fm.getHullSpec() != null &&
+                            fm.getHullSpec().getShieldType()== ShieldAPI.ShieldType.PHASE) {
+                        fm.getStats().getPhaseCloakActivationCostBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, -buff.getHullSizeFactor()*level*2.5f);
+                        fm.getStats().getPhaseCloakCooldownBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, -buff.getHullSizeFactor()*level*2.5f);
+                        fm.getStats().getPhaseCloakUpkeepCostBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, -buff.getHullSizeFactor()*level*2f);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
     FleetMemberAPI findShip(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         String key = stats.getVariant().getHullVariantId();
@@ -82,7 +165,7 @@ public class ExtraSystemHM extends BaseHullMod {
         if (array[2]>0) {
             tooltip.addPara("CR per deployment: %s (%s)", 5, Misc.getHighlightColor(), String.format("%.3f",fm.getStats().getCRPerDeploymentPercent().getPercentBonus(Es_LEVEL_FUNCTION_ID).getValue()) + "%", String.format("%.2f",fm.getStats().getCRPerDeploymentPercent().getPercentBonus(Es_LEVEL_FUNCTION_ID).getValue()*fm.getVariant().getHullSpec().getCRToDeploy()*0.01f));
             tooltip.addPara("Bonus ammunition: +%s", 0, Misc.getHighlightColor(), String.format("%.3f",fm.getStats().getBallisticAmmoBonus().getPercentBonus(Es_LEVEL_FUNCTION_ID).getValue()) + "%");
-            tooltip.addPara("Less required and more maximum crew: %s (%s)", 0, Misc.getHighlightColor(), String.format("%.3f",fm.getStats().getMaxCrewMod().getPercentBonus(Es_LEVEL_FUNCTION_ID).getValue()) + "%", String.format("%.0f",fm.getStats().getMinCrewMod().getPercentBonus(Es_LEVEL_FUNCTION_ID).getValue()*fm.getVariant().getHullSpec().getMinCrew()*0.01f) + ",+" + String.format("%.0f",fm.getStats().getMaxCrewMod().getPercentBonus(Es_LEVEL_FUNCTION_ID).getValue()*fm.getVariant().getHullSpec().getMaxCrew()*0.01f));
+            tooltip.addPara("Less required and more maximum crew: %s (%s,%s)", 0, Misc.getHighlightColor(), String.format("%.3f",fm.getStats().getMaxCrewMod().getPercentBonus(Es_LEVEL_FUNCTION_ID).getValue()) + "%", String.format("%.0f",fm.getStats().getMinCrewMod().getPercentBonus(Es_LEVEL_FUNCTION_ID).getValue()*fm.getVariant().getHullSpec().getMinCrew()*0.01f), "+" + String.format("%.0f",fm.getStats().getMaxCrewMod().getPercentBonus(Es_LEVEL_FUNCTION_ID).getValue()*fm.getVariant().getHullSpec().getMaxCrew()*0.01f));
             tooltip.addPara("Repairs and recovery rates: +%s (%s)", 0, Misc.getHighlightColor(), String.format("%.3f",fm.getStats().getBaseCRRecoveryRatePercentPerDay().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue()) + "%", "+" + String.format("%.2f",fm.getStats().getBaseCRRecoveryRatePercentPerDay().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue()*fm.getStats().getBaseCRRecoveryRatePercentPerDay().getBaseValue()*0.01f));
             tooltip.addPara("Fuel consumption: %s (%s)", 0, Misc.getHighlightColor(), String.format("%.3f",fm.getStats().getFuelUseMod().getPercentBonus(Es_LEVEL_FUNCTION_ID).getValue()) + "%", String.format("%.2f",fm.getStats().getFuelUseMod().getPercentBonus(Es_LEVEL_FUNCTION_ID).getValue()*fm.getVariant().getHullSpec().getFuelPerLY()*0.01f));
             tooltip.addPara("Overall supplies consumption rates: %s (%s)", 0, Misc.getHighlightColor(), String.format("%.3f",fm.getStats().getSuppliesPerMonth().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue()) + "%", String.format("%.2f",fm.getStats().getSuppliesPerMonth().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue()*fm.getStats().getSuppliesPerMonth().getBaseValue()*0.01f));
@@ -99,7 +182,7 @@ public class ExtraSystemHM extends BaseHullMod {
         }
 
         if (array[4]>0) {
-            tooltip.addPara("Flux capacity and dissipation: +%s (%s)", 5, Misc.getHighlightColor(), String.format("%.3f",fm.getStats().getFluxCapacity().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue()) + "%", String.format("%.0f",fm.getStats().getFluxCapacity().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue()*fm.getStats().getFluxCapacity().getBaseValue()*0.01f));
+            tooltip.addPara("Flux capacity and dissipation: +%s (%s,%s)", 5, Misc.getHighlightColor(), String.format("%.3f",fm.getStats().getFluxCapacity().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue()) + "%", "+" + String.format("%.0f",fm.getStats().getFluxCapacity().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue()*fm.getStats().getFluxCapacity().getBaseValue()*0.01f), "+" + String.format("%.0f",fm.getStats().getFluxDissipation().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue()*fm.getStats().getFluxDissipation().getBaseValue()*0.01f));
 //        tooltip.addPara("Flux dissipation: +%s", 0, Misc.getHighlightColor(), String.format("%.3f",fm.getStats().getMaxBurnLevel().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue()) + "%");
             tooltip.addPara("Weapon flux cost: %s", 0, Misc.getHighlightColor(), String.format("%.3f",fm.getStats().getBallisticWeaponFluxCostMod().getPercentBonus(Es_LEVEL_FUNCTION_ID).getValue()) + "%");
             if(fm.getHullSpec() != null &&

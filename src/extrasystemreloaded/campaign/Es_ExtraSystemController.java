@@ -93,15 +93,14 @@ public class Es_ExtraSystemController implements EveryFrameScript{
 		CampaignFleetAPI fleet = Global.getSector().getPlayerFleet();
 		for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
 				if (member.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID)!=null) {
+					Es_ShipLevelFleetData data = (Es_ShipLevelFleetData)member.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID);
+					int[] array = data.getLevelIndex();
+					int temp_points = 0;
+					for (int i = 0; i < array.length; i++) {
+						temp_points += array[i];
+					}
 					if (!member.getVariant().hasHullMod("es_shiplevelHM")) {
-						Es_ShipLevelFleetData data = (Es_ShipLevelFleetData)member.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID);
-						int[] array = data.getLevelIndex();
-						int temp_points = 0;
-						for (int i = 0; i < array.length; i++) {
-							temp_points += array[i];
-						}
-
-						if (temp_points>0){
+						if (temp_points > 0) {
 							ShipVariantAPI v;
 							if(member.getVariant().isStockVariant()) {
 								v = member.getVariant().clone();
@@ -112,7 +111,30 @@ public class Es_ExtraSystemController implements EveryFrameScript{
 							v.setHullVariantId("es_" + member.getId());
 							v.addPermaMod("es_shiplevelHM");
 
+							List<String> slots = v.getModuleSlots();
+							for(int i = 0; i < slots.size(); ++i) {
+								ShipVariantAPI module = v.getModuleVariant(slots.get(i));
+								if(module.isStockVariant()) {
+									module = module.clone();
+									module.setSource(VariantSource.REFIT);
+									v.setModuleVariant(slots.get(i), module);
+								}
+								module.setHullVariantId(v.getHullVariantId());
+								module.addPermaMod("es_shiplevelHM");
+							}
+
 							member.updateStats();
+						}
+					else if(member.getVariant().hasHullMod("es_shiplevelHM") && temp_points <= 0) {
+							ShipVariantAPI v = member.getVariant();
+							v.removePermaMod("es_shiplevelHM");
+
+							List<String> slots = v.getModuleSlots();
+							for(int i = 0; i < slots.size(); ++i) {
+								ShipVariantAPI module = v.getModuleVariant(slots.get(i));
+								module.removePermaMod("es_shiplevelHM");
+							}
+
 						}
 					}
 				}
