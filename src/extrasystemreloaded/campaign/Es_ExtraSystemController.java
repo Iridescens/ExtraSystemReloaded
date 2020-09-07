@@ -5,9 +5,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.util.IntervalUtil;
 import org.lwjgl.input.Keyboard;
 
@@ -18,7 +16,7 @@ public class Es_ExtraSystemController implements EveryFrameScript{
 	private static final String Es_LEVEL_FUNCTION_ID = "Es_ShipLevelUp";	
 	private static final String SHIP_TRADE_SAVE_ID = "Es_ShipTradeSaveData";
 	private static final float AI_LEVEL = 0.3f;//aiејєеє¦
-	public static  boolean Enter_Level = false;
+	public static boolean Enter_Level = false;
 	public static boolean Enter_Trade = false;
 	public static boolean AIUpgradeOn = Global.getSettings().getBoolean("enabledAIUpgrade");
 	private static Es_ShipTradeSaveData tradeData;
@@ -39,7 +37,7 @@ public class Es_ExtraSystemController implements EveryFrameScript{
 
 	@Override
 	public void advance(float amount) {
-		if(!(tradeData instanceof Es_ShipTradeSaveData)||tradeData ==null){
+		if(!(tradeData instanceof Es_ShipTradeSaveData) || tradeData ==null){
 			tradeData = (Es_ShipTradeSaveData) Global.getSector().getPersistentData().get(SHIP_TRADE_SAVE_ID);
 		}
 		if (AIUpgradeOn){
@@ -90,55 +88,55 @@ public class Es_ExtraSystemController implements EveryFrameScript{
 			}
 		}
 ////////////////
-		CampaignFleetAPI fleet = Global.getSector().getPlayerFleet();
-		for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
-				if (member.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID)!=null) {
-					Es_ShipLevelFleetData data = (Es_ShipLevelFleetData)member.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID);
-					int[] array = data.getLevelIndex();
-					int temp_points = 0;
-					for (int i = 0; i < array.length; i++) {
-						temp_points += array[i];
-					}
-					if (!member.getVariant().hasHullMod("es_shiplevelHM")) {
-						if (temp_points > 0) {
-							ShipVariantAPI v;
-							if(member.getVariant().isStockVariant()) {
-								v = member.getVariant().clone();
-								v.setSource(VariantSource.REFIT);
-								member.setVariant(v, false, false);
-							} else v = member.getVariant();
-
-							v.setHullVariantId("es_" + member.getId());
-							v.addPermaMod("es_shiplevelHM");
-
-							List<String> slots = v.getModuleSlots();
-							for(int i = 0; i < slots.size(); ++i) {
-								ShipVariantAPI module = v.getModuleVariant(slots.get(i));
-								if(module.isStockVariant()) {
-									module = module.clone();
-									module.setSource(VariantSource.REFIT);
-									v.setModuleVariant(slots.get(i), module);
-								}
-								module.setHullVariantId(v.getHullVariantId());
-								module.addPermaMod("es_shiplevelHM");
-							}
-
-							member.updateStats();
-						}
-					else if(member.getVariant().hasHullMod("es_shiplevelHM") && temp_points <= 0) {
-							ShipVariantAPI v = member.getVariant();
-							v.removePermaMod("es_shiplevelHM");
-
-							List<String> slots = v.getModuleSlots();
-							for(int i = 0; i < slots.size(); ++i) {
-								ShipVariantAPI module = v.getModuleVariant(slots.get(i));
-								module.removePermaMod("es_shiplevelHM");
-							}
-
-						}
-					}
-				}
-		}
+//		CampaignFleetAPI fleet = Global.getSector().getPlayerFleet();
+//		for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
+//				if (member.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID)!=null) {
+//					Es_ShipLevelFleetData data = (Es_ShipLevelFleetData)member.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID);
+//					int[] array = data.getLevelIndex();
+//					int temp_points = 0;
+//					for (int i = 0; i < array.length; i++) {
+//						temp_points += array[i];
+//					}
+//					if (!member.getVariant().hasHullMod("es_shiplevelHM")) {
+//						if (temp_points > 0) {
+//							ShipVariantAPI v;
+//							if(member.getVariant().isStockVariant()) {
+//								v = member.getVariant().clone();
+//								v.setSource(VariantSource.REFIT);
+//								member.setVariant(v, false, false);
+//							} else v = member.getVariant();
+//
+//							v.setHullVariantId(Es_ModPlugin.VARIANT_PREFIX + member.getId());
+//							v.addPermaMod("es_shiplevelHM");
+//
+//							List<String> slots = v.getModuleSlots();
+//							for(int i = 0; i < slots.size(); ++i) {
+//								ShipVariantAPI module = v.getModuleVariant(slots.get(i));
+//								if(module.isStockVariant()) {
+//									module = module.clone();
+//									module.setSource(VariantSource.REFIT);
+//									v.setModuleVariant(slots.get(i), module);
+//								}
+//								module.setHullVariantId(v.getHullVariantId());
+//								module.addPermaMod("es_shiplevelHM");
+//							}
+//
+//							member.updateStats();
+//						}
+//					else if(member.getVariant().hasHullMod("es_shiplevelHM") && temp_points <= 0) {
+//							ShipVariantAPI v = member.getVariant();
+//							v.removePermaMod("es_shiplevelHM");
+//
+//							List<String> slots = v.getModuleSlots();
+//							for(int i = 0; i < slots.size(); ++i) {
+//								ShipVariantAPI module = v.getModuleVariant(slots.get(i));
+//								module.removePermaMod("es_shiplevelHM");
+//							}
+//
+//						}
+//					}
+//				}
+//		}
 ////////////////
 			  if (Enter_Level) {
 				  Global.getSector().getCampaignUI().showInteractionDialog(new Es_ShipLevelFunctionPlugin(), Global.getSector().getPlayerFleet()); 

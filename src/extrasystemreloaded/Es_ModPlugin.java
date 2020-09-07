@@ -12,15 +12,24 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class Es_ModPlugin extends BaseModPlugin
-{
-	private static final String Es_LEVEL_FUNCTION_ID = "Es_ShipLevelUp";	
+
+public class Es_ModPlugin extends BaseModPlugin {
+	private static final String Es_LEVEL_FUNCTION_ID = "Es_ShipLevelUp";
 	private static final String SHIP_TRADE_SAVE_ID = "Es_ShipTradeSaveData";
 	private static final String Es_LEVEL_SHIPLIST_ID = "Es_LEVEL_SHIPLIST";	
 	private static final String Es_LEVEL_SHIPLMAP_ID = "Es_LEVEL_SHIPMAP";	
 	private static final boolean ACHIEVEMENTSENABLED = Global.getSettings().getBoolean("enableAchievements");
 	private static final String ACHIEVEMENT_ID = "AchievementData";
 	private static final String ACHIEVEMENT_CREDITS_ID = "Achievement_Credits";
+	public static String VARIANT_PREFIX = "es_";
+
+	@Override
+	public void onApplicationLoad() {
+		if (Global.getSettings().getModManager().isModEnabled("sun_starship_legends")) {
+			VARIANT_PREFIX = "sun_sl_";  // Compatibility hack for Sundog's Starship Legends
+		}
+	}
+
     public void onGameLoad(boolean newGame){
     	Global.getSector().addTransientScript(new Es_ExtraSystemController());
     	if(ACHIEVEMENTSENABLED){

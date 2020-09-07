@@ -3,10 +3,14 @@ package extrasystemreloaded.campaign;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BuffManagerAPI.Buff;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.util.IntervalUtil;
+import extrasystemreloaded.Es_ModPlugin;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 //import org.lazywizard.lazylib.VectorUtils;
@@ -33,12 +37,7 @@ public class Es_ShipLevelFleetData implements Buff{
 		mag.put(HullSize.CRUISER, 0.533f);//е·Ўжґ‹и€°
 		mag.put(HullSize.CAPITAL_SHIP, 0.4f);//ж€�е€—и€°
 	}
-	private static final String[] ABILITY_NAME ={Global.getSettings().getString("AbilityName", "Durability"),
-			Global.getSettings().getString("AbilityName", "WeaponProficiency"),
-			Global.getSettings().getString("AbilityName", "Logistics"),
-			Global.getSettings().getString("AbilityName", "Flexibility"),
-			Global.getSettings().getString("AbilityName", "Technology"),};
-	
+
 	@SuppressWarnings("unchecked")
 	public static void loadagain(){
 		ShipLevel_DATA =  (Map<String, int[]>) Global.getSector().getPersistentData().get(Es_LEVEL_SHIPLMAP_ID);
@@ -80,20 +79,62 @@ public class Es_ShipLevelFleetData implements Buff{
 			if (uppedFleetMemberAPIs==null || ShipLevel_DATA ==null) {
 				return;
 			}
-			int[] args = getLevelIndex();
-			if(uppedFleetMemberAPIs.containsKey(member.getId())) {
-				String tips = "----Extra System upgrades----\n" +
-						"Quality:"+ (float)Math.round(uppedFleetMemberAPIs.get(member.getId())*100)/100 + "\n" +
-						ABILITY_NAME[0] + ": " + args[0] + "\n" +
-						ABILITY_NAME[1] + ": " + args[1] + "\n" +
-						ABILITY_NAME[2] + ": " + args[2] + "\n" +
-						ABILITY_NAME[3] + ": " + args[3] + "\n" +
-						ABILITY_NAME[4] + ": " + args[4] + "\n" +
-						"-----------------------------";
-				member.getStats().getMaxCombatReadiness().modifyFlat(Es_LEVEL_FUNCTION_ID, 0.00001f, tips);	
+			int[] levels = getLevelIndex();
+
+			int temp_points = 0;
+			for (int i = 0; i < levels.length; i++) {
+				temp_points += levels[i];
 			}
-//            for (int i = 0; i < args.length; i++) {
-//				float level = (float)args[i]*qualityFactor;
+
+			ShipVariantAPI mGV = member.getVariant();
+			if (mGV == null) { return; }
+			boolean hasHM = mGV.hasHullMod("es_shiplevelHM");
+
+			if ( temp_points > 0 ) {
+				if ( !hasHM ) {
+					ShipVariantAPI v;
+					if (member.getVariant().isStockVariant()) {
+						v = member.getVariant().clone();
+						v.setSource(VariantSource.REFIT);
+						member.setVariant(v, false, false);
+					} else v = member.getVariant();
+
+					v.setHullVariantId(Es_ModPlugin.VARIANT_PREFIX + member.getId());
+					v.addPermaMod("es_shiplevelHM");
+
+					List<String> slots = v.getModuleSlots();
+					for (int i = 0; i < slots.size(); ++i) {
+						ShipVariantAPI module = v.getModuleVariant(slots.get(i));
+						if (module.isStockVariant()) {
+							module = module.clone();
+							module.setSource(VariantSource.REFIT);
+							v.setModuleVariant(slots.get(i), module);
+						}
+						module.setHullVariantId(v.getHullVariantId());
+						module.addPermaMod("es_shiplevelHM");
+					}
+
+				}
+			}
+
+			if (  temp_points <= 0 ) {
+				if ( hasHM ) {
+					ShipVariantAPI v = member.getVariant();
+					v.removePermaMod("es_shiplevelHM");
+
+					List<String> slots = v.getModuleSlots();
+					for(int i = 0; i < slots.size(); ++i) {
+						ShipVariantAPI module = v.getModuleVariant(slots.get(i));
+						module.removePermaMod("es_shiplevelHM");
+					}
+
+				}
+			}
+			member.updateStats();
+	}
+
+//            for (int i = 0; i < levels.length; i++) {
+//				float level = (float)levels[i]*qualityFactor;
 //				switch (i) {
 //				case 0://иЂђд№…
 //					member.getStats().getHullBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
@@ -173,7 +214,7 @@ public class Es_ShipLevelFleetData implements Buff{
 //					break;
 //				}
 //			}
-	}
+
 
 	@Override
 	public String getId() {
