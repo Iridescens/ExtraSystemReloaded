@@ -2,8 +2,8 @@
     "id": "extra_system_reloaded",
     "name": "Extra System Reloaded",
     "author": "Created by Originem. Reloaded by Iridescens",
-    "version": "0.4.2",
-    "description": "Upgrade subsystems on non-hostile planets with market (and by pressing ctrl + q)\n +Ship's quality can be upgraded! (you'd better be rich, pal)\n +Now with phase, EMP resist and burnlevel improvements!\n +Also pauses after leaving the dialog!",
+    "version": "0.4.3",
+    "description": "Upgrade subsystems on non-hostile planets with market (and by pressing ctrl + q)\n Ship's quality can be upgraded.\n Pauses after leaving the dialog.",
     "gameVersion": "0.9.1a",
     "jars": ["jars/ExtraSystemCore.jar"],
     "modPlugin": "extrasystemreloaded.Es_ModPlugin"

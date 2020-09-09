@@ -28,6 +28,7 @@ public class ExtraSystemHM extends BaseHullMod {
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         FleetMemberAPI fm = findShip(hullSize, stats);
+        if (fm.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID) == null) { return;}
         Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) fm.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID);
         int[] levels = buff.getLevelIndex();
 

@@ -34,7 +34,7 @@ public class Es_ShipLevelFleetData implements Buff{
 	static {
 		mag.put(HullSize.FRIGATE, 1f);//жЉ¤еЌ«и€°
 		mag.put(HullSize.DESTROYER, 0.666f);//й©±йЂђи€°
-		mag.put(HullSize.CRUISER, 0.533f);//е·Ўжґ‹и€°
+		mag.put(HullSize.CRUISER, 0.5f);//е·Ўжґ‹и€°
 		mag.put(HullSize.CAPITAL_SHIP, 0.4f);//ж€�е€—и€°
 	}
 

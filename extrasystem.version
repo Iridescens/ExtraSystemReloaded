@@ -1,11 +1,11 @@
 {
-	"masterVersionFile":"https://bitbucket.org/Iridescens/extrasystemreloaded/downloads/extrasystem.version",
+	"masterVersionFile":"https://github.com/Iridescens/ExtraSystemReloaded/raw/master/extrasystem.version",
 	"modName":"Extra System Reloaded",
 	"modThreadId":13089,
 	"modVersion":
 	{
 		"major":0,
 		"minor":4,
-		"patch":2
+		"patch":3
 	}
 }
