@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static extrasystemreloaded.campaign.Es_ShipLevelFunctionPlugin.ORDNANCE_HULLMOD_MAX_LEVEL;
+
 //import org.lazywizard.lazylib.VectorUtils;
 
 public class Es_ShipLevelFleetData implements Buff{
@@ -29,8 +31,8 @@ public class Es_ShipLevelFleetData implements Buff{
 	private float qualityFactor = 0f;
 	private boolean expired = false;
 	
-	private int[] AbilityLevel = {0,0,0,0,0};//е€†е€«еЇ№еє”0иЂђд№…гЂЃ1ж­¦е™ЁгЂЃ2еђЋе‹¤гЂЃ3жњєеЉЁгЂЃ4з§‘жЉЂ
-	private static final Map<HullSize, Float> mag = new HashMap<HullSize, Float>();//иѓЅеЉ›дёЉеЌ‡еЏ‚ж•°
+	private int[] AbilityLevel = {0,0,0,0,0,0};//е€†е€«еЇ№еє”0иЂђд№…гЂЃ1ж­¦е™ЁгЂЃ2еђЋе‹¤гЂЃ3жњєеЉЁгЂЃ4з§‘жЉЂ
+	private static final Map<HullSize, Float> mag = new HashMap<>();//иѓЅеЉ›дёЉеЌ‡еЏ‚ж•°
 	static {
 		mag.put(HullSize.FRIGATE, 1f);//жЉ¤еЌ«и€°
 		mag.put(HullSize.DESTROYER, 0.666f);//й©±йЂђи€°
@@ -82,50 +84,55 @@ public class Es_ShipLevelFleetData implements Buff{
 			int[] levels = getLevelIndex();
 
 			int temp_points = 0;
-			for (int i = 0; i < levels.length; i++) {
+			for (int i = 0; i < levels.length; ++i) {
 				temp_points += levels[i];
 			}
 
 			ShipVariantAPI mGV = member.getVariant();
 			if (mGV == null) { return; }
-			boolean hasHM = mGV.hasHullMod("es_shiplevelHM");
+			boolean hasHM = mGV.hasHullMod("es_shiplevelHM0") ||
+					mGV.hasHullMod("es_shiplevelHM1") ||
+					mGV.hasHullMod("es_shiplevelHM2") ||
+					mGV.hasHullMod("es_shiplevelHM3") ||
+					mGV.hasHullMod("es_shiplevelHM4") ||
+					mGV.hasHullMod("es_shiplevelHM5");
 
 			if ( temp_points > 0 ) {
-				if ( !hasHM ) {
-					ShipVariantAPI v;
-					if (member.getVariant().isStockVariant()) {
-						v = member.getVariant().clone();
-						v.setSource(VariantSource.REFIT);
-						member.setVariant(v, false, false);
-					} else v = member.getVariant();
+				ShipVariantAPI v;
+				if (member.getVariant().isStockVariant()) {
+					v = member.getVariant().clone();
+					v.setSource(VariantSource.REFIT);
+					member.setVariant(v, false, false);
+				} else v = member.getVariant();
 
-					v.setHullVariantId(Es_ModPlugin.VARIANT_PREFIX + member.getId());
-					v.addPermaMod("es_shiplevelHM");
+				v.setHullVariantId(Es_ModPlugin.VARIANT_PREFIX + member.getId());
+				removeESHullMods(v);
+				v.addPermaMod("es_shiplevelHM"+levels[5]);
 
-					List<String> slots = v.getModuleSlots();
-					for (int i = 0; i < slots.size(); ++i) {
-						ShipVariantAPI module = v.getModuleVariant(slots.get(i));
-						if (module.isStockVariant()) {
-							module = module.clone();
-							module.setSource(VariantSource.REFIT);
-							v.setModuleVariant(slots.get(i), module);
-						}
-						module.setHullVariantId(v.getHullVariantId());
-						module.addPermaMod("es_shiplevelHM");
+				List<String> slots = v.getModuleSlots();
+				for (int i = 0; i < slots.size(); ++i) {
+					ShipVariantAPI module = v.getModuleVariant(slots.get(i));
+					if (module == null) { return; }
+					if (module.isStockVariant()) {
+						module = module.clone();
+						module.setSource(VariantSource.REFIT);
+						v.setModuleVariant(slots.get(i), module);
 					}
-
+					module.setHullVariantId(v.getHullVariantId());
+					module.addPermaMod("es_shiplevelHM0");
 				}
 			}
 
 			if (  temp_points <= 0 ) {
 				if ( hasHM ) {
 					ShipVariantAPI v = member.getVariant();
-					v.removePermaMod("es_shiplevelHM");
+					removeESHullMods(v);
 
 					List<String> slots = v.getModuleSlots();
 					for(int i = 0; i < slots.size(); ++i) {
 						ShipVariantAPI module = v.getModuleVariant(slots.get(i));
-						module.removePermaMod("es_shiplevelHM");
+						if (module == null) { return; }
+						module.removePermaMod("es_shiplevelHM0");
 					}
 
 				}
@@ -133,88 +140,11 @@ public class Es_ShipLevelFleetData implements Buff{
 			member.updateStats();
 	}
 
-//            for (int i = 0; i < levels.length; i++) {
-//				float level = (float)levels[i]*qualityFactor;
-//				switch (i) {
-//				case 0://иЂђд№…
-//					member.getStats().getHullBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
-//					member.getStats().getArmorBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
-//					member.getStats().getWeaponHealthBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
-//					member.getStats().getEngineHealthBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
-//					member.getStats().getEmpDamageTakenMult().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*4f);
-//					break;
-//				case 1://ж­¦е™Ё
-//					member.getStats().getBallisticWeaponRangeBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
-//					member.getStats().getEnergyWeaponRangeBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
-//					member.getStats().getMissileWeaponRangeBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
-//
-//					member.getStats().getBallisticWeaponDamageMult().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
-//					member.getStats().getEnergyWeaponDamageMult().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
-//					member.getStats().getMissileWeaponDamageMult().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
-//
-//					member.getStats().getBallisticRoFMult().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
-//					member.getStats().getEnergyRoFMult().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
-//					member.getStats().getMissileRoFMult().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*1.5f);
-//					break;
-//				case 2://еђЋе‹¤
-//					member.getStats().getCRPerDeploymentPercent().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
-//
-//					member.getStats().getBallisticAmmoBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2f);
-//					member.getStats().getEnergyAmmoBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2f);
-//					member.getStats().getMissileAmmoBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2f);
-//
-//					member.getStats().getMinCrewMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2f);
-//					member.getStats().getMaxCrewMod().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2f);
-//
-//					member.getStats().getRepairRatePercentPerDay().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2.5f);
-//					member.getStats().getBaseCRRecoveryRatePercentPerDay().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2.5f);
-//
-//					member.getStats().getFuelUseMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2.5f);
-//
-//					member.getStats().getSuppliesPerMonth().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2f);
-//					member.getStats().getSuppliesToRecover().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2f);
-//					break;
-//				case 3://жњєеЉЁ
-//					member.getStats().getMaxSpeed().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2f);
-//					member.getStats().getAcceleration().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
-//					member.getStats().getDeceleration().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
-//
-//					member.getStats().getMaxTurnRate().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
-//					member.getStats().getTurnAcceleration().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*3f);
-//
-//					member.getStats().getMaxBurnLevel().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2f);
-//					break;
-//				case 4://з§‘жЉЂ
-//					member.getStats().getFluxCapacity().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2f);
-//					member.getStats().getFluxDissipation().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*2f);
-//
-//					member.getStats().getBallisticWeaponFluxCostMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
-//					member.getStats().getMissileWeaponFluxCostMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
-//					member.getStats().getEnergyWeaponFluxCostMod().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
-////
-////					if(member!=null && member.getHullSpec() != null)
-////						  Global.getLogger(Es_ShipLevelFleetData.class).log(Level.INFO,member.getHullSpec().getShieldType());
-//					if(member.getHullSpec() != null &&
-//							(member.getHullSpec().getShieldType()==ShieldType.FRONT ||
-//							 member.getHullSpec().getShieldType()==ShieldType.OMNI)) {
-//						member.getStats().getShieldDamageTakenMult().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*1.5f);
-//						member.getStats().getShieldUpkeepMult().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2f);
-//						member.getStats().getShieldUnfoldRateMult().modifyPercent(Es_LEVEL_FUNCTION_ID, hullSizeFactor*level*5f);
-//					}
-//					else if(member.getHullSpec() != null &&
-//							member.getHullSpec().getShieldType()==ShieldType.PHASE) {
-//						member.getStats().getPhaseCloakActivationCostBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2.5f);
-//						member.getStats().getPhaseCloakCooldownBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2.5f);
-//						member.getStats().getPhaseCloakUpkeepCostBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2f);
-//					}
-//					break;
-//
-//// TODO -> getOrdnancePoints(MutableCharacterStatsAPI) - getShipOrdnancePointBonus().modifyPercent(Es_LEVEL_FUNCTION_ID, -hullSizeFactor*level*2.5f);
-//				default:
-//					break;
-//				}
-//			}
-
+	private void removeESHullMods(ShipVariantAPI v) {
+		for (int i = 0; i <= ORDNANCE_HULLMOD_MAX_LEVEL; ++i) {
+			v.removePermaMod("es_shiplevelHM"+i);
+		}
+	}
 
 	@Override
 	public String getId() {
@@ -241,7 +171,6 @@ public class Es_ShipLevelFleetData implements Buff{
                 }
             }
         }
-		
 	}
 
 	public int[] getLevelIndex(){	//иї”е›ћз­‰зє§ж•°з»„
@@ -261,15 +190,15 @@ public class Es_ShipLevelFleetData implements Buff{
 			char[] ids = id.toCharArray();
 			float sum = 0f;
 			for (int i = 0; i < ids.length; i++) {
-				sum += (float)ids[i];
-				if (i%2 ==0) {
-					sum*=(float)ids[i];
-				}else {
-					sum/=(float)ids[i];
+				sum += ids[i];
+				if ( i%2 == 0 ) {
+					sum *= ids[i];
+				} else {
+					sum /= ids[i];
 				}
 			}
-			while(sum>1f) {
-				sum/=10f;
+			while( sum > 1f ) {
+				sum /= 10f;
 			}
 			sum += 0.5f;
 			return sum;

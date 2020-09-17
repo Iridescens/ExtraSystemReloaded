@@ -16,10 +16,8 @@ import org.json.JSONObject;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
@@ -60,7 +58,7 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 		public static String ability3 = "You have ";
 		public static String ability4 = " chance of success.";
 	}
-	public static final Map<HullSize, Integer> HULLSIZE_TO_MAXLEVEL = new HashMap<HullSize, Integer>();//иѓЅеЉ›жњЂй«�з­‰зє§
+	public static final Map<HullSize, Integer> HULLSIZE_TO_MAXLEVEL = new HashMap<>();//иѓЅеЉ›жњЂй«�з­‰зє§
 	static {
 		HULLSIZE_TO_MAXLEVEL.put(HullSize.FRIGATE, 10);//жЉ¤еЌ«и€°
 		HULLSIZE_TO_MAXLEVEL.put(HullSize.DESTROYER, 15);//й©±йЂђи€°
@@ -73,8 +71,8 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 	static{
 		RESOURCE_NAME.put(0, Global.getSettings().getString("ResourceName", "supplies"));
 		RESOURCE_NAME.put(1, Global.getSettings().getString("ResourceName", "volatiles"));
-		RESOURCE_NAME.put(2, Global.getSettings().getString("ResourceName", "ore"));
-		RESOURCE_NAME.put(3, Global.getSettings().getString("ResourceName", "rare_ore"));
+		RESOURCE_NAME.put(2, Global.getSettings().getString("ResourceName", "organics"));
+		RESOURCE_NAME.put(3, Global.getSettings().getString("ResourceName", "hand_weapons"));
 		RESOURCE_NAME.put(4, Global.getSettings().getString("ResourceName", "metals"));
 		RESOURCE_NAME.put(5, Global.getSettings().getString("ResourceName", "rare_metals"));
 		RESOURCE_NAME.put(6, Global.getSettings().getString("ResourceName", "heavy_machinery"));
@@ -86,11 +84,14 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 	public static final float UPGRADE_COST_MINFACTOR = Global.getSettings().getFloat("upgradeCostMinFactor"); // 0.1f; //жњЂдЅЋеЌ‡зє§ж—¶ж‰ЂйњЂи¦Ѓи€°и€№д»·ж ј
 	public static final float UPGRADE_COST_MAXFACTOR = Global.getSettings().getFloat("upgradeCostMaxFactor"); // 0.5f; //жњЂй«�еЌ‡зє§ж—¶ж‰ЂйњЂи¦Ѓи€°и€№д»·ж ј
 	public static final float DIVIDING_RATIO = Global.getSettings().getFloat("dividingRatio"); //Csv й™¤д»Ґзљ„зі»ж•°
-	
+	public static final int ORDNANCE_HULLMOD_MAX_LEVEL = 5;
+
 	private static final String Es_SR_FILE_PATH = "data/config/skill_resource_ratio.csv";//жЉЂиѓЅеЇ№еє”еЌ‡зє§иµ„жєђжЇ”дѕ‹
 	private static final String SHIP_TRADE_SAVE_ID = "Es_ShipTradeSaveData";
-	private static final float[] CARGO_BASEVALUE={100,200,10,75,30,200,150};//supplies,volatiles,ore,rare_ore,metals,rare_metals,heavy_machinery
-	
+	private static final float[] CARGO_BASEVALUE={100,250,30,500,30,200,150};//supplies,volatiles,organics,hand_weapons,metals,rare_metals,heavy_machinery
+
+	private static boolean DEBUG_UPGRADES_REMOVE_COST = false;
+
 	private InteractionDialogAPI dialog;
 	private TextPanelAPI textPanel;
 	private OptionPanelAPI options;
@@ -104,7 +105,7 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 	private Map<FleetMemberAPI, OptionId>ShipOptionMap = new HashMap<>();//и€°й�џж€ђе‘�еЇ№еє”йЂ‰йЎ№
 	private Map<OptionId, Integer>option_SkillIndex = new HashMap<>();//йЂ‰йЎ№еЇ№еє”жЉЂиѓЅпј€иЂђд№…гЂЃж­¦е™Ёetcпј‰,йњЂи¦Ѓжё…зђ†
 	private Map<OptionId, Integer>option_SkillValue = new HashMap<>();//йЂ‰йЎ№еЇ№еє”жЉЂиѓЅз­‰зє§,йњЂи¦Ѓжё…зђ†
-	private int ShipIndex=0;//и€°и€№зљ„йЎµж•°
+	private int ShipIndex = 0;//и€°и€№зљ„йЎµж•°
 	private int FunctionIndex = 0;//0дёєеЌ‡зє§и€°и€№,1дёєж�ѕз¤єеђ„йЎ№иѓЅеЉ›,2дёєж�Їеђ¦зЎ®и®¤,3дёєж±‡жЉҐж€ђеЉџдёЋеђ¦
 	private FleetMemberAPI ShipSelected;//и®°еЅ•йЂ‰ж‹©зљ„и€°и€№
 	private OptionId abilitySelected;//йЂ‰ж‹©зљ„иѓЅеЉ›
@@ -114,17 +115,19 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 	
 	
 	private static class AbilityOption{
-		static final String[] DATA ={Global.getSettings().getString("AbilityName", "Durability"),
-						Global.getSettings().getString("AbilityName", "WeaponProficiency"),
-						Global.getSettings().getString("AbilityName", "Logistics"),
-						Global.getSettings().getString("AbilityName", "Flexibility"),
-						Global.getSettings().getString("AbilityName", "Technology"),};
+		static final String[] DATA ={ Global.getSettings().getString("AbilityName", "Durability"),
+				Global.getSettings().getString("AbilityName", "WeaponProficiency"),
+				Global.getSettings().getString("AbilityName", "Logistics"),
+				Global.getSettings().getString("AbilityName", "Flexibility"),
+				Global.getSettings().getString("AbilityName", "Technology"),
+				Global.getSettings().getString("AbilityName", "Ordnance")};
 		static final String[] DATATOOLTIPS = {
 			"Improve hullpoints, armor, EMP resistance, weapon health, engine health.",
 			"Improve weapon range, weapon damage, rate of fire.",
 			"Improve CR per deployment, weapon ammo, crew, ship repair rate, CR recovery, fuel and supply use.",
 			"Improve max speed, burn level, acceleration, deceleration, max turn rate, turn acceleration.",
-			"Improve flux capacity and disspation, weapon flux cost, shield/phase efficiency."
+			"Improve flux capacity and disspation, weapon flux cost, shield/phase efficiency.",
+			"Improve ordnance capacity"
 		};
 		Map<String, OptionId>optionsidMap = new HashMap<>();
 		public AbilityOption(){
@@ -133,8 +136,17 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 			}
 		}
 	}
-	
-	
+
+	public static void setDebugUpgradesRemoveCost() {
+		DEBUG_UPGRADES_REMOVE_COST = true;
+	}
+	public static void unsetDebugUpgradesRemoveCost() {
+		DEBUG_UPGRADES_REMOVE_COST = false;
+	}
+	public static boolean isDebugUpgradesRemoveCost() {
+		return DEBUG_UPGRADES_REMOVE_COST;
+	}
+
 	public void init(InteractionDialogAPI dialog) {
 		this.dialog = dialog;
 		textPanel = dialog.getTextPanel();
@@ -143,7 +155,7 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 		
 		sector = Global.getSector();
 //		playerFleet = (CampaignFleetAPI) dialog.getInteractionTarget();
-		playerFleet = (CampaignFleetAPI) Global.getSector().getPlayerFleet();
+		playerFleet = Global.getSector().getPlayerFleet();
 
 		try {
 			Es_sr_csvArray = Global.getSettings().loadCSV(Es_SR_FILE_PATH);
@@ -218,7 +230,7 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 //				}});
 		}else if (option == OptionId.Ship_LIST) {
 			addText(TextTip.pleaseChooseShip);
-			if (text==TextTip.improveTheShip) {
+			if (Objects.equals(text, TextTip.improveTheShip)) {
 				FunctionIndex = 0;
 				updateOptions();
 			}
@@ -289,12 +301,10 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 			int levelnow=option_SkillValue.containsKey(abilitySelected)?option_SkillValue.get(abilitySelected):0;
 			
 			float possibility = 1f;
-			if(!UPGRADE_ALWAYS_SUCCEED) {
+			if(!UPGRADE_ALWAYS_SUCCEED && levelnow!=0 ) {
 				possibility = (float) Math.cos(Math.PI*levelnow*0.5f/max)*(1f-BASE_FAILURE_MINFACTOR)+BASE_FAILURE_MINFACTOR;//зЎ®е®љж¦‚зЋ‡
-				if (levelnow==0) {
-				possibility=1f;
-				}
 			}
+
 			int Index = option_SkillIndex.get(abilitySelected);
 
 			if ((float)Math.random()<possibility) {
@@ -305,13 +315,15 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 			}else {
 				addText(TextTip.Failure, Color.red);
 			}
-			playerFleet.getCargo().removeSupplies(resources_record[0]);
-			playerFleet.getCargo().removeItems(CargoItemType.RESOURCES, "volatiles", resources_record[1]);
-			playerFleet.getCargo().removeItems(CargoItemType.RESOURCES, "ore", resources_record[2]);
-			playerFleet.getCargo().removeItems(CargoItemType.RESOURCES, "rare_ore", resources_record[3]);
-			playerFleet.getCargo().removeItems(CargoItemType.RESOURCES, "metals", resources_record[4]);
-			playerFleet.getCargo().removeItems(CargoItemType.RESOURCES, "rare_metals", resources_record[5]);
-			playerFleet.getCargo().removeItems(CargoItemType.RESOURCES, "heavy_machinery", resources_record[6]);
+			if (!DEBUG_UPGRADES_REMOVE_COST) {
+				playerFleet.getCargo().removeSupplies(resources_record[0]);
+				playerFleet.getCargo().removeItems(CargoItemType.RESOURCES, "volatiles", resources_record[1]);
+				playerFleet.getCargo().removeItems(CargoItemType.RESOURCES, "organics", resources_record[2]);
+				playerFleet.getCargo().removeItems(CargoItemType.RESOURCES, "hand_weapons", resources_record[3]);
+				playerFleet.getCargo().removeItems(CargoItemType.RESOURCES, "metals", resources_record[4]);
+				playerFleet.getCargo().removeItems(CargoItemType.RESOURCES, "rare_metals", resources_record[5]);
+				playerFleet.getCargo().removeItems(CargoItemType.RESOURCES, "heavy_machinery", resources_record[6]);
+			}
 			abilitySelected=null;//жё…з©єйЂ‰ж‹©id
 			FunctionIndex = 3;
 			updateOptions();
@@ -334,10 +346,10 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 			}
 			options.addOption(OptionName.PreviousP, OptionId.Back_LIST);
 			options.addOption(OptionName.NextP, OptionId.Next_LIST);
-			if (ShipIndex==0) {
+			if (ShipIndex == 0) {
 				options.setEnabled(OptionId.Back_LIST, false);
 			}
-			if (ShipIndex+5>=ShipList.size()) {
+			if (ShipIndex+5 >= ShipList.size()) {
 				options.setEnabled(OptionId.Next_LIST, false);
 			}
 			break;
@@ -349,7 +361,7 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 			addText("-----------------------",Color.gray);
 			for (int i = 0; i < 7; i++) {
 				String name = RESOURCE_NAME.get(i);
-				addText(name + ":"+(int)getFleetCargoMap(playerFleet)[i]);
+				addText(name + ":" + (int)getFleetCargoMap(playerFleet)[i]);
 			}
 			addText("-----------------------",Color.gray);
 			final String[] data = AbilityOption.DATA;
@@ -361,10 +373,11 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 				option_SkillValue.put(optionId, level);
 				int max = 0;
 				HullSize hullSize = ShipSelected.getHullSpec().getHullSize();//жњЂй«�з­‰зє§
-				max=(int)HULLSIZE_TO_MAXLEVEL.get(hullSize);
+				max = ( i == 5 ? ORDNANCE_HULLMOD_MAX_LEVEL : (int)HULLSIZE_TO_MAXLEVEL.get(hullSize)); // 5 is an Ordnance index
 				int levelnow=option_SkillValue.containsKey(optionId)?option_SkillValue.get(optionId):0;
 				if (levelnow>=max) {
 					options.addOption(data[i]+" ("+level+") (Full)", optionId,tooltips[i]);
+					options.setEnabled(optionId, false);
 				}else {
 					options.addOption(data[i]+" ("+level+")", optionId,tooltips[i]);
 				}
@@ -380,73 +393,71 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 			if (ShipSelected!=null && abilitySelected!=null) {
 				int max = 0;
 				HullSize hullSize = ShipSelected.getHullSpec().getHullSize();//жњЂй«�з­‰зє§
-				max=(int)HULLSIZE_TO_MAXLEVEL.get(hullSize);
-				int levelnow=option_SkillValue.containsKey(abilitySelected)?option_SkillValue.get(abilitySelected):0;
+				max = (int)HULLSIZE_TO_MAXLEVEL.get(hullSize);
+				int levelnow = option_SkillValue.containsKey(abilitySelected)?option_SkillValue.get(abilitySelected):0;
 				options.addOption(OptionName.Confirm, OptionId.Ability_APPLYER);
-				if (levelnow>=max) {
+				if (levelnow >= max) {
 					addText(TextTip.ability2+"("+levelnow+")", Color.yellow);
 					options.setEnabled(OptionId.Ability_APPLYER, false);
-				}else {
+				} else {
 					float shipbasevalue = ShipSelected.getHullSpec().getBaseValue();//еџєзЎЂи€°и€№зљ„д»·ж ј
 					float base_ratio = (UPGRADE_COST_MAXFACTOR-UPGRADE_COST_MINFACTOR)/max;//y=ax+b,зі»ж•°a,bдёєvalue_up_min
 					float ratio = base_ratio*levelnow+UPGRADE_COST_MINFACTOR;//жЇ”дѕ‹
-					float resource_total_value = shipbasevalue*ratio;//иµ„жєђжЂ»и®Ўд»·еЂј
+					float resource_total_value = shipbasevalue * ratio;//иµ„жєђжЂ»и®Ўд»·еЂј
 					int Index = option_SkillIndex.get(abilitySelected);
 					float[] resources_ratio = new float[7];
 					int[] resources_value = new int[7];
 					float thisquality = Es_ShipLevelFleetData.uppedFleetMemberAPIs.get(ShipSelected.getId());
 					boolean isCanLevelUp = true;//ж�Їеђ¦иѓЅеЌ‡зє§
 					String[] showStrings = new String[7];//зјєдёЌзјєиґ§зљ„жЏђз¤є
-					try {
-					for (int j = 0; j < Es_sr_csvArray.length(); j++) {//жџҐж‰ѕдёЂдё‹
-						final JSONObject entry = Es_sr_csvArray.getJSONObject(j);
-						if (entry.getInt("skill_index") == Index) {
-							resources_ratio[0] = (float)entry.getDouble("supplies");
-							resources_ratio[1] = (float)entry.getDouble("volatiles");
-							resources_ratio[2] = (float)entry.getDouble("ore");
-							resources_ratio[3] = (float)entry.getDouble("rare_ore");
-							resources_ratio[4] = (float)entry.getDouble("metals");
-							resources_ratio[5] = (float)entry.getDouble("rare_metals");
-							resources_ratio[6] = (float)entry.getDouble("heavy_machinery");
-							for (int k = 0; k < resources_value.length; k++) {
-								resources_value[k]=Math.round(resources_ratio[k]*resource_total_value/CARGO_BASEVALUE[k]*thisquality/DIVIDING_RATIO);
-								resources_record[k]=resources_value[k];
-								showStrings[k] = "";
-								float fleetcargo = getFleetCargoMap(playerFleet)[k];
-								if (resources_value[k]>fleetcargo) {
-										isCanLevelUp = false;
-										showStrings[k]=TextTip.resoucestip3+(int)(resources_value[k]-fleetcargo)+TextTip.resoucestip4;
-								}								
+					if (!DEBUG_UPGRADES_REMOVE_COST) {
+						try {
+						for (int j = 0; j < Es_sr_csvArray.length(); ++j) {//жџҐж‰ѕдёЂдё‹
+							final JSONObject entry = Es_sr_csvArray.getJSONObject(j);
+							if (entry.getInt("upgrade_index") == Index) {
+								resources_ratio[0] = (float)entry.getDouble("supplies");
+								resources_ratio[1] = (float)entry.getDouble("volatiles");
+								resources_ratio[2] = (float)entry.getDouble("organics");
+								resources_ratio[3] = (float)entry.getDouble("hand_weapons");
+								resources_ratio[4] = (float)entry.getDouble("metals");
+								resources_ratio[5] = (float)entry.getDouble("rare_metals");
+								resources_ratio[6] = (float)entry.getDouble("heavy_machinery");
+								for (int k = 0; k < resources_value.length; ++k) {
+									resources_value[k]=Math.round(resources_ratio[k]*resource_total_value/CARGO_BASEVALUE[k]*thisquality/DIVIDING_RATIO);
+									resources_record[k]=resources_value[k];
+									showStrings[k] = "";
+									float fleetcargo = getFleetCargoMap(playerFleet)[k];
+									if (resources_value[k]>fleetcargo) {
+											isCanLevelUp = false;
+											showStrings[k]=TextTip.resoucestip3+(int)(resources_value[k]-fleetcargo)+TextTip.resoucestip4;
+									}
+								}
+								if (!isCanLevelUp) {
+									options.setEnabled(OptionId.Ability_APPLYER, false);
+								}
+								float possibility = 1f;
+								if( !UPGRADE_ALWAYS_SUCCEED && levelnow!=0 ) {
+									possibility = (float) Math.cos(Math.PI*levelnow*0.5f/max)*(1f-BASE_FAILURE_MINFACTOR)+BASE_FAILURE_MINFACTOR;//зЎ®е®љж¦‚зЋ‡
+									//ж·»еЉ text
+								}
+								addText(TextTip.resoucestip2,Color.green);
+								addText("-----------------------",Color.gray);
+								for (int i = 0; i < showStrings.length; ++i) {
+									String name = RESOURCE_NAME.get(i);
+									addText(name + ":" +resources_value[i]+showStrings[i]);
+								}
+								addText("-----------------------",Color.gray);
+								addText(TextTip.ability3);
+								String text1 = ""+Math.round(possibility*1000f)/10f+"%";
+								appendText(text1);
+								textPanel.highlightLastInLastPara(text1, Color.green);
+								appendText(TextTip.ability4);
+								break;
 							}
-						if (!isCanLevelUp) {
-							options.setEnabled(OptionId.Ability_APPLYER, false);
 						}
-						float possibility = 1f;
-						if(!UPGRADE_ALWAYS_SUCCEED) {
-							possibility = (float) Math.cos(Math.PI*levelnow*0.5f/max)*(1f-BASE_FAILURE_MINFACTOR)+BASE_FAILURE_MINFACTOR;//зЎ®е®љж¦‚зЋ‡
-							if (levelnow==0) {
-								possibility=1f;
-							}
-							//ж·»еЉ text
-						}	
-							addText(TextTip.resoucestip2,Color.green);
-							addText("-----------------------",Color.gray);
-							for (int i = 0; i < showStrings.length; i++) {
-								String name = RESOURCE_NAME.get(i);
-								addText(name + ":" +resources_value[i]+showStrings[i]);
-							}
-							addText("-----------------------",Color.gray);
-							addText(TextTip.ability3);
-							String text1 = ""+Math.round(possibility*1000f)/10f+"%";
-							appendText(text1);
-							textPanel.highlightLastInLastPara(text1, Color.green);
-							appendText(TextTip.ability4);
-							break;
+						} catch (JSONException e) {
+							Global.getLogger(Es_ShipLevelFunctionPlugin.class).log(Level.ERROR, "Failed to load settings: " + e.getMessage());
 						}
-						}
-						
-					} catch (JSONException e) {
-						Global.getLogger(Es_ShipLevelFunctionPlugin.class).log(Level.ERROR, "Failed to load settings: " + e.getMessage());
 					}
 				}
 			}
@@ -498,7 +509,7 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 		}else if (isInside(arg, 1.4f, 1.5f)) {
 			text = Global.getSettings().getString("QualityName", "perfect");
 		}else if (arg == 1.5f) {
-				text = Global.getSettings().getString("QualityName", "s_perfect");				
+			text = Global.getSettings().getString("QualityName", "s_perfect");
 		}else
 		    text = "(WTF?!)";
 
@@ -526,7 +537,7 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 		}
 		return color;
 	}
-	
+
 	public static boolean isInside(float arg,float a,float b){
 		return (arg>=a && arg<b);
 	}
@@ -534,14 +545,14 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 		List<CargoStackAPI>cargosList = fleet.getCargo().getStacksCopy();
 		float supplies = 0;//иЎҐз»™0
 		float volatiles = 0;//ж°”зџї1
-		float ore = 0;//зџїзџі2
-		float rare_ore = 0;//зЁЂжњ‰зџїзџі3
+		float organics = 0;//зџїзџі2
+		float hand_weapons = 0;//зЁЂжњ‰зџїзџі3
 		float metals = 0;//й‡‘е±ћ4
 		float rare_metals = 0;//зЁЂжњ‰й‡‘е±ћ5
 		float heavy_machinery = 0;//й‡Ќећ‹жњєжў°6
 		for (CargoStackAPI cargoStackAPI : cargosList) {
 			String id = cargoStackAPI.getCommodityId();
-			if (id==null) {
+			if ( id == null ) {
 				continue;
 			}
 			switch (id) {
@@ -551,11 +562,11 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 			case "volatiles":
 				volatiles+=cargoStackAPI.getSize();
 				break;
-			case "ore":
-				ore+=cargoStackAPI.getSize();
+			case "organics":
+				organics+=cargoStackAPI.getSize();
 				break;
-			case "rare_ore":
-				rare_ore+=cargoStackAPI.getSize();
+			case "hand_weapons":
+				hand_weapons+=cargoStackAPI.getSize();
 				break;
 			case "metals":
 				metals+=cargoStackAPI.getSize();
@@ -570,8 +581,7 @@ public class Es_ShipLevelFunctionPlugin implements InteractionDialogPlugin {
 				break;
 			}
 		}
-		float[]commodities ={supplies,volatiles,ore,rare_ore,metals,rare_metals,heavy_machinery}; 
-		return commodities;
+		return new float[]{supplies,volatiles,organics,hand_weapons,metals,rare_metals,heavy_machinery};
 	}
 	@Override
 	public Map<String, MemoryAPI> getMemoryMap() {

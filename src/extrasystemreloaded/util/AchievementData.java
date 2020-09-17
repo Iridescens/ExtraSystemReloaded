@@ -25,9 +25,7 @@ public class AchievementData {
 		CustomData = new LinkedHashMap<>();
 		try {
 			loadAndCheck();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
+		} catch (IOException | JSONException e) {
 			e.printStackTrace();
 		}
 	}
@@ -45,8 +43,7 @@ public class AchievementData {
 				Es_AchievementSprite asprite = new Es_AchievementSprite(sprite);
 				unit.bindAchievementSprite(asprite);
 				info.setUnit(unit);
-				continue;
-			}else {
+			} else {
 				AchievementInfo info = new AchievementInfo();
 				getAchievementMaps().put(id,info);
 				info.setId(id);
@@ -68,7 +65,7 @@ public class AchievementData {
 		}
 	}
 	private static final AchievementAnimationUnit spawnBaseUnit(){
-		Vector2f center = new Vector2f(Display.getWidth() / 2,Display.getHeight() / 7 * 6);
+		Vector2f center = new Vector2f(Display.getWidth() / 2f,Display.getHeight() / 7f * 6);
 		SpriteAPI spriteAPI = Global.getSettings().getSprite("graphics/achievements/Es_Achievement_core.png");
 		Es_AchievementSprite sprite = new Es_AchievementSprite(spriteAPI);
 		AchievementUIBaseAnimation core = new AchievementUIBaseAnimation((int) center.x, (int) center.y, spriteAPI.getWidth(),
@@ -86,7 +83,7 @@ public class AchievementData {
 		final AchievementInfo info = data.getAchievementMaps().get(achievementID);
 		return info;
 	}
-	public Map<String,AchievementInfo> getAchievementMaps(){
+	public Map<String, AchievementInfo> getAchievementMaps(){
 		return this.achievementMaps;
 	}
 	public Map<String, Object> getCustomData(){

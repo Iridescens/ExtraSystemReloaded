@@ -40,7 +40,7 @@ public class Es_ExtraSystemController implements EveryFrameScript{
 		if(!(tradeData instanceof Es_ShipTradeSaveData) || tradeData ==null){
 			tradeData = (Es_ShipTradeSaveData) Global.getSector().getPersistentData().get(SHIP_TRADE_SAVE_ID);
 		}
-		if (AIUpgradeOn){
+		if (AIUpgradeOn) {
 			if (!Global.getSector().isPaused()) {//еЉїеЉ›и€°й�џе€·ж–°
 				float day = Global.getSector().getClock().convertToDays(amount);
 				AI_FLEET_REFRESH_INTER.advance(day);
@@ -67,19 +67,19 @@ public class Es_ExtraSystemController implements EveryFrameScript{
 							if (member.isFighterWing()) {
 								continue;
 							}
-							if (member.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID)==null) {
+							if (member.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID) == null) {
 								member.getBuffManager().addBuff(new Es_ShipLevelFleetData(member));
-								Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData)member.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID);
-								HullSize hullSize = member.getHullSpec().getHullSize();
-								int maxlevel = (int)Es_ShipLevelFunctionPlugin.HULLSIZE_TO_MAXLEVEL.get(hullSize);
-								float arg1 = opcost/300f;//300дёєжњЂе¤§
-								int[] skill = buff.getLevelIndex();
-								for (int i = 0; i < skill.length; i++) {
-									if (member.isFlagship()) {									
-										skill[i] += Math.min(maxlevel, Math.round(maxlevel*arg1*(Math.random()*0.8f+0.2f)*AI_LEVEL));
-									}else {									
-										skill[i] += Math.min(maxlevel, Math.round(maxlevel*arg1*(Math.random())*AI_LEVEL*0.8f));
-									}
+							}
+							Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) member.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID);
+							HullSize hullSize = member.getHullSpec().getHullSize();
+							int maxlevel = (int) Es_ShipLevelFunctionPlugin.HULLSIZE_TO_MAXLEVEL.get(hullSize);
+							float arg1 = opcost/300f;//300дёєжњЂе¤§
+							int[] skill = buff.getLevelIndex();
+							for (int i = 0; i < skill.length; i++) {
+								if (member.isFlagship()) {
+									skill[i] += Math.min(maxlevel, Math.round(maxlevel*arg1*(Math.random()*0.8f+0.2f)*AI_LEVEL));
+								}else {
+									skill[i] += Math.min(maxlevel, Math.round(maxlevel*arg1*(Math.random())*AI_LEVEL*0.8f));
 								}
 							}
 						}

@@ -18,7 +18,7 @@ public class Es_ModPlugin extends BaseModPlugin {
 	private static final String SHIP_TRADE_SAVE_ID = "Es_ShipTradeSaveData";
 	private static final String Es_LEVEL_SHIPLIST_ID = "Es_LEVEL_SHIPLIST";	
 	private static final String Es_LEVEL_SHIPLMAP_ID = "Es_LEVEL_SHIPMAP";	
-	private static final boolean ACHIEVEMENTSENABLED = Global.getSettings().getBoolean("enableAchievements");
+	private static final boolean ACHIEVEMENTS_ENABLED = Global.getSettings().getBoolean("enableAchievements");
 	private static final String ACHIEVEMENT_ID = "AchievementData";
 	private static final String ACHIEVEMENT_CREDITS_ID = "Achievement_Credits";
 	public static String VARIANT_PREFIX = "es_";
@@ -32,24 +32,22 @@ public class Es_ModPlugin extends BaseModPlugin {
 
     public void onGameLoad(boolean newGame){
     	Global.getSector().addTransientScript(new Es_ExtraSystemController());
-    	if(ACHIEVEMENTSENABLED){
+    	if(ACHIEVEMENTS_ENABLED){
     		Global.getSector().addTransientScript(new Es_CampaignRenderPlugin());
     		Global.getSector().addTransientScript(new Es_BaseAchievementsUnlockPlugin());
     		if (!Global.getSector().getPersistentData().containsKey(ACHIEVEMENT_ID)) {
     			AchievementData data = new AchievementData();
     			Global.getSector().getPersistentData().put(ACHIEVEMENT_ID, data);
-    			boolean BOOL[] = {false,false,false,false,false,false};
+    			boolean[] BOOL = {false,false,false,false,false,false};
     			data.getCustomData().put(ACHIEVEMENT_CREDITS_ID, BOOL);
-    		}else {
+    		} else {
     			AchievementData data = (AchievementData) Global.getSector().getPersistentData().get(ACHIEVEMENT_ID);
     			try {
     				data.loadAndCheck();
-    			} catch (IOException e) {
-    				e.printStackTrace();
-    			} catch (JSONException e) {
+    			} catch (IOException | JSONException e) {
     				e.printStackTrace();
     			}
-    		}
+			}
     	}
     	if (newGame) {
     		if (Global.getSector().getPersistentData().get(Es_LEVEL_SHIPLIST_ID)==null ||Global.getSector().getPersistentData().get(Es_LEVEL_SHIPLMAP_ID)==null ) {
@@ -62,7 +60,7 @@ public class Es_ModPlugin extends BaseModPlugin {
 //            	Global.getSector().getPersistentData().put(SHIP_TRADE_SAVE_ID, data);
 //            	data.init();
 //    		}
-		}else {			
+		} else {
 			if (Global.getSector().getPersistentData().get(Es_LEVEL_SHIPLIST_ID)==null ||Global.getSector().getPersistentData().get(Es_LEVEL_SHIPLMAP_ID)==null ) {
 				Global.getSector().getPersistentData().put(Es_LEVEL_SHIPLIST_ID ,new HashMap<>());
 				Global.getSector().getPersistentData().put(Es_LEVEL_SHIPLMAP_ID ,new HashMap<>());

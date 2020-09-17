@@ -130,20 +130,24 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
                     text = "Local industrial facilities are capable of improving overall quality rating of ships by "+bonusQ();
                     textPanel.addParagraph(text);
                     textPanel.highlightLastInLastPara(""+bonusQ(), Color.green);
-                    text = "On-site team estimates ship's overhaul to cost " + estimatedOverhaulCost + " credits";
-                    textPanel.addParagraph(text);
-                    textPanel.highlightLastInLastPara(""+estimatedOverhaulCost, Color.green);
+                    if ( !Es_ShipLevelFunctionPlugin.isDebugUpgradesRemoveCost() ) {
+                        text = "On-site team estimates ship's overhaul to cost " + estimatedOverhaulCost + " credits";
+                        textPanel.addParagraph(text);
+                        textPanel.highlightLastInLastPara(""+estimatedOverhaulCost, Color.green);
+                    }
                     options.addOption("Agree to conditions","ESShipQualityApply",null);
                     isAbleToPayForUpgrade(estimatedOverhaulCost);
                     break;
                 case "ApplyUpgrade":
-                    float newquality = Math.round((Es_ShipLevelFleetData.uppedFleetMemberAPIs.get(ShipSelectedId)+bonusQ())*100f)/100f; // qualityFactor + bonus
+                    float newquality = Math.round((Es_ShipLevelFleetData.uppedFleetMemberAPIs.get(ShipSelectedId)+bonusQ())*1000f)/1000f; // qualityFactor + bonus
                     Es_ShipLevelFleetData.uppedFleetMemberAPIs.remove(ShipSelectedId);
 //                    Es_ShipLevelFleetData.uppedFleetMemberAPIs.put(ShipSelectedId,newquality);
                     Es_ShipLevelFleetData buffTemp = (Es_ShipLevelFleetData)buffmanager;
                     ShipSelected.getBuffManager().removeBuff(buffmanager.getId());
                     ShipSelected.getBuffManager().addBuff(new Es_ShipLevelFleetData(ShipSelected,newquality,buffTemp.getLevelIndex()));
-                    playerFleet.getCargo().getCredits().subtract(estimatedOverhaulCost);
+                    if ( !Es_ShipLevelFunctionPlugin.isDebugUpgradesRemoveCost() ) {
+                        playerFleet.getCargo().getCredits().subtract(estimatedOverhaulCost);
+                    }
                     String text2 = "After some improvements here and there, your ship now has quality rating of "+newquality;
                     textPanel.addParagraph(text2);
                     textPanel.highlightLastInLastPara(""+newquality, Es_ShipLevelFunctionPlugin.getQualityColor(newquality));
@@ -155,7 +159,7 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
             options.addOption("Return to ES main menu", "ESMainMenu", null);
         }
         private void isAbleToPayForUpgrade(float Cost) {
-            if (Cost <= playerFleet.getCargo().getCredits().get()) {
+            if ( Cost <= playerFleet.getCargo().getCredits().get() || Es_ShipLevelFunctionPlugin.isDebugUpgradesRemoveCost() ) {
                 options.setTooltip("ESShipQualityApply", "Proceed with overhaul");
             } else {
                 options.setEnabled("ESShipQualityApply", false);

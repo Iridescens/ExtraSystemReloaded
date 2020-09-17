@@ -1,0 +1,3 @@
+alias,command
+esr_ruc,esr_removeUpgradeCosts
+esr_duc,esr_defaultUpgradeCosts

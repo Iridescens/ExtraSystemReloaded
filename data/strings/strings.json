@@ -2,11 +2,11 @@
 	"ResourceName":{
 		"supplies":"Supplies",
 		"volatiles":"Volatiles",
-		"ore":"ore",
-		"rare_ore":"Transplutonic ore",
+		"organics":"Organics",
+		"hand_weapons":"Heavy armaments",
 		"metals":"Metals",
 		"rare_metals":"Transplutonics",
-		"heavy_machinery":"Heavy machinery",
+		"heavy_machinery":"Heavy machinery"
 	},
 	"AbilityName":{
 		"Durability":"Durability",
@@ -14,6 +14,7 @@
 		"Logistics":"Logistics",
 		"Flexibility":"Mobility",
 		"Technology":"Technology",
+		"Ordnance":"Ordnance"
 	},
 	"Options":{
 		"leave":"Leave",
@@ -21,7 +22,7 @@
 		"confirm":"Confirm",
 		"cancel":"Cancel",
 		"previouspage":"Previous Page",
-		"nextpage":"Next Page",
+		"nextpage":"Next Page"
 	},
 	"QualityName":{
 		"inferior":"(inferior)",
@@ -31,6 +32,6 @@
 		"good":"(good)",
 		"superior":"(superior)",
 		"perfect":"(perfect)",
-		"s_perfect":"(ultimate)",
+		"s_perfect":"(ultimate)"
 	}
 }
