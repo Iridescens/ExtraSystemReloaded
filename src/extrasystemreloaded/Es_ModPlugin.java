@@ -31,7 +31,8 @@ public class Es_ModPlugin extends BaseModPlugin {
 	}
 
     public void onGameLoad(boolean newGame){
-    	Global.getSector().addTransientScript(new Es_ExtraSystemController());
+//		Es_ShipLevelFleetData.removeESHullmodFromAutoFitGoalVariants();
+		Global.getSector().addTransientScript(new Es_ExtraSystemController());
     	if(ACHIEVEMENTS_ENABLED){
     		Global.getSector().addTransientScript(new Es_CampaignRenderPlugin());
     		Global.getSector().addTransientScript(new Es_BaseAchievementsUnlockPlugin());
@@ -73,5 +74,15 @@ public class Es_ModPlugin extends BaseModPlugin {
 //			data.init();
 			Es_ShipLevelFleetData.loadagain();
 		}
+	}
+
+	@Override
+	public void beforeGameSave() {
+		Es_ShipLevelFleetData.removeESHullmodsFromAutoFitGoalVariants();
+
+//        for(ShipVariantAPI v : Global.getSector().getAutofitVariants().getTargetVariants("sunder")) {
+//            v.removeMod();
+//            v.getPermaMods().clear();
+//        }
 	}
 }

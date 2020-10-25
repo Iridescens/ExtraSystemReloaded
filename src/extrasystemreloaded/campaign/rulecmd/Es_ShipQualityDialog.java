@@ -30,7 +30,7 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
     private OptionPanelAPI options;
     private VisualPanelAPI visual;
 
-    private BuffManagerAPI.Buff buffmanager;
+    private BuffManagerAPI.Buff buff;
     private MarketAPI currMarket;
     private CampaignFleetAPI playerFleet;
     private List<FleetMemberAPI> ShipList;
@@ -69,13 +69,9 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
                         break;
                     }
                 }
-                buffmanager = ShipSelected.getBuffManager().getBuff(Es_ShipLevelFunctionPlugin.Es_LEVEL_FUNCTION_ID);
+                buff = ShipSelected.getBuffManager().getBuff(Es_ShipLevelFunctionPlugin.Es_LEVEL_FUNCTION_ID);
 
-                if (buffmanager instanceof Es_ShipLevelFleetData) {
-//                    Es_ShipLevelFleetData buffTemp = (Es_ShipLevelFleetData)buffmanager;
-//                    ShipSelected.getBuffManager().removeBuff(buffmanager.getId());
-//                    ShipSelected.getBuffManager().addBuff(new Es_ShipLevelFleetData(ShipSelected,buffTemp.getQualityFactor(),buffTemp.getLevelIndex()));
-                } else {
+                if (!(buff instanceof Es_ShipLevelFleetData)) {
                     ShipSelected.getBuffManager().addBuff(new Es_ShipLevelFleetData(ShipSelected));
                 }
 
@@ -123,7 +119,7 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
                     textPanel.addParagraph(Es_ShipLevelFunctionPlugin.TextTip.quality1);
 // buffmanager was here
 // shipQuality was here
-                    String text = ""+Math.round(shipQuality*100f)/100f + Es_ShipLevelFunctionPlugin.getQualityName(shipQuality);
+                    String text = ""+Math.round(shipQuality*1000f)/1000f + Es_ShipLevelFunctionPlugin.getQualityName(shipQuality);
                     textPanel.appendToLastParagraph(" " + text);
                     textPanel.highlightLastInLastPara(text, Es_ShipLevelFunctionPlugin.getQualityColor(shipQuality));
 // shipBaseValue & estimatedOverhaulCost were here
@@ -142,9 +138,9 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
                     float newquality = Math.round((Es_ShipLevelFleetData.uppedFleetMemberAPIs.get(ShipSelectedId)+bonusQ())*1000f)/1000f; // qualityFactor + bonus
                     Es_ShipLevelFleetData.uppedFleetMemberAPIs.remove(ShipSelectedId);
 //                    Es_ShipLevelFleetData.uppedFleetMemberAPIs.put(ShipSelectedId,newquality);
-                    Es_ShipLevelFleetData buffTemp = (Es_ShipLevelFleetData)buffmanager;
-                    ShipSelected.getBuffManager().removeBuff(buffmanager.getId());
-                    ShipSelected.getBuffManager().addBuff(new Es_ShipLevelFleetData(ShipSelected,newquality,buffTemp.getLevelIndex()));
+                    Es_ShipLevelFleetData buffTemp = (Es_ShipLevelFleetData) buff;
+                    ShipSelected.getBuffManager().removeBuff(buff.getId());
+                    ShipSelected.getBuffManager().addBuff(new Es_ShipLevelFleetData(ShipSelected,buffTemp.getLevelIndex(),newquality));
                     if ( !Es_ShipLevelFunctionPlugin.isDebugUpgradesRemoveCost() ) {
                         playerFleet.getCargo().getCredits().subtract(estimatedOverhaulCost);
                     }

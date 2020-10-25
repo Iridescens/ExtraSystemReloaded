@@ -10,7 +10,7 @@ public class esr_removeUpgradeCosts implements BaseCommand
     @Override
     public CommandResult runCommand(String args, CommandContext context)
     {
-        if ( context.isInCampaign() || context.isInMarket() )  // TODO: Remove isInCampaign when Ctrl+q deprecates
+        if ( context.isInCampaign() || context.isInMarket() )
         {
             Es_ShipLevelFunctionPlugin.setDebugUpgradesRemoveCost();
             Console.showMessage("DEBUG_UPGRADES_REMOVE_COST flag set to "+Es_ShipLevelFunctionPlugin.isDebugUpgradesRemoveCost());

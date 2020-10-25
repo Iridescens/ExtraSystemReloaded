@@ -118,13 +118,11 @@ public class Es_ShipTotalFunctionPlugin implements InteractionDialogPlugin {
 
 	@Override
 	public Object getContext() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Map<String, MemoryAPI> getMemoryMap() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

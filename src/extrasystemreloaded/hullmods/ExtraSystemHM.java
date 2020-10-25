@@ -1,6 +1,7 @@
 package extrasystemreloaded.hullmods;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.BaseHullMod;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
@@ -41,7 +42,11 @@ public class ExtraSystemHM extends BaseHullMod {
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         FleetMemberAPI fm = findShip(hullSize, stats);
-        if ( fm == null || fm.getBuffManager() == null || fm.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID) == null) { return;}
+        if ( fm == null || fm.getBuffManager() == null ) { return;}
+        if ( fm.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID) == null ) {
+//            Es_ShipLevelFleetData.removeESHullMods(fm.getVariant());
+            return;
+        }
         Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) fm.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID);
         int[] levels = buff.getLevelIndex();
 
@@ -141,10 +146,21 @@ public class ExtraSystemHM extends BaseHullMod {
     FleetMemberAPI findShip(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats) {
         String key = stats.getVariant().getHullVariantId();
         List<FleetMemberAPI> members;
-
+//        List<FleetMemberAPI> members = Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy();
         try {
             members = Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy();
         } catch (NullPointerException e) { return null; }
+
+        try {
+            for (CampaignFleetAPI campaignFleetAPI : Global.getSector().getCurrentLocation().getFleets()) {
+                if ( ! campaignFleetAPI.equals( Global.getSector().getPlayerFleet() ) ) {
+                    members.addAll(campaignFleetAPI.getFleetData().getMembersListCopy());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
 
         if(stats.getEntity() != null) {
             if (stats.getEntity() instanceof FleetMemberAPI) {
@@ -159,7 +175,8 @@ public class ExtraSystemHM extends BaseHullMod {
         }
 
         for (FleetMemberAPI s : members) {
-            if (key.equals(s.getVariant().getHullVariantId())) {
+//            if (key.equals(s.getVariant().getHullVariantId())) {
+            if (key.contains(s.getVariant().getHullVariantId())) {
                 //if(stats == s.getStats()) {
                 return s;
             }
@@ -174,15 +191,17 @@ public class ExtraSystemHM extends BaseHullMod {
         if(fm == null) return "SHIP NOT FOUND";
         return fm.getShipName();
     }
-
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI.HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
         FleetMemberAPI fm = findShip(hullSize, ship.getMutableStats());
+        if (fm == null) { return; }
         Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) fm.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID);
+        if (buff == null) { return; }
         int[] levels = buff.getLevelIndex();
         String qname = getQualityName(buff.getQualityFactor());
 
         tooltip.addPara("The ship is of %s quality, which affected base upgrade values by %s multiplier (following numbers are final calculations):", 0, getQualityColor(buff.getQualityFactor()),qname,""+String.format("%.3f",buff.getQualityFactor()));
+
 
         if (levels[0]>0) {
             tooltip.addPara(ABILITY_NAME[0] + " (%s):", 5, Color.green, ""+levels[0]);
@@ -244,6 +263,7 @@ public class ExtraSystemHM extends BaseHullMod {
             tooltip.addPara(ABILITY_NAME[5] + " (%s) [%s]:", 5, Color.green, "" + levels[5], "Unaffected by quality");
             tooltip.addPara("  Bonus ordnance points: %s", 0, Misc.getHighlightColor(), "" + levels[5] * ORDNANCE_EFFECT_MULT.get(hullSize));
         }
+
 
     }
 }

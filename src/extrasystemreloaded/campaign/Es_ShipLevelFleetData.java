@@ -2,20 +2,21 @@ package extrasystemreloaded.campaign;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BuffManagerAPI.Buff;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.util.IntervalUtil;
 import extrasystemreloaded.Es_ModPlugin;
+import org.lazywizard.console.Console;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static extrasystemreloaded.campaign.Es_ShipLevelFunctionPlugin.ORDNANCE_HULLMOD_MAX_LEVEL;
-
-//import org.lazywizard.lazylib.VectorUtils;
 
 public class Es_ShipLevelFleetData implements Buff{
 	private static final String Es_LEVEL_FUNCTION_ID = "Es_ShipLevelUp";	
@@ -25,7 +26,7 @@ public class Es_ShipLevelFleetData implements Buff{
 	private static final float USERQUALITY = Global.getSettings().getFloat("baseQuality");
 	public static Map<String, int[]>ShipLevel_DATA;//е…Ёе±Ђи€°и€№жЎЈжЎ€
 	public static Map<String,Float>uppedFleetMemberAPIs ;//и®°еЅ•ж‰Ђжњ‰и€№зљ„е“ЃиґЁ
-	private final IntervalUtil interval = new IntervalUtil(1f, 1f);
+	private final IntervalUtil interval = new IntervalUtil(2f, 2f);
 	private FleetMemberAPI lastMember = null;
 	private float hullSizeFactor = 1f;
 	private float qualityFactor = 0f;
@@ -56,7 +57,18 @@ public class Es_ShipLevelFleetData implements Buff{
 		uppedFleetMemberAPIs.put(memberAPI.getId(),qualityFactor);
 	}
 
-	public Es_ShipLevelFleetData(FleetMemberAPI memberAPI, float qualityForced, int[] AbilityLevelsForced) {
+	public Es_ShipLevelFleetData(FleetMemberAPI memberAPI, int[] AbilityLevelsForced) {//жћ„йЂ е‡Ѕж•°
+		lastMember=memberAPI;
+		if (mag.containsKey(memberAPI.getHullSpec().getHullSize())) {
+			hullSizeFactor = mag.get(memberAPI.getHullSpec().getHullSize());
+		}
+		qualityFactor = getQuality(memberAPI);
+		AbilityLevel = AbilityLevelsForced;
+		ShipLevel_DATA.put(memberAPI.getId(),this.getLevelIndex());
+		uppedFleetMemberAPIs.put(memberAPI.getId(),qualityFactor);
+	}
+
+	public Es_ShipLevelFleetData(FleetMemberAPI memberAPI, int[] AbilityLevelsForced, float qualityForced) {
 		lastMember=memberAPI;
 		if (mag.containsKey(memberAPI.getHullSpec().getHullSize())) {
 			hullSizeFactor = mag.get(memberAPI.getHullSpec().getHullSize());
@@ -78,72 +90,102 @@ public class Es_ShipLevelFleetData implements Buff{
 
 	@Override
 	public void apply(FleetMemberAPI member) {
-			if (uppedFleetMemberAPIs==null || ShipLevel_DATA ==null) {
+		if (uppedFleetMemberAPIs==null || ShipLevel_DATA ==null) {
+			return;
+		}
+		int[] levels = getLevelIndex();
+
+		int temp_points = 0;
+		for (int i = 0; i < levels.length; ++i) {
+			temp_points += levels[i];
+		}
+
+		if (member.getVariant() == null) {
+//				member.updateStats();
+			return;
+		}
+
+		if ( temp_points > 0 ) {
+			ShipVariantAPI v = member.getVariant();
+
+//				if (v.isStockVariant()) {
+				v = v.clone();
+				v.setGoalVariant(false);
+				v.setSource(VariantSource.REFIT);
+				member.setVariant(v, false, false);
+//				}
+
+			v.setHullVariantId(Es_ModPlugin.VARIANT_PREFIX + member.getId());
+			removeESHullModsFromVariant(v);
+			v.addPermaMod("es_shiplevelHM"+(Math.min(levels[5], ORDNANCE_HULLMOD_MAX_LEVEL)));
+
+			List<String> slots = v.getModuleSlots();
+			if (slots == null || slots.isEmpty()) {
+				member.updateStats();
 				return;
 			}
-			int[] levels = getLevelIndex();
+			for (int i = 0; i < slots.size(); ++i) {
+				ShipVariantAPI module = v.getModuleVariant(slots.get(i));
 
-			int temp_points = 0;
-			for (int i = 0; i < levels.length; ++i) {
-				temp_points += levels[i];
+				if (module == null) { continue; }
+//					if (module.isStockVariant()) {
+					module = module.clone();
+					module.setGoalVariant(false);
+					module.setSource(VariantSource.REFIT);
+					v.setModuleVariant(slots.get(i), module);
+//					}
+				module.setHullVariantId(
+						module.getHullVariantId().contains(v.getHullVariantId()) ?
+								module.getHullVariantId() :
+								v.getHullVariantId() + "_" + module.getHullVariantId() );
+				module.addPermaMod("es_shiplevelHM"+(Math.min(levels[5], ORDNANCE_HULLMOD_MAX_LEVEL)));
 			}
-
-			ShipVariantAPI mGV = member.getVariant();
-			if (mGV == null) { return; }
-			boolean hasHM = mGV.hasHullMod("es_shiplevelHM0") ||
-					mGV.hasHullMod("es_shiplevelHM1") ||
-					mGV.hasHullMod("es_shiplevelHM2") ||
-					mGV.hasHullMod("es_shiplevelHM3") ||
-					mGV.hasHullMod("es_shiplevelHM4") ||
-					mGV.hasHullMod("es_shiplevelHM5");
-
-			if ( temp_points > 0 ) {
-				ShipVariantAPI v;
-				if (member.getVariant().isStockVariant()) {
-					v = member.getVariant().clone();
-					v.setSource(VariantSource.REFIT);
-					member.setVariant(v, false, false);
-				} else v = member.getVariant();
-
-				v.setHullVariantId(Es_ModPlugin.VARIANT_PREFIX + member.getId());
-				removeESHullMods(v);
-				v.addPermaMod("es_shiplevelHM"+levels[5]);
-
-				List<String> slots = v.getModuleSlots();
-				for (int i = 0; i < slots.size(); ++i) {
-					ShipVariantAPI module = v.getModuleVariant(slots.get(i));
-					if (module == null) { return; }
-					if (module.isStockVariant()) {
-						module = module.clone();
-						module.setSource(VariantSource.REFIT);
-						v.setModuleVariant(slots.get(i), module);
-					}
-					module.setHullVariantId(v.getHullVariantId());
-					module.addPermaMod("es_shiplevelHM0");
-				}
-			}
-
-			if (  temp_points <= 0 ) {
-				if ( hasHM ) {
-					ShipVariantAPI v = member.getVariant();
-					removeESHullMods(v);
-
-					List<String> slots = v.getModuleSlots();
-					for(int i = 0; i < slots.size(); ++i) {
-						ShipVariantAPI module = v.getModuleVariant(slots.get(i));
-						if (module == null) { return; }
-						module.removePermaMod("es_shiplevelHM0");
-					}
-
-				}
-			}
+		}
 			member.updateStats();
 	}
 
-	private void removeESHullMods(ShipVariantAPI v) {
+	public static void removeESHullModsFromVariant(ShipVariantAPI v) {
 		for (int i = 0; i <= ORDNANCE_HULLMOD_MAX_LEVEL; ++i) {
 			v.removePermaMod("es_shiplevelHM"+i);
 		}
+		List<String> slots = v.getModuleSlots();
+		if ((slots == null) || slots.isEmpty()) { return; }
+
+		for(int i = 0; i < slots.size(); ++i) {
+			ShipVariantAPI module = v.getModuleVariant(slots.get(i));
+			if (module != null) {
+				removeESHullModsFromVariant(module);
+			}
+		}
+	}
+
+	public static void removeESHullmodsFromAutoFitGoalVariants() {
+		try {
+			for (ShipHullSpecAPI spec : Global.getSettings().getAllShipHullSpecs()) {
+				for (ShipVariantAPI v : Global.getSector().getAutofitVariants().getTargetVariants(spec.getHullId())) {
+					if(v != null) removeESHullModsFromVariant(v);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void removeESHullmodsFromEveryVariant() {
+		try {
+			for (CampaignFleetAPI campaignFleetAPI : Global.getSector().getCurrentLocation().getFleets()) {
+				for (FleetMemberAPI member : campaignFleetAPI.getFleetData().getMembersListCopy()) {
+					if (member.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID) != null) {
+						member.getBuffManager().removeBuff(Es_LEVEL_FUNCTION_ID);
+						removeESHullModsFromVariant(member.getVariant());
+						Console.showMessage("Cleared ESR data from: "+member.getShipName());
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		removeESHullmodsFromAutoFitGoalVariants();
 	}
 
 	@Override
@@ -160,15 +202,17 @@ public class Es_ShipLevelFleetData implements Buff{
 	public void advance(float days) {
 		interval.advance(days);
         if (interval.intervalElapsed()) {
-            if (lastMember != null) {
-                if ( lastMember.getFleetData() == null ||
-						lastMember.getFleetData().getFleet() == null ||
-						lastMember.getFleetData().getFleet().isAIMode() ||
-                    !lastMember.getFleetData().getFleet().isAlive()) {
-                    expired = true;
-                    ShipLevel_DATA.remove(lastMember.getId());
-                    uppedFleetMemberAPIs.remove(lastMember.getId());
-                }
+//			removeESHullmodFromAutoFitGoalVariants();
+        	if (lastMember != null) {
+                if (lastMember.getFleetData() == null ||
+					lastMember.getFleetData().getFleet() == null ||
+					lastMember.getFleetData().getFleet().isAIMode() ||
+                    !lastMember.getFleetData().getFleet().isAlive() ) {
+						expired = true;
+						ShipLevel_DATA.remove(lastMember.getId());
+						uppedFleetMemberAPIs.remove(lastMember.getId());
+						removeESHullModsFromVariant(lastMember.getVariant());
+				}
             }
         }
 	}

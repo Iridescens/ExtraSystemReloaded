@@ -24,9 +24,9 @@ public class Es_ExtraSystemController implements EveryFrameScript{
 	private static final IntervalUtil AI_FLEET_REFRESH_INTER = new IntervalUtil(2f, 4f);//иї‡е‡ е¤©пјЊе€·ж–°дёЂж¬Ў
 //	private static final IntervalUtil MARKET_REFRESH_MOUTH_ITER = new IntervalUtil(1f, 1f);//её‚ењєе€·ж–°
 //	private static final IntervalUtil DAY_ITER = new IntervalUtil(1f, 1f);//жЇЏе¤©и°ѓз”Ё
+
 	@Override
 	public boolean isDone() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -53,7 +53,7 @@ public class Es_ExtraSystemController implements EveryFrameScript{
 				//			if (DAY_ITER.intervalElapsed()) {//и®ўеЌ•
 				//				tradeData.advance();//е‰Ќиї›
 				//			}
-				if (AI_FLEET_REFRESH_INTER.intervalElapsed()) {		
+				if (AI_FLEET_REFRESH_INTER.intervalElapsed()) {
 
 					LocationAPI location = Global.getSector().getCurrentLocation();
 					List<CampaignFleetAPI>fleets = location.getFleets();
@@ -64,27 +64,31 @@ public class Es_ExtraSystemController implements EveryFrameScript{
 						int opcost = campaignFleetAPI.getFleetPoints();
 						List<FleetMemberAPI>members = campaignFleetAPI.getFleetData().getMembersListCopy();
 						for (FleetMemberAPI member : members) {
-							if (member.isFighterWing()) {
+							if (member.isFighterWing() || member.isStation() || member.isMothballed()) {
 								continue;
 							}
 							if (member.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID) == null) {
-								member.getBuffManager().addBuff(new Es_ShipLevelFleetData(member));
-							}
-							Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) member.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID);
-							HullSize hullSize = member.getHullSpec().getHullSize();
-							int maxlevel = (int) Es_ShipLevelFunctionPlugin.HULLSIZE_TO_MAXLEVEL.get(hullSize);
-							float arg1 = opcost/300f;//300дёєжњЂе¤§
-							int[] skill = buff.getLevelIndex();
-							for (int i = 0; i < skill.length; i++) {
-								if (member.isFlagship()) {
-									skill[i] += Math.min(maxlevel, Math.round(maxlevel*arg1*(Math.random()*0.8f+0.2f)*AI_LEVEL));
-								}else {
-									skill[i] += Math.min(maxlevel, Math.round(maxlevel*arg1*(Math.random())*AI_LEVEL*0.8f));
+
+//								Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) member.getBuffManager().getBuff(Es_LEVEL_FUNCTION_ID);
+								HullSize hullSize = member.getHullSpec().getHullSize();
+								int maxlevel = (int) Es_ShipLevelFunctionPlugin.HULLSIZE_TO_MAXLEVEL.get(hullSize);
+								float arg1 = opcost/300f;//300дёєжњЂе¤§
+								int[] skill = {0,0,0,0,0,0};
+								for (int i = 0; i < skill.length-1; i++) {  // do not use Ordnance levels
+									if (member.isFlagship()) {
+										skill[i] += Math.min(maxlevel, Math.round(maxlevel*arg1*(Math.random()*0.8f+0.2f)*AI_LEVEL));
+									}else {
+										skill[i] += Math.min(maxlevel, Math.round(maxlevel*arg1*(Math.random())*AI_LEVEL*0.8f));
+									}
 								}
+								member.getBuffManager().addBuff(new Es_ShipLevelFleetData(member,skill));
 							}
 						}
 					}
+//					LocationAPI location2 = Global.getSector().getCurrentLocation();
+//					Es_ShipLevelFleetData.removeESHullmodFromAutoFitGoalVariants();
 				}
+
 			}
 		}
 ////////////////
@@ -150,7 +154,7 @@ public class Es_ExtraSystemController implements EveryFrameScript{
 			  if ((Keyboard.isKeyDown(29)) && 
 				  (Keyboard.isKeyDown(16))) {
 				  Global.getSector().getCampaignUI().showInteractionDialog(new Es_ShipTotalFunctionPlugin(), Global.getSector().getPlayerFleet());
-			  }
+			  }  // TODO: Remove when Ctrl+q deprecates
 //			  if ((Keyboard.isKeyDown(29)) && 
 //				      (Keyboard.isKeyDown(36))) {
 ////					Vector2f center = new Vector2f(Display.getWidth() / 2,Display.getHeight() / 8 * 7);
