@@ -14,3 +14,4 @@ command,class,tags,syntax,help
 esr_defaultUpgradeCosts,extrasystemreloaded.commands.esr_defaultUpgradeCosts,"dialog,campaign,market",esr_defaultUpgradeCosts (no arguments),"Extra System Reloaded upgrades now require resources"
 esr_removeUpgradeCosts,extrasystemreloaded.commands.esr_removeUpgradeCosts,"dialog,campaign,market",esr_removeUpgradeCosts (no arguments),"Extra System Reloaded upgrades are now FREE"
 esr_clearAllData,extrasystemreloaded.commands.esr_clearAllData,"campaign",esr_clearAllData (no arguments),"Clear all Extra System Reloaded data"
+esr_getNearbyFleets,extrasystemreloaded.commands.esr_getNearbyFleets,"campaign",esr_getNearbyFleets [seek_range],"Display nearby fleets with system coordinates and relative distance to player fleet. Optional argument provides a range to display only those which are in it (default: whole system)."
