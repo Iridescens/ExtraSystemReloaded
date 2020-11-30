@@ -2,7 +2,7 @@
     "id": "extra_system_reloaded",
     "name": "Extra System Reloaded",
     "author": "Created by Originem. Reloaded by Iridescens",
-    "version": "0.5.1",
+    "version": "0.5.2",
     "description": "*Requires LazyLib*  *Requires Console Commands*\n\nUpgrade subsystems at non-hostile markets (and by pressing ctrl + q)\nShip's quality can be upgraded at non-hostile markets.\nPauses after leaving the dialog.\nOrdnance points can be upgraded.\nConsole commands (esr_) added for debug, making upgrades free/normal and clearAllData",
     "gameVersion": "0.9.1a",
     "jars": ["jars/ExtraSystemCore.jar"],
