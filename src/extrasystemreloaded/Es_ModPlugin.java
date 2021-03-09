@@ -2,26 +2,23 @@ package extrasystemreloaded;
 
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
-import extrasystemreloaded.campaign.Es_BaseAchievementsUnlockPlugin;
-import extrasystemreloaded.campaign.Es_CampaignRenderPlugin;
-import extrasystemreloaded.campaign.Es_ExtraSystemController;
-import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
-import extrasystemreloaded.util.AchievementData;
-import org.json.JSONException;
+import extrasystemreloaded.campaign.*;
+import extrasystemreloaded.util.ESUpgrades;
 
-import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class Es_ModPlugin extends BaseModPlugin {
-	private static final String Es_LEVEL_FUNCTION_ID = "Es_ShipLevelUp";
-	private static final String SHIP_TRADE_SAVE_ID = "Es_ShipTradeSaveData";
-	private static final String Es_LEVEL_SHIPLIST_ID = "Es_LEVEL_SHIPLIST";	
-	private static final String Es_LEVEL_SHIPLMAP_ID = "Es_LEVEL_SHIPMAP";	
-	private static final boolean ACHIEVEMENTS_ENABLED = Global.getSettings().getBoolean("enableAchievements");
-	private static final String ACHIEVEMENT_ID = "AchievementData";
-	private static final String ACHIEVEMENT_CREDITS_ID = "Achievement_Credits";
 	public static String VARIANT_PREFIX = "es_";
+
+	public static final String ES_PERSISTENTQUALITYMAP = "Es_LEVEL_SHIPLIST";
+	public static final String ES_PERSISTENTUPGRADEMAP = "ES_UPGRADEMAP";
+
+	public static Map<String, ESUpgrades> ShipUpgradeData;
+	public static Map<String,Float> ShipQualityData;
+
+	private static boolean debugUpgradeCosts = false;
 
 	@Override
 	public void onApplicationLoad() {
@@ -31,58 +28,46 @@ public class Es_ModPlugin extends BaseModPlugin {
 	}
 
     public void onGameLoad(boolean newGame){
-//		Es_ShipLevelFleetData.removeESHullmodFromAutoFitGoalVariants();
 		Global.getSector().addTransientScript(new Es_ExtraSystemController());
-    	if(ACHIEVEMENTS_ENABLED){
-    		Global.getSector().addTransientScript(new Es_CampaignRenderPlugin());
-    		Global.getSector().addTransientScript(new Es_BaseAchievementsUnlockPlugin());
-    		if (!Global.getSector().getPersistentData().containsKey(ACHIEVEMENT_ID)) {
-    			AchievementData data = new AchievementData();
-    			Global.getSector().getPersistentData().put(ACHIEVEMENT_ID, data);
-    			boolean[] BOOL = {false,false,false,false,false,false};
-    			data.getCustomData().put(ACHIEVEMENT_CREDITS_ID, BOOL);
-    		} else {
-    			AchievementData data = (AchievementData) Global.getSector().getPersistentData().get(ACHIEVEMENT_ID);
-    			try {
-    				data.loadAndCheck();
-    			} catch (IOException | JSONException e) {
-    				e.printStackTrace();
-    			}
-			}
-    	}
     	if (newGame) {
-    		if (Global.getSector().getPersistentData().get(Es_LEVEL_SHIPLIST_ID)==null ||Global.getSector().getPersistentData().get(Es_LEVEL_SHIPLMAP_ID)==null ) {
-    			Global.getSector().getPersistentData().put(Es_LEVEL_SHIPLIST_ID ,new HashMap<>());
-    			Global.getSector().getPersistentData().put(Es_LEVEL_SHIPLMAP_ID ,new HashMap<>());
-    			Es_ShipLevelFleetData.loadagain();
+    		if (Global.getSector().getPersistentData().get(ES_PERSISTENTUPGRADEMAP)==null
+					|| Global.getSector().getPersistentData().get(ES_PERSISTENTQUALITYMAP)==null ) {
+				Global.getSector().getPersistentData().put(ES_PERSISTENTUPGRADEMAP, new HashMap<>());
+    			Global.getSector().getPersistentData().put(ES_PERSISTENTQUALITYMAP, new HashMap<>());
     		}
-//            if (Global.getSector().getPersistentData().get(SHIP_TRADE_SAVE_ID)==null) {
-//            	Es_ShipTradeSaveData data = new Es_ShipTradeSaveData();
-//            	Global.getSector().getPersistentData().put(SHIP_TRADE_SAVE_ID, data);
-//            	data.init();
-//    		}
 		} else {
-			if (Global.getSector().getPersistentData().get(Es_LEVEL_SHIPLIST_ID)==null ||Global.getSector().getPersistentData().get(Es_LEVEL_SHIPLMAP_ID)==null ) {
-				Global.getSector().getPersistentData().put(Es_LEVEL_SHIPLIST_ID ,new HashMap<>());
-				Global.getSector().getPersistentData().put(Es_LEVEL_SHIPLMAP_ID ,new HashMap<>());
+			if (Global.getSector().getPersistentData().get(ES_PERSISTENTQUALITYMAP)==null ||
+					Global.getSector().getPersistentData().get(ES_PERSISTENTUPGRADEMAP)==null) {
+				Global.getSector().getPersistentData().put(ES_PERSISTENTQUALITYMAP, new HashMap<>());
+				Global.getSector().getPersistentData().put(ES_PERSISTENTUPGRADEMAP, new HashMap<>());
 			}
-//			Es_ShipTradeSaveData data = (Es_ShipTradeSaveData) Global.getSector().getPersistentData().get(SHIP_TRADE_SAVE_ID);
-//			if (data==null) {
-//				data = new Es_ShipTradeSaveData();
-//				Global.getSector().getPersistentData().put(SHIP_TRADE_SAVE_ID, data);
-//			}
-//			data.init();
-			Es_ShipLevelFleetData.loadagain();
 		}
+		loadagain();
 	}
+
+	@SuppressWarnings("unchecked")
+	public static void loadagain(){
+		ShipUpgradeData = (Map<String, ESUpgrades>) Global.getSector().getPersistentData().get(ES_PERSISTENTUPGRADEMAP);
+		Map<String, int[]> oldLevelData = (Map<String, int[]>) Global.getSector().getPersistentData().get("Es_LEVEL_SHIPMAP");
+		if(oldLevelData != null) {
+			Global.getSector().getPersistentData().remove("Es_LEVEL_SHIPMAP");
+		}
+		ShipQualityData = (Map<String, Float>) Global.getSector().getPersistentData().get(ES_PERSISTENTQUALITYMAP);
+	}
+
 
 	@Override
 	public void beforeGameSave() {
 		Es_ShipLevelFleetData.removeESHullmodsFromAutoFitGoalVariants();
+	}
 
-//        for(ShipVariantAPI v : Global.getSector().getAutofitVariants().getTargetVariants("sunder")) {
-//            v.removeMod();
-//            v.getPermaMods().clear();
-//        }
+
+
+	public static void setDebugUpgradeCosts(boolean set) {
+		debugUpgradeCosts = set;
+	}
+
+	public static boolean isDebugUpgradeCosts() {
+		return debugUpgradeCosts;
 	}
 }

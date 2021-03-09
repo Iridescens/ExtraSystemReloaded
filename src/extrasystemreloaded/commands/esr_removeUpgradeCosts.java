@@ -1,6 +1,6 @@
 package extrasystemreloaded.commands;
 
-import extrasystemreloaded.campaign.Es_ShipLevelFunctionPlugin;
+import extrasystemreloaded.Es_ModPlugin;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
@@ -12,8 +12,8 @@ public class esr_removeUpgradeCosts implements BaseCommand
     {
         if ( context.isInCampaign() || context.isInMarket() )
         {
-            Es_ShipLevelFunctionPlugin.setDebugUpgradesRemoveCost();
-            Console.showMessage("DEBUG_UPGRADES_REMOVE_COST flag set to "+Es_ShipLevelFunctionPlugin.isDebugUpgradesRemoveCost());
+            Es_ModPlugin.setDebugUpgradeCosts(true);
+            Console.showMessage("DEBUG_UPGRADES_REMOVE_COST flag set to "+Es_ModPlugin.isDebugUpgradeCosts());
             return CommandResult.SUCCESS;
         } else {
             Console.showMessage(CommonStrings.ERROR_CAMPAIGN_ONLY);

@@ -1,6 +1,7 @@
 package extrasystemreloaded.commands;
 
 import com.fs.starfarer.api.Global;
+import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
 import org.apache.log4j.Level;
 import org.lazywizard.console.BaseCommand;
@@ -15,14 +16,10 @@ public class esr_clearAllData implements BaseCommand
         if ( context.isInCampaign() )
         {
             Es_ShipLevelFleetData.removeESHullmodsFromEveryVariant();
-            Global.getSector().getPersistentData().remove("Es_LEVEL_SHIPLIST");
-            Global.getSector().getPersistentData().remove("Es_LEVEL_SHIPMAP");
-            Global.getSector().getPersistentData().remove("AchievementData");
+            Global.getSector().getPersistentData().remove(Es_ModPlugin.ES_PERSISTENTQUALITYMAP);
+            Global.getSector().getPersistentData().remove(Es_ModPlugin.ES_PERSISTENTUPGRADEMAP);
             try {
                 Global.getSector().removeTransientScriptsOfClass(Class.forName("extrasystemreloaded.campaign.Es_ExtraSystemController"));
-                Global.getSector().removeTransientScriptsOfClass(Class.forName("extrasystemreloaded.campaign.Es_BaseAchievementsUnlockPlugin"));
-                Global.getSector().removeTransientScriptsOfClass(Class.forName("extrasystemreloaded.campaign.Es_CampaignRenderPlugin"));
-                Global.getSector().removeTransientScriptsOfClass(Class.forName("extrasystemreloaded.campaign.Es_GameSetPausePlugin"));
             } catch (Exception e) {
                 e.printStackTrace();
                 Console.showMessage("Exception while removing transient scripts: "+e.getMessage(), Level.ERROR);

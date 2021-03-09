@@ -12,17 +12,21 @@
 		"Durability":"Durability",
 		"WeaponProficiency":"Weaponry",
 		"Logistics":"Logistics",
-		"Flexibility":"Mobility",
+		"Mobility":"Mobility",
 		"Technology":"Technology",
-		"Ordnance":"Ordnance"
+		"Ordnance":"Ordnance",
+		"Fighters":"Fighters",
+		"Subsystems":"Subsystems",
+		"Aggression": "Aggression Protocol"
 	},
 	"Options":{
 		"leave":"Leave",
 		"back":"Back",
-		"confirm":"Confirm",
+		"confirm":"Confirm this upgrade (%s / %s)",
 		"cancel":"Cancel",
 		"previouspage":"Previous Page",
-		"nextpage":"Next Page"
+		"nextpage":"Next Page",
+		"repurchase": "Purchase the upgrade again"
 	},
 	"QualityName":{
 		"inferior":"(inferior)",
