@@ -31,7 +31,6 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
     public static final boolean UPGRADE_ALWAYS_SUCCEED = Global.getSettings().getBoolean("upgradeAlwaysSucceed");
     public static final float BASE_FAILURE_MINFACTOR = Global.getSettings().getFloat("baseFailureMinFactor");
 
-    private static final boolean DEBUG_UPGRADES_REMOVE_COST = false;
     private static final int NumShipsPerPage = 5;
     private static final float baseQualityStep = 0.025f;
 
@@ -193,10 +192,15 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
                     Es_ModPlugin.ShipQualityData.remove(shipSelectedId);
                     selectedShip.getBuffManager().removeBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
                     selectedShip.getBuffManager().addBuff(new Es_ShipLevelFleetData(selectedShip, buff.getUpgrades(), newQuality));
-                    playerFleet.getCargo().getCredits().subtract(estimatedOverhaulCost);
+
+                    if(!Es_ModPlugin.isDebugUpgradeCosts()) {
+                        playerFleet.getCargo().getCredits().subtract(estimatedOverhaulCost);
+                    }
+
                     String text2 = "After some improvements here and there, your ship now has quality rating of " + newQuality;
                     textPanel.addParagraph(text2);
                     textPanel.highlightLastInLastPara("" + newQuality, getQualityColor(newQuality));
+                    options.addOption(OptionName.Repurchase, "ESShipQualityPicked");
                     options.addOption("Back to ship", shipSelectedId);
                 }
                 options.addOption("Back to ship list", "ESShipQuality");
@@ -309,7 +313,7 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
                 options.setEnabled("ESShipExtraUpgradeApply", false);
             } else {
                 boolean isCanLevelUp = true;
-                if (!DEBUG_UPGRADES_REMOVE_COST) {
+                if (!Es_ModPlugin.isDebugUpgradeCosts()) {
                     int[] resourceCosts = getUpgradeCosts(shipSelected, abilitySelected, level, max);
 
                     float possibility = 1f;
@@ -375,7 +379,7 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
         }else {
             textPanel.addParagraph(TextTip.Failure, Color.red);
         }
-        if (!DEBUG_UPGRADES_REMOVE_COST) {
+        if (!Es_ModPlugin.isDebugUpgradeCosts()) {
             int[] resourceCosts = getUpgradeCosts(shipSelected, abilitySelected, currentLevel, max);
             playerFleet.getCargo().removeSupplies(resourceCosts[0]);
             playerFleet.getCargo().removeItems(CargoAPI.CargoItemType.RESOURCES, "volatiles", resourceCosts[1]);

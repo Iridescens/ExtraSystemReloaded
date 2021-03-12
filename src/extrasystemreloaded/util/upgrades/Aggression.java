@@ -43,7 +43,7 @@ public class Aggression extends Upgrade {
 
     @Override
     public void advanceInCombat(ShipAPI ship, float amount, int level, float quality) {
-        if(!ship.isAlive()) {
+        if(!ship.isAlive() || ship.getSystem() == null) {
             return;
         }
 
@@ -53,8 +53,6 @@ public class Aggression extends Upgrade {
 
         if(ship.getSystem().isActive() && !engine.getCustomData().containsKey(customDataId)) {
             engine.getCustomData().put(customDataId, engine.getTotalElapsedTime(false) + 3.5f);
-        } else if(!ship.getSystem().isActive() && engine.getCustomData().containsKey(customDataId)) {
-            engine.getCustomData().remove(customDataId);
         }
 
         if(engine.getCustomData().containsKey(customDataId)) {
@@ -72,6 +70,9 @@ public class Aggression extends Upgrade {
                     engine.maintainStatusForPlayerShip(AGGRESSION_DATA_KEY, "graphics/icons/hullsys/maneuvering_jets.png", "Aggression Protocol", "THEY WILL KNOW FEAR (" + timeLeft + "s)", false);
                 }
             } else {
+                if(!ship.getSystem().isActive()) {
+                    engine.getCustomData().remove(customDataId);
+                }
                 stats.getMaxSpeed().unmodifyFlat(AGGRESSION_DATA_KEY);
                 stats.getAcceleration().unmodifyPercent(AGGRESSION_DATA_KEY);
                 stats.getTurnAcceleration().unmodifyPercent(AGGRESSION_DATA_KEY);
