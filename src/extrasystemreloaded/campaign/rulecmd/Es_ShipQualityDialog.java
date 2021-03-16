@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.campaign.BuffManager;
@@ -200,7 +201,14 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
                     String text2 = "After some improvements here and there, your ship now has quality rating of " + newQuality;
                     textPanel.addParagraph(text2);
                     textPanel.highlightLastInLastPara("" + newQuality, getQualityColor(newQuality));
-                    options.addOption(OptionName.Repurchase, "ESShipQualityPicked");
+
+                    String shipQualityText = "On-site team estimates that another overhaul would cost %s credits for a quality increase of %s.";
+                    textPanel.addParagraph(String.format(shipQualityText, estimatedOverhaulCost, bonusQualityAtMarket()));
+                    textPanel.highlightLastInLastPara("" + estimatedOverhaulCost, Color.green);
+
+                    options.addOption(OptionName.Repurchase, "ESShipQualityApply");
+                    isAbleToPayForQualityUpgrade(estimatedOverhaulCost);
+
                     options.addOption("Back to ship", shipSelectedId);
                 }
                 options.addOption("Back to ship list", "ESShipQuality");
@@ -266,7 +274,7 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
             textPanel.addParagraph("-----------------------", Color.gray);
             for (int i = 0; i < 7; i++) {
                 String name = RESOURCE_NAME.get(i);
-                textPanel.addParagraph(name + ":" + (int) getFleetCargoMap(playerFleet)[i]);
+                textPanel.addParagraph(name + ":" + (int) getFleetCargoMap(playerFleet, currMarket)[i]);
             }
             textPanel.addParagraph("-----------------------", Color.gray);
 
@@ -312,36 +320,7 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
                 textPanel.addParagraph(TextTip.ability2 + "(" + level + ")", Color.yellow);
                 options.setEnabled("ESShipExtraUpgradeApply", false);
             } else {
-                boolean isCanLevelUp = true;
-                if (!Es_ModPlugin.isDebugUpgradeCosts()) {
-                    int[] resourceCosts = getUpgradeCosts(shipSelected, abilitySelected, level, max);
-
-                    float possibility = 1f;
-                    if (!UPGRADE_ALWAYS_SUCCEED && level != 0) {
-                        possibility = (float) Math.cos(Math.PI * level * 0.5f / max) * (1f - BASE_FAILURE_MINFACTOR) + BASE_FAILURE_MINFACTOR;
-                    }
-
-                    textPanel.addParagraph(TextTip.costHeader, Color.green);
-                    textPanel.addParagraph("-----------------------", Color.gray);
-
-                    for (int i = 0; i < resourceCosts.length; ++i) {
-                        String name = RESOURCE_NAME.get(i);
-                        float fleetcargo = getFleetCargoMap(playerFleet)[i];
-                        if (resourceCosts[i] > fleetcargo) {
-                            isCanLevelUp = false;
-                            String suffix = TextTip.tooExpensivePrefix + (int) (resourceCosts[i] - fleetcargo) + TextTip.tooExpensiveSuffix;
-                            textPanel.addParagraph(name + ":" + resourceCosts[i] + suffix, Color.red);
-                        } else {
-                            textPanel.addParagraph(name + ":" + resourceCosts[i]);
-                        }
-                    }
-                    textPanel.addParagraph("-----------------------", Color.gray);
-                    textPanel.addParagraph(TextTip.ability3);
-                    String text1 = Math.round(possibility * 1000f) / 10f + "%";
-                    textPanel.appendToLastParagraph(text1);
-                    textPanel.highlightLastInLastPara(text1, Color.green);
-                    textPanel.appendToLastParagraph(TextTip.ability4);
-                }
+                boolean isCanLevelUp = appendUpgradeCostText(shipSelected, abilitySelected, level, max);
 
                 if (!isCanLevelUp) {
                     options.setEnabled("ESShipExtraUpgradeApply", false);
@@ -358,7 +337,17 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
             int level = buff.getUpgrades().getUpgrade(abilitySelected.getKey());
             textPanel.addParagraph(abilitySelected.getName() + "(" + level + " / " + max + ")", Color.yellow);
 
-            options.addOption(OptionName.Repurchase, abilitySelected.getKey().getKey());
+            options.addOption(OptionName.Repurchase  + " (" + level + " / " + max + ")", "ESShipExtraUpgradeApply");
+
+            if (level >= max) {
+                textPanel.addParagraph(TextTip.ability2 + "(" + level + ")", Color.yellow);
+                options.setEnabled("ESShipExtraUpgradeApply", false);
+            } else {
+                boolean isCanLevelUp = appendUpgradeCostText(shipSelected, abilitySelected, level, max);
+                if (!isCanLevelUp) {
+                    options.setEnabled("ESShipExtraUpgradeApply", false);
+                }
+            }
         }
     }
 
@@ -380,15 +369,78 @@ public class Es_ShipQualityDialog extends BaseCommandPlugin {
             textPanel.addParagraph(TextTip.Failure, Color.red);
         }
         if (!Es_ModPlugin.isDebugUpgradeCosts()) {
-            int[] resourceCosts = getUpgradeCosts(shipSelected, abilitySelected, currentLevel, max);
-            playerFleet.getCargo().removeSupplies(resourceCosts[0]);
-            playerFleet.getCargo().removeItems(CargoAPI.CargoItemType.RESOURCES, "volatiles", resourceCosts[1]);
-            playerFleet.getCargo().removeItems(CargoAPI.CargoItemType.RESOURCES, "organics", resourceCosts[2]);
-            playerFleet.getCargo().removeItems(CargoAPI.CargoItemType.RESOURCES, "hand_weapons", resourceCosts[3]);
-            playerFleet.getCargo().removeItems(CargoAPI.CargoItemType.RESOURCES, "metals", resourceCosts[4]);
-            playerFleet.getCargo().removeItems(CargoAPI.CargoItemType.RESOURCES, "rare_metals", resourceCosts[5]);
-            playerFleet.getCargo().removeItems(CargoAPI.CargoItemType.RESOURCES, "heavy_machinery", resourceCosts[6]);
+            float[] resourceCosts = getUpgradeCosts(shipSelected, abilitySelected, currentLevel, max);
+
+            if (currMarket != null
+                    && currMarket.getSubmarket(Submarkets.SUBMARKET_STORAGE) != null
+                    && currMarket.getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo() != null) {
+
+                CargoAPI storageCargo = currMarket.getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo();
+
+                resourceCosts[0] = removeCommodityAndReturnRemainingCost(storageCargo, "supplies", resourceCosts[0]);
+                resourceCosts[1] = removeCommodityAndReturnRemainingCost(storageCargo, "volatiles", resourceCosts[1]);
+                resourceCosts[2] = removeCommodityAndReturnRemainingCost(storageCargo, "organics", resourceCosts[2]);
+                resourceCosts[3] = removeCommodityAndReturnRemainingCost(storageCargo, "hand_weapons", resourceCosts[3]);
+                resourceCosts[4] = removeCommodityAndReturnRemainingCost(storageCargo, "metals", resourceCosts[4]);
+                resourceCosts[5] = removeCommodityAndReturnRemainingCost(storageCargo, "rare_metals", resourceCosts[5]);
+                resourceCosts[6] = removeCommodityAndReturnRemainingCost(storageCargo, "heavy_machinery", resourceCosts[6]);
+            }
+
+            CargoAPI playerCargo = playerFleet.getCargo();
+            removeCommodity(playerCargo, "supplies", resourceCosts[0]);
+            removeCommodity(playerCargo, "volatiles", resourceCosts[1]);
+            removeCommodity(playerCargo, "organics", resourceCosts[2]);
+            removeCommodity(playerCargo, "hand_weapons", resourceCosts[3]);
+            removeCommodity(playerCargo, "metals", resourceCosts[4]);
+            removeCommodity(playerCargo, "rare_metals", resourceCosts[5]);
+            removeCommodity(playerCargo, "heavy_machinery", resourceCosts[6]);
         }
+    }
+
+    private boolean appendUpgradeCostText(FleetMemberAPI shipSelected, Upgrade abilitySelected, int level, int max) {
+        boolean isCanLevelUp = true;
+        if (!Es_ModPlugin.isDebugUpgradeCosts()) {
+            float[] resourceCosts = getUpgradeCosts(shipSelected, abilitySelected, level, max);
+
+            float possibility = 1f;
+            if (!UPGRADE_ALWAYS_SUCCEED && level != 0) {
+                possibility = (float) Math.cos(Math.PI * level * 0.5f / max) * (1f - BASE_FAILURE_MINFACTOR) + BASE_FAILURE_MINFACTOR;
+            }
+
+            textPanel.addParagraph(TextTip.costHeader, Color.green);
+            textPanel.addParagraph("-----------------------", Color.gray);
+
+            for (int i = 0; i < resourceCosts.length; ++i) {
+                String name = RESOURCE_NAME.get(i);
+                float fleetcargo = getFleetCargoMap(playerFleet, currMarket)[i];
+                if (resourceCosts[i] > fleetcargo) {
+                    isCanLevelUp = false;
+                    String suffix = TextTip.tooExpensivePrefix + (int) (resourceCosts[i] - fleetcargo) + TextTip.tooExpensiveSuffix;
+                    textPanel.addParagraph(name + ":" + resourceCosts[i] + suffix, Color.red);
+                } else {
+                    textPanel.addParagraph(name + ":" + resourceCosts[i]);
+                }
+            }
+            textPanel.addParagraph("-----------------------", Color.gray);
+            textPanel.addParagraph(TextTip.ability3);
+            String text1 = Math.round(possibility * 1000f) / 10f + "%";
+            textPanel.appendToLastParagraph(text1);
+            textPanel.highlightLastInLastPara(text1, Color.green);
+            textPanel.appendToLastParagraph(TextTip.ability4);
+        }
+
+        return isCanLevelUp;
+    }
+
+    private void removeCommodity(CargoAPI cargo, String id, float cost) {
+        cargo.removeCommodity(id, cost);
+    }
+
+    private float removeCommodityAndReturnRemainingCost(CargoAPI cargo, String id, float cost) {
+        float current = cargo.getCommodityQuantity(id);
+        float taken = Math.min(current, cost);
+        cargo.removeCommodity(id, taken);
+        return cost - taken;
     }
 
     public FleetMemberAPI getSelectedShip(String shipId) {

@@ -48,10 +48,6 @@ public class Es_ModPlugin extends BaseModPlugin {
 	@SuppressWarnings("unchecked")
 	public static void loadagain(){
 		ShipUpgradeData = (Map<String, ESUpgrades>) Global.getSector().getPersistentData().get(ES_PERSISTENTUPGRADEMAP);
-		Map<String, int[]> oldLevelData = (Map<String, int[]>) Global.getSector().getPersistentData().get("Es_LEVEL_SHIPMAP");
-		if(oldLevelData != null) {
-			Global.getSector().getPersistentData().remove("Es_LEVEL_SHIPMAP");
-		}
 		ShipQualityData = (Map<String, Float>) Global.getSector().getPersistentData().get(ES_PERSISTENTQUALITYMAP);
 	}
 
