@@ -1,5 +1,0 @@
-id,name,quality_f,quality_r,price_f,price_r,time_prepare_f,time_deliver_f,hints,signal
-Es_NCT,自由联合商贸,1,0.2,0.8,0.3,0.6,1.4,NCT,NEU
-Es_BST,黑骷髅峰会,1.2,0.375,1.2,0.15,1,0.6,BST,BON
-Es_BKF,博尔肯基金会,1.3,0.1,2,0.3,1.2,1,BKF,ALF
-Es_SLI,徘徊者中介,0.8,0.05,0.8,0.1,0.8,0.8,SLI,MIL

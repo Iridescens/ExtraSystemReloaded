@@ -7,37 +7,51 @@ RepairAvailable","SetShortcut ESMainMenu ""U"" true",,"25:ESMainMenu:Consider up
 ESMainMenu,DialogOptionSelected,"$option==ESMainMenu","ShowDefaultVisual
 $menuState = ESMainMenu
 $ShipPageIndex = 0
+$ExtraUpgradePageIndex = 0
 SetEnabled ESDeleteUpgradesAll false
 SetTooltip ESDeleteUpgradesAll ""Not implemented yet!""","Welcome to ExtraSystem Reloaded!
-Choose the function you want.","10:ESShipLevel:Enchance ship's performance
-15:ESShipQuality:Consider an overhaul to ship's hull
+Choose the function you want.","15:ESShipQuality:Consider an overhaul to ship's hull
 90:ESDialogBack:Back
 99:ESDeleteUpgradesAll:Clear all ExtraSystem data",
-ESShipLevel,DialogOptionSelected,"$option==ESShipLevel","$menuState = ESShipLevel
-Es_ShipLevelDialog",,,
 ESShipQuality,DialogOptionSelected,"$option==ESShipQuality","$menuState = ESShipQuality
-Es_ShipQualityDialog $ShipPageIndex ShipList",,,
+Es_ShipQualityDialog ShipList $ShipPageIndex",,,
 ,,,,,,
-ESShipQualityPREV,DialogOptionSelected,"$menuState==ESShipQuality
-$option==ESShipQualityPREV","$ShipPageIndex--
-Es_ShipQualityDialog $ShipPageIndex ShipList",,,
-ESShipQualityNEXT,DialogOptionSelected,"$menuState==ESShipQuality
-$option==ESShipQualityNEXT","$ShipPageIndex++
-Es_ShipQualityDialog $ShipPageIndex ShipList",,,
-ESShipQualityPicker,DialogOptionSelected,"$option!=ESShipQualityPREV
-$option!=ESShipQualityNEXT
-$option!=ESShipQualityApply
-$option!=ESShipQuality
-$option!=ESMainMenu
-$option!=ESDialogBack
-$menuState==ESShipQuality","Es_ShipQualityDialog $ShipPageIndex ShipSelected $option
-$ShipSelectedId=$option",,,
-ESShipQualityApply,DialogOptionSelected,"$option==ESShipQualityApply","Es_ShipQualityDialog $ShipPageIndex ApplyUpgrade $ShipSelectedId",,,
+ESShipPickerPREV,DialogOptionSelected,"$menuState==ESShipQuality
+$option==ESShipPickerPREV","$ShipPageIndex--
+Es_ShipQualityDialog ShipList $ShipPageIndex",,,
+ESShipPickerNEXT,DialogOptionSelected,"$menuState==ESShipQuality
+$option==ESShipPickerNEXT","$ShipPageIndex++
+Es_ShipQualityDialog ShipList $ShipPageIndex ",,,
+ESShipPicked,DialogOptionSelected,"Es_ShipPicked exists $option
+$menuState==ESShipQuality","unset $ExtraUpgradePageIndex
+Es_ShipPicked set $option
+Es_ShipQualityDialog ShipSelected",,,
+ESShipQualityPicked,DialogOptionSelected,"Es_ShipPicked get
+$option==ESShipQualityPicked","Es_ShipQualityDialog QualityUpgradeSelected",,,
+ESShipQualityApply,DialogOptionSelected,"Es_ShipPicked get
+$option==ESShipQualityApply","Es_ShipQualityDialog ApplyQualityUpgrade",,,
+ESShipExtraUpgradesPicked,DialogOptionSelected,"Es_ShipPicked get
+$option==ESShipExtraUpgradesPicked","Es_ShipQualityDialog ExtraUpgradesSelected $ExtraUpgradePageIndex",,,
+ESShipExtraUpgradesPREV,DialogOptionSelected,"$menuState==ESShipQuality
+$option==ESShipExtraUpgradesPREV","$ExtraUpgradePageIndex--
+Es_ShipQualityDialog ExtraUpgradesChangedPage $ExtraUpgradePageIndex",,,
+ESShipExtraUpgradesNEXT,DialogOptionSelected,"$menuState==ESShipQuality
+$option==ESShipExtraUpgradesNEXT","$ExtraUpgradePageIndex++
+Es_ShipQualityDialog ExtraUpgradesChangedPage $ExtraUpgradePageIndex ",,,
+ESShipExtraUpgradeConfirm,DialogOptionSelected,"Es_ShipPicked get
+Es_UpgradePicked exists $option
+$menuState==ESShipQuality","Es_UpgradePicked set $option
+Es_ShipQualityDialog ConfirmExtraUpgrade",,,
+ESShipExtraUpgradeApply,DialogOptionSelected,"Es_ShipPicked get
+Es_UpgradePicked get
+$option==ESShipExtraUpgradeApply","Es_ShipQualityDialog ApplyExtraUpgrade",,,
 ,,,,,,
 ESDialogBack,DialogOptionSelected,"$option==ESDialogBack","ShowDefaultVisual
 $menuState = main 0
 FireAll PopulateOptions
 unset $ShipPageIndex
-unset $ShipSelectedId",,,
+unset $ShipSelectedId
+unset $UpgradeId
+unset $ExtraUpgradePageIndex",,,
 ,,,,,,
 
