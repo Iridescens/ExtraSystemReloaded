@@ -132,13 +132,13 @@ public class ESUpgrades {
         return upgrades;
     }
 
-    public static int[] getUpgradeCosts(FleetMemberAPI shipSelected, Upgrade abilitySelected, int level, int max) {
+    public static float[] getUpgradeCosts(FleetMemberAPI shipSelected, Upgrade abilitySelected, int level, int max) {
         try {
             UPGRADE_COST_MULTIPLIERS = Global.getSettings().loadCSV(Es_SR_FILE_PATH);
         } catch (IOException | JSONException e) {
             log.log(Level.ERROR, "Failed to load settings: " + e.getMessage());
         }
-        int[] resourceCosts = new int[7];
+        float[] resourceCosts = new float[7];
 
         float shipQuality = Es_ModPlugin.ShipQualityData.get(shipSelected.getId());
         float hullBaseValue = shipSelected.getHullSpec().getBaseValue();
@@ -179,7 +179,7 @@ public class ESUpgrades {
         return resourceCosts;
     }
 
-    public static int getUpgradeCost(float multiplier, float baseValue, float shipQuality, float upgradeValueByHull) {
+    public static float getUpgradeCost(float multiplier, float baseValue, float shipQuality, float upgradeValueByHull) {
         return Math.round(multiplier * upgradeValueByHull / baseValue * shipQuality / DIVIDING_RATIO);
     }
 }

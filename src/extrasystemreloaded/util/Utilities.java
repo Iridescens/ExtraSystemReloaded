@@ -3,6 +3,8 @@ package extrasystemreloaded.util;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -48,8 +50,26 @@ public class Utilities {
         public static String Repurchase = Global.getSettings().getString("Options", "repurchase");
     }
 
-    public static float[] getFleetCargoMap(CampaignFleetAPI fleet) {
+    public static float[] getFleetCargoMap(CampaignFleetAPI fleet, MarketAPI market) {
         List<CargoStackAPI> cargosList = fleet.getCargo().getStacksCopy();
+
+        float[] playerCargo = getCargoFromStacks(cargosList);
+
+        //add cargo from submarket if it exists
+        if (market != null && market.getSubmarket(Submarkets.SUBMARKET_STORAGE) != null && market.getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo() != null) {
+            cargosList = market.getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo().getStacksCopy();
+
+            int i = 0;
+            for(float cargo : getCargoFromStacks(cargosList)) {
+                playerCargo[i] += cargo;
+                i++;
+            }
+        }
+
+        return playerCargo;
+    }
+
+    private static float[] getCargoFromStacks(List<CargoStackAPI> cargoStackAPIList) {
         float supplies = 0;
         float volatiles = 0;
         float organics = 0;
@@ -58,38 +78,40 @@ public class Utilities {
         float rare_metals = 0;
         float heavy_machinery = 0;
 
-        for (CargoStackAPI cargoStackAPI : cargosList) {
+
+        for (CargoStackAPI cargoStackAPI : cargoStackAPIList) {
             String id = cargoStackAPI.getCommodityId();
-            if ( id == null ) {
+            if (id == null) {
                 continue;
             }
             switch (id) {
-            case "supplies":
-                supplies+=cargoStackAPI.getSize();
-                break;
-            case "volatiles":
-                volatiles+=cargoStackAPI.getSize();
-                break;
-            case "organics":
-                organics+=cargoStackAPI.getSize();
-                break;
-            case "hand_weapons":
-                hand_weapons+=cargoStackAPI.getSize();
-                break;
-            case "metals":
-                metals+=cargoStackAPI.getSize();
-                break;
-            case "rare_metals":
-                rare_metals+=cargoStackAPI.getSize();
-                break;
-            case "heavy_machinery":
-                heavy_machinery+=cargoStackAPI.getSize();
-                break;
-            default:
-                break;
+                case "supplies":
+                    supplies += cargoStackAPI.getSize();
+                    break;
+                case "volatiles":
+                    volatiles += cargoStackAPI.getSize();
+                    break;
+                case "organics":
+                    organics += cargoStackAPI.getSize();
+                    break;
+                case "hand_weapons":
+                    hand_weapons += cargoStackAPI.getSize();
+                    break;
+                case "metals":
+                    metals += cargoStackAPI.getSize();
+                    break;
+                case "rare_metals":
+                    rare_metals += cargoStackAPI.getSize();
+                    break;
+                case "heavy_machinery":
+                    heavy_machinery += cargoStackAPI.getSize();
+                    break;
+                default:
+                    break;
             }
         }
-        return new float[]{supplies,volatiles,organics,hand_weapons,metals,rare_metals,heavy_machinery};
+
+        return new float[]{supplies, volatiles, organics, hand_weapons, metals, rare_metals, heavy_machinery};
     }
 
     public static String getQualityName(float arg){
