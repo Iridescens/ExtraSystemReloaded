@@ -215,7 +215,6 @@ public class Es_ShipLevelFleetData implements Buff{
 						expired = true;
 						ShipUpgradeData.remove(buffedShip.getId());
 						ShipQualityData.remove(buffedShip.getId());
-						ExtraSystemHM.getFleetMemberAPIMap().remove(buffedShip.getStats());
 						removeESHullModsFromVariant(buffedShip.getVariant());
 				}
             }

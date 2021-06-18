@@ -17,17 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 public class ExtraSystemHM extends BaseHullMod {
-    private static Map<MutableShipStatsAPI, FleetMemberAPI> fleetMemberAPIMap = new HashMap<>();
-
-    public static Map<MutableShipStatsAPI, FleetMemberAPI> getFleetMemberAPIMap() {
-        return fleetMemberAPIMap;
-    }
-
     @Override
     public void advanceInCombat(ShipAPI ship, float amount) {
-        super.advanceInCombat(ship, amount);
-
-        FleetMemberAPI fm = findShip(ship.getMutableStats());
+        FleetMemberAPI fm = ship.getFleetMember();
         if ( fm == null || fm.getBuffManager() == null ) { return;}
         if ( fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID) == null ) {
             return;
@@ -44,7 +36,7 @@ public class ExtraSystemHM extends BaseHullMod {
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
-        FleetMemberAPI fm = findShip(stats);
+        FleetMemberAPI fm = stats.getFleetMember();
         if ( fm == null || fm.getBuffManager() == null ) { return;}
         if ( fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID) == null ) {
             return;
@@ -59,57 +51,16 @@ public class ExtraSystemHM extends BaseHullMod {
         }
     }
 
-    private FleetMemberAPI findShip(MutableShipStatsAPI stats) {
-        if(fleetMemberAPIMap.containsKey(stats)) {
-            return fleetMemberAPIMap.get(stats);
-        }
-
-        String key = stats.getVariant().getHullVariantId();
-        List<FleetMemberAPI> members;
-
-        try {
-            members = Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy();
-        } catch (NullPointerException e) {
-            return null;
-        }
-
-        try {
-            for (CampaignFleetAPI campaignFleetAPI : Global.getSector().getCurrentLocation().getFleets()) {
-                if ( ! campaignFleetAPI.equals( Global.getSector().getPlayerFleet() ) ) {
-                    members.addAll(campaignFleetAPI.getFleetData().getMembersListCopy());
-                }
-            }
-        } catch (Exception e) {
-            return null;
-        }
-
-        if(stats.getEntity() != null) {
-            if (stats.getEntity() instanceof FleetMemberAPI) {
-                fleetMemberAPIMap.put(stats, (FleetMemberAPI) stats.getEntity());
-                return (FleetMemberAPI) stats.getEntity();
-            }
-        }
-
-        for (FleetMemberAPI s : members) {
-            if (key.contains(s.getVariant().getHullVariantId()) || s == stats.getEntity()) {
-                fleetMemberAPIMap.put(stats, s);
-                return s;
-            }
-        }
-
-        return null;
-    }
-
     @Override
     public String getDescriptionParam(int index, ShipAPI.HullSize hullSize, ShipAPI ship) {
-        FleetMemberAPI fm = findShip(ship.getMutableStats());
+        FleetMemberAPI fm = ship.getFleetMember();
         if(fm == null) return "SHIP NOT FOUND";
         return fm.getShipName();
     }
 
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI.HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
-        FleetMemberAPI fm = findShip(ship.getMutableStats());
+        FleetMemberAPI fm = ship.getFleetMember();
         if (fm == null) { return; }
         Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
         if (buff == null) { return; }

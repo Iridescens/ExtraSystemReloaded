@@ -55,8 +55,8 @@ public class Logistics extends Upgrade {
 
         stats.getFuelUseMod().modifyPercent(Es_LEVEL_FUNCTION_ID, level * quality * -2.5f);
 
-        stats.getSuppliesPerMonth().modifyPercent(Es_LEVEL_FUNCTION_ID, level * quality * 2f);
-        stats.getSuppliesToRecover().modifyPercent(Es_LEVEL_FUNCTION_ID, level * quality * 2f);
+        stats.getSuppliesPerMonth().modifyPercent(Es_LEVEL_FUNCTION_ID, level * quality * -2f);
+        stats.getSuppliesToRecover().modifyPercent(Es_LEVEL_FUNCTION_ID, level * quality * -2f);
     }
 
     @Override

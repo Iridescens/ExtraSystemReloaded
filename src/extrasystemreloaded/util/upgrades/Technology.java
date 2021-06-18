@@ -44,7 +44,7 @@ public class Technology extends Upgrade {
     @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float hullSizeFactor, int level, float quality) {
         stats.getSensorProfile().modifyPercent(Es_LEVEL_FUNCTION_ID, level * quality * -1f);
-        stats.getSensorStrength().modifyPercent(Es_LEVEL_FUNCTION_ID, level * quality * -1f);
+        stats.getSensorStrength().modifyPercent(Es_LEVEL_FUNCTION_ID, level * quality * 1f);
 
         stats.getFluxCapacity().modifyPercent(Es_LEVEL_FUNCTION_ID, level * quality * 2f);
         stats.getFluxDissipation().modifyPercent(Es_LEVEL_FUNCTION_ID, level * quality * 2f);
@@ -88,8 +88,15 @@ public class Technology extends Upgrade {
 
         if(levels.getUpgrade(this.getKey()) > 0) {
             tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(this.getLevel(levels)));
-            tooltip.addPara("  Flux capacity and dissipation: +%s (%s,%s)", 0, Misc.getHighlightColor(), String.format("%.3f", fm.getStats().getFluxCapacity().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue()) + "%", "+" + String.format("%.0f", fm.getStats().getFluxCapacity().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue() * fm.getStats().getFluxCapacity().getBaseValue() * 0.01f), "+" + String.format("%.0f", fm.getStats().getFluxDissipation().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue() * fm.getStats().getFluxDissipation().getBaseValue() * 0.01f));
+            tooltip.addPara("  Flux capacity and dissipation: +%s (%s,%s)", 0, Misc.getHighlightColor(),
+                    String.format("%.3f", fm.getStats().getFluxCapacity().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue()) + "%",
+                    "+" + String.format("%.0f", fm.getStats().getFluxCapacity().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue() * fm.getStats().getFluxCapacity().getBaseValue() * 0.01f),
+                    "+" + String.format("%.0f", fm.getStats().getFluxDissipation().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue() * fm.getStats().getFluxDissipation().getBaseValue() * 0.01f));
             tooltip.addPara("  Weapon flux cost: %s", 0, Misc.getHighlightColor(), String.format("%.3f", fm.getStats().getBallisticWeaponFluxCostMod().getPercentBonus(Es_LEVEL_FUNCTION_ID).getValue()) + "%");
+            tooltip.addPara("  Sensor profile and range: %s (%s,%s)", 0, Misc.getHighlightColor(),
+                    String.format("%.3f", fm.getStats().getSensorProfile().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue()) + "%",
+                    String.format("+%.0f", fm.getStats().getSensorProfile().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue() * fm.getStats().getSensorProfile().getBaseValue() * 0.01),
+                    String.format("+%.0f", fm.getStats().getSensorStrength().getPercentStatMod(Es_LEVEL_FUNCTION_ID).getValue() * fm.getStats().getSensorStrength().getBaseValue() * 0.01));
 
             if (fm.getHullSpec() != null &&
                     (fm.getHullSpec().getShieldType() == ShieldAPI.ShieldType.FRONT ||
