@@ -18,21 +18,21 @@ public class Technology extends Upgrade {
     private static final float FLUX_SCALAR = 20f;
     private static final float FLUX_QUALITY_MULT = 3.15f;
 
-    private static final float SHIELD_FLUX_SEC_SCALAR = 30f;
+    private static final float SHIELD_FLUX_SEC_SCALAR = -30f;
     private static final float SHIELD_FLUX_QUALITY_MULT = 2.25f;
 
-    private static final float SHIELD_FLUX_DAM_SCALAR = 66f;
+    private static final float SHIELD_FLUX_DAM_SCALAR = -66f;
     private static final float SHIELD_FLUX_DAM_QUALITY_MULT = 0.3f;
 
     private static final float SHIELD_UNFOLD_RATE_MULT = 2f;
 
-    private static final float PHASE_FLUX_SEC_SCALAR = 18f;
+    private static final float PHASE_FLUX_SEC_SCALAR = -18f;
     private static final float PHASE_FLUX_QUALITY_MULT = 3f;
 
-    private static final float PHASE_ACTIVATE_FLUX_SCALAR = 50f;
+    private static final float PHASE_ACTIVATE_FLUX_SCALAR = -50f;
     private static final float PHASE_ACTIVATE_FLUX_QUALITY_MULT = 1.5f;
 
-    private static final float PHASE_COOLDOWN_MULT = 0.75f;
+    private static final float PHASE_COOLDOWN_MULT = -0.75f;
 
     @Override
     public String getKey() {
@@ -92,11 +92,11 @@ public class Technology extends Upgrade {
         if (level > 0) {
             tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-            StatUtils.addDoublePercentBonusToTooltip(tooltip, "  Flux capacity and dissipation: +%s (%s,%s)",
+            StatUtils.addDoublePercentBonusToTooltip(tooltip, "  Flux capacity and dissipation: +%s (%s, %s)",
                     fm.getStats().getFluxCapacity().getPercentStatMod(this.getBuffId()).getValue(),
                     fm.getStats().getFluxCapacity().getBaseValue(), fm.getStats().getFluxDissipation().getBaseValue());
 
-            StatUtils.addDoublePercentBonusToTooltip(tooltip, "  Sensor strength and profile: +/- %s (%s,%s)",
+            StatUtils.addDoublePercentBonusToTooltip(tooltip, "  Sensor strength and profile: +/- %s (%s, %s)",
                     fm.getStats().getSensorStrength().getPercentStatMod(this.getBuffId()).getValue(),
                     fm.getStats().getSensorStrength().getBaseValue(), fm.getStats().getSensorProfile().getBaseValue());
 
