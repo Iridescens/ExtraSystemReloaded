@@ -122,18 +122,18 @@ public class Utilities {
             text = Global.getSettings().getString("QualityName", "rough");
         }else if (isInside(arg, 0.8f, 0.95f)) {
             text = Global.getSettings().getString("QualityName", "crude");
-        }else if (isInside(arg, 0.95f, 1.1f)) {
+        }else if (isInside(arg, 0.95f, 1.33f)) {
             text = Global.getSettings().getString("QualityName", "normal");
-        }else if (isInside(arg, 1.1f, 1.25f)) {
+        }else if (isInside(arg, 1.33f, 1.66f)) {
             text = Global.getSettings().getString("QualityName", "good");
-        }else if (isInside(arg, 1.25f, 1.4f)) {
+        }else if (isInside(arg, 1.66f, 2.1f)) {
             text = Global.getSettings().getString("QualityName", "superior");
-        }else if (isInside(arg, 1.4f, 1.5f)) {
+        }else if (isInside(arg, 2.1f, 2.5f)) {
             text = Global.getSettings().getString("QualityName", "perfect");
-        }else if (arg == 1.5f) {
+        }else if (arg < 3f) {
             text = Global.getSettings().getString("QualityName", "s_perfect");
-        }else
-            text = "(WTF?!)";
+        } else
+            text = Global.getSettings().getString("QualityName", "domain");
 
         return text;
     }
@@ -167,4 +167,41 @@ public class Utilities {
     public static float diminishingReturns(float level, float scalar, float cap) {
         return cap * (level / (level + scalar));
     }
+
+    public static void removePlayerSpecialItem(String id)
+    {
+        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        if (playerFleet == null)
+            return;
+        List<CargoStackAPI> playerCargoStacks = playerFleet.getCargo().getStacksCopy();
+
+        for (CargoStackAPI cargoStack : playerCargoStacks) {
+            if (cargoStack.isSpecialStack() && cargoStack.getSpecialDataIfSpecial().getId().equals(id)) {
+                cargoStack.subtract(1);
+                if (cargoStack.getSize() <= 0)
+                    playerFleet.getCargo().removeStack(cargoStack);
+                return;
+            }
+        }
+    }
+
+    public static boolean playerHasSpecialItem(String id)
+    {
+        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        if (playerFleet == null)
+            return false;
+        List<CargoStackAPI> playerCargoStacks = playerFleet.getCargo().getStacksCopy();
+
+        System.out.println("Searching for special item " + id + ".");
+
+        for (CargoStackAPI cargoStack : playerCargoStacks) {
+            if (cargoStack.isSpecialStack() && cargoStack.getSpecialDataIfSpecial().getId().equals(id) && cargoStack.getSize() > 0) {
+                System.out.println("Found special item " + cargoStack.getDisplayName() + ", with size " + cargoStack.getSize() + ".");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

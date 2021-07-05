@@ -4,17 +4,13 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
-import extrasystemreloaded.util.ESUpgrades;
-import org.apache.log4j.Level;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static extrasystemreloaded.util.ESUpgrades.UPGRADES;
+import static extrasystemreloaded.util.upgrades.Upgrades.UPGRADES;
 
 public class Es_UpgradePicked extends BaseCommandPlugin {
     private static final org.apache.log4j.Logger log = Global.getLogger(Es_UpgradePicked.class);
@@ -31,9 +27,8 @@ public class Es_UpgradePicked extends BaseCommandPlugin {
                     break;
                 case "exists":
                     String upgradeId = params.get(1).getString(memoryMap);
-                    log.log(Level.INFO, String.format("upgradeID: [%s]", upgradeId));
-                    for(ESUpgrades.UpgradeKey upgradeKey : UPGRADES.keySet()) {
-                        if(upgradeKey.compareKey(upgradeId)) {
+                    for(String upgradeKey : UPGRADES.keySet()) {
+                        if(upgradeKey.equals(upgradeId)) {
                             return true;
                         }
                     }
@@ -41,7 +36,6 @@ public class Es_UpgradePicked extends BaseCommandPlugin {
                 case "get":
                     return memory.get("$UpgradeId") != null;
                 case "set":
-                    log.log(Level.INFO, String.format("upgradeID: [%s]", params.get(1).getString(memoryMap)));
                     memory.set("$UpgradeId", params.get(1).getString(memoryMap));
                 default:
                     break;

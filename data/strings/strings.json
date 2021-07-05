@@ -10,14 +10,19 @@
 	},
 	"AbilityName":{
 		"Durability":"Durability",
-		"WeaponProficiency":"Weaponry",
+		"Weapons":"Weaponry",
 		"Logistics":"Logistics",
 		"Mobility":"Mobility",
 		"Technology":"Technology",
-		"Ordnance":"Ordnance",
 		"Fighters":"Fighters",
 		"Subsystems":"Subsystems",
-		"Aggression": "Aggression Protocol"
+		"Magazines": "Magazines",
+
+		"SpooledFeeders":"Spooled Ammo Feeders",
+		"PlasmaCatalyst":"Plasma Flux Catalyst",
+		"FusionIgnition":"Fusion Missile Ignitors",
+		"HangarForge": "Hangar Forge",
+		"EqualizerCore": "Equalizer Core"
 	},
 	"Options":{
 		"leave":"Leave",
@@ -36,6 +41,7 @@
 		"good":"(good)",
 		"superior":"(superior)",
 		"perfect":"(perfect)",
-		"s_perfect":"(ultimate)"
+		"s_perfect":"(ultimate)",
+		"domain":"(domain)"
 	}
 }

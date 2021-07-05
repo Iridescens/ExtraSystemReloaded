@@ -6,7 +6,8 @@
 	"upgradeCostMaxFactor":0.25,	
 	"upgradeCostMinFactor":0.05,	# bring this closer to 0, or even set to 0, if you think capitals are ridiculously expensive
 	"dividingRatio":20.0,	# higher is cheaper
-	"enabledAIUpgrade":false,	# do AI upgrade it's ships?,
+	"enabledAIUpgrade":false,	# do AI upgrade it's ships?
+	"maxQuality":3.0, #max quality for any ship
 
 	"ruleCommandPackages":[
 		"extrasystemreloaded.campaign.rulecmd",

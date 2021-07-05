@@ -3,154 +3,153 @@ package extrasystemreloaded.campaign;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BuffManagerAPI.Buff;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.util.IntervalUtil;
 import extrasystemreloaded.Es_ModPlugin;
-import extrasystemreloaded.hullmods.ExtraSystemHM;
-import extrasystemreloaded.util.ESUpgrades;
+import extrasystemreloaded.util.ExtraSystems;
+import extrasystemreloaded.util.upgrades.Upgrade;
+import extrasystemreloaded.util.upgrades.Upgrades;
+import org.apache.log4j.Logger;
 import org.lazywizard.console.Console;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import extrasystemreloaded.util.ESUpgrades.UpgradeKey;
 import static extrasystemreloaded.Es_ModPlugin.ShipUpgradeData;
-import static extrasystemreloaded.Es_ModPlugin.ShipQualityData;
-import static extrasystemreloaded.util.ESUpgrades.UPGRADES;
+import static extrasystemreloaded.util.Utilities.RESOURCE_NAME;
+import static extrasystemreloaded.util.Utilities.getFleetCargoMap;
 
-public class Es_ShipLevelFleetData implements Buff{
+public class Es_ShipLevelFleetData implements Buff {
+	private static final Logger log = Logger.getLogger(Es_ShipLevelFleetData.class);
     public static final String Es_LEVEL_FUNCTION_ID = "Es_ShipLevelUp";
-	private static final boolean QUALITYENABLED = Global.getSettings().getBoolean("useShipIdForQualityCalculation");
-	private static final float USERQUALITY = Global.getSettings().getFloat("baseQuality");
+
 	private final IntervalUtil interval = new IntervalUtil(2f, 2f);
 	private FleetMemberAPI buffedShip = null;
 	private boolean expired = false;
-	
-	private ESUpgrades UpgradesObject;
-	private float qualityFactor = 0f;
 
-	private float hullSizeFactor = 1f;
-	private static final Map<HullSize, Float> mag = new HashMap<>();//иѓЅеЉ›дёЉеЌ‡еЏ‚ж•°
-	static {
-		mag.put(HullSize.FRIGATE, 1f);//жЉ¤еЌ«и€°
-		mag.put(HullSize.DESTROYER, 0.666f);//й©±йЂђи€°
-		mag.put(HullSize.CRUISER, 0.5f);//е·Ўжґ‹и€°
-		mag.put(HullSize.CAPITAL_SHIP, 0.4f);//ж€�е€—и€°
-	}
+	private ExtraSystems UpgradesObject;
 
-	//debug-Logger
-	private static void debugMessage(String Text) {
-		boolean DEBUG = false; //set to false once done
-		if (DEBUG) {
-			Global.getLogger(Es_ShipLevelFleetData.class).info(Text);
-		}
-	}
-	
 	public Es_ShipLevelFleetData(FleetMemberAPI memberAPI) { //new ship
-		buffedShip =memberAPI;
-		if (mag.containsKey(memberAPI.getHullSpec().getHullSize())) {			
-			hullSizeFactor = mag.get(memberAPI.getHullSpec().getHullSize());
-		}
-		qualityFactor = getQuality(memberAPI);
-
-		UpgradesObject = new ESUpgrades();
-
-        ShipUpgradeData.put(memberAPI.getId(),this.getUpgrades());
-		ShipQualityData.put(memberAPI.getId(),qualityFactor);
-	}
-
-	public Es_ShipLevelFleetData(FleetMemberAPI memberAPI, ESUpgrades upgrades) { //random AI stats
-		buffedShip =memberAPI;
-		if (mag.containsKey(memberAPI.getHullSpec().getHullSize())) {
-			hullSizeFactor = mag.get(memberAPI.getHullSpec().getHullSize());
-		}
-		qualityFactor = getQuality(memberAPI);
-
-		UpgradesObject = upgrades;
-
-		ShipUpgradeData.put(memberAPI.getId(),this.getUpgrades());
-		ShipQualityData.put(memberAPI.getId(),qualityFactor);
-	}
-
-	public Es_ShipLevelFleetData(FleetMemberAPI memberAPI, ESUpgrades upgrades, float qualityForced) { //quality upgrade
 		buffedShip = memberAPI;
-		if (mag.containsKey(memberAPI.getHullSpec().getHullSize())) {
-			hullSizeFactor = mag.get(memberAPI.getHullSpec().getHullSize());
+		if(ShipUpgradeData.containsKey(memberAPI.getId())) {
+			UpgradesObject = ShipUpgradeData.get(memberAPI.getId());
+		} else {
+			UpgradesObject = new ExtraSystems(memberAPI);
 		}
-		qualityFactor = qualityForced;
+	}
 
+	public Es_ShipLevelFleetData(FleetMemberAPI memberAPI, ExtraSystems upgrades) { //random AI stats
+		buffedShip = memberAPI;
 		UpgradesObject = upgrades;
-
-		ShipUpgradeData.put(memberAPI.getId(),this.getUpgrades());
-		ShipQualityData.put(memberAPI.getId(),qualityFactor);
 	}
 
-	public float getQualityFactor(){
-		return qualityFactor;
+	public void save() {
+		Es_ModPlugin.saveData(buffedShip.getId(), this.getExtraSystems());
 	}
 
-	public float getHullSizeFactor() {
-		return hullSizeFactor;
+	public String getCanUpgradeWithImpossibleTooltip() {
+		return getCanUpgradeWithImpossibleTooltip(null, null);
+	}
+
+	public String getCanUpgradeWithImpossibleTooltip(Upgrade upgrade, MarketAPI market) {
+		String returnValue = null;
+		FleetMemberAPI shipSelected = this.buffedShip;
+		if(upgrade != null) {
+			if(this.getExtraSystems().getUpgrade(upgrade) >= upgrade.getMaxLevel(shipSelected.getHullSpec().getHullSize())) {
+				returnValue = "This ship cannot support any more upgrades of this type.";
+			} else {
+				returnValue = canUpgradeByResourceCosts(shipSelected, market, upgrade, this.getExtraSystems().getQuality(this.buffedShip));
+			}
+		}
+		return returnValue;
+	}
+
+	private String canUpgradeByResourceCosts(FleetMemberAPI shipSelected, MarketAPI market, Upgrade upgrade, float qualityFactor) {
+		if(Es_ModPlugin.isDebugUpgradeCosts()) {
+			return null;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		float[] resourceCosts = Upgrades.getUpgradeCosts(shipSelected, upgrade, this.getExtraSystems().getUpgrade(upgrade), qualityFactor);
+		for (int i = 0; i < resourceCosts.length; ++i) {
+			String name = RESOURCE_NAME.get(i);
+
+			float fleetcargo = getFleetCargoMap(shipSelected.getFleetData().getFleet(), market)[i];
+			if (resourceCosts[i] > fleetcargo) {
+				sb.append("\n");
+				sb.append((int) (resourceCosts[i] - fleetcargo));
+				sb.append(" ");
+				sb.append(name);
+			}
+		}
+
+		if(sb.length() == 0) {
+			return null;
+		}
+
+		return "This upgrade requires more resources: " + sb.toString();
 	}
 
 	@Override
 	public void apply(FleetMemberAPI member) {
-		if (ShipQualityData ==null || ShipUpgradeData ==null) {
-			return;
-		}
-		ESUpgrades levels = getUpgrades();
-
 		if (member.getVariant() == null) {
 			return;
+		} else if(member.getVariant().isStockVariant()) {
+			ShipVariantAPI v = member.getVariant().clone();
+			v.setSource(VariantSource.REFIT);
+			member.setVariant(v, false, false);
 		}
 
-		if ( levels.hasUpgrades() ) {
-			ShipVariantAPI v = member.getVariant();
+		ExtraSystems levels = getExtraSystems();
+		if (levels.shouldApplyHullmod()) {
+			ShipVariantAPI shipVariant = member.getVariant();
 
-				v = v.clone();
-				v.setGoalVariant(false);
-				v.setSource(VariantSource.REFIT);
-				member.setVariant(v, false, false);
-
-			v.setHullVariantId(Es_ModPlugin.VARIANT_PREFIX + member.getId());
-			removeESHullModsFromVariant(v);
-
-			int ordnanceLevel = Math.min(levels.getUpgrade(UpgradeKey.ORDNANCE), UPGRADES.get(UpgradeKey.ORDNANCE).getMaxLevel(v.getHullSize()));
-			v.addPermaMod("es_shiplevelHM" + ordnanceLevel);
-
-			List<String> slots = v.getModuleSlots();
-			if (slots == null || slots.isEmpty()) {
-				member.updateStats();
-				return;
+			if(shipVariant.hasHullMod("es_shiplevelHM")) {
+				shipVariant.removeMod("es_shiplevelHM");
 			}
-			for (int i = 0; i < slots.size(); ++i) {
-				ShipVariantAPI module = v.getModuleVariant(slots.get(i));
 
-				if (module == null) { continue; }
-					module = module.clone();
-					module.setGoalVariant(false);
-					module.setSource(VariantSource.REFIT);
-					v.setModuleVariant(slots.get(i), module);
+			shipVariant = shipVariant.clone();
+			shipVariant.setGoalVariant(false);
+			shipVariant.setSource(VariantSource.REFIT);
+			shipVariant.setHullVariantId(Es_ModPlugin.VARIANT_PREFIX + member.getId());
 
-				module.setHullVariantId(
-						module.getHullVariantId().contains(v.getHullVariantId()) ?
-								module.getHullVariantId() :
-								v.getHullVariantId() + "_" + module.getHullVariantId() );
-				module.addPermaMod("es_shiplevelHM" + ordnanceLevel);
+
+			member.setVariant(shipVariant, false, false);
+
+			removeESHullModsFromVariant(shipVariant);
+
+			shipVariant.addPermaMod("es_shiplevelHM");
+
+			List<String> slots = shipVariant.getModuleSlots();
+
+			if(slots != null && !slots.isEmpty()) {
+				for (int i = 0; i < slots.size(); ++i) {
+					ShipVariantAPI module = shipVariant.getModuleVariant(slots.get(i));
+
+					if (module != null) {
+						module = module.clone();
+						module.setGoalVariant(false);
+						module.setSource(VariantSource.REFIT);
+						shipVariant.setModuleVariant(slots.get(i), module);
+
+						module.setHullVariantId(
+								module.getHullVariantId().contains(shipVariant.getHullVariantId()) ?
+										module.getHullVariantId() :
+										shipVariant.getHullVariantId() + "_" + module.getHullVariantId());
+						module.addPermaMod("es_shiplevelHM");
+					}
+				}
 			}
+
+			member.updateStats();
 		}
-		member.updateStats();
 	}
 
 	public static void removeESHullModsFromVariant(ShipVariantAPI v) {
-		for (int i = 0; i <= UPGRADES.get(UpgradeKey.ORDNANCE).getMaxLevel(v.getHullSize()); ++i) {
-			v.removePermaMod("es_shiplevelHM"+i);
-		}
+		v.removePermaMod("es_shiplevelHM");
 
 		List<String> slots = v.getModuleSlots();
 		if ((slots == null) || slots.isEmpty()) { return; }
@@ -205,53 +204,22 @@ public class Es_ShipLevelFleetData implements Buff{
 	@Override
 	public void advance(float days) {
 		interval.advance(days);
-        if (interval.intervalElapsed()) {
-//			removeESHullmodFromAutoFitGoalVariants();
-        	if (buffedShip != null) {
-                if (buffedShip.getFleetData() == null ||
+		if (interval.intervalElapsed()) {
+			if (buffedShip != null && (
+					buffedShip.getFleetData() == null ||
 					buffedShip.getFleetData().getFleet() == null ||
 					buffedShip.getFleetData().getFleet().isAIMode() ||
-                    !buffedShip.getFleetData().getFleet().isAlive() ) {
-						expired = true;
-						ShipUpgradeData.remove(buffedShip.getId());
-						ShipQualityData.remove(buffedShip.getId());
-						removeESHullModsFromVariant(buffedShip.getVariant());
-				}
-            }
-        }
+					!buffedShip.getFleetData().getFleet().isAlive())) {
+				expired = true;
+				Es_ModPlugin.removeData(buffedShip.getId());
+				removeESHullModsFromVariant(buffedShip.getVariant());
+			} else if (buffedShip == null) {
+				expired = true;
+			}
+		}
 	}
 
-	public ESUpgrades getUpgrades(){	//иї”е›ћз­‰зє§ж•°з»„
+	public ExtraSystems getExtraSystems() {
 		return UpgradesObject;
 	}
-
-	private float getQuality(FleetMemberAPI member) {
-        if (QUALITYENABLED) {
-
-            if (ShipQualityData !=null) {
-                if (ShipQualityData.containsKey(member.getId())) {
-                    return ShipQualityData.get(member.getId());
-                }
-            }
-
-			String id = member.getId();
-			char[] ids = id.toCharArray();
-			float sum = 0f;
-			for (int i = 0; i < ids.length; i++) {
-				sum += ids[i];
-				if ( i%2 == 0 ) {
-					sum *= ids[i];
-				} else {
-					sum /= ids[i];
-				}
-			}
-			while( sum > 1f ) {
-				sum /= 10f;
-			}
-			sum += 0.5f;
-			return sum;
-		}
-		else return ( ((USERQUALITY >= 0f) && (USERQUALITY <= 1.5f)) ? USERQUALITY : 1.0f);
-	}
-
 }
