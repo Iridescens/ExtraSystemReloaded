@@ -30,8 +30,11 @@ public class FleetMemberUtils {
     }
 
     private static FleetMemberAPI searchFleetForStats(CampaignFleetAPI fleet, MutableShipStatsAPI stats) {
+        if(fleet == null)
+            return null;
+
         FleetMemberAPI fm = null;
-        for(FleetMemberAPI member : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
+        for(FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
             if(member.isFighterWing()) continue;
             if(member.getStats() == stats) {
                 fm = member;
