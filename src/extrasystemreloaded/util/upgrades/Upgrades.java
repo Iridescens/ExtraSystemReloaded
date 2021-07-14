@@ -1,14 +1,17 @@
 package extrasystemreloaded.util.upgrades;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.util.upgrades.impl.*;
 import org.apache.log4j.Level;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +22,7 @@ public class Upgrades {
 
     public static final Map<String, Upgrade> UPGRADES = new HashMap<>();
     public static final List<Upgrade> UPGRADES_LIST = new ArrayList<>();
+    private static final List<String> RESOURCES_LIST = new ArrayList<>();
 
     private static final float[] CARGO_BASE_VALUE ={100,250,30,500,30,200,150};//supplies,volatiles,organics,hand_weapons,metals,rare_metals,heavy_machinery
 
@@ -31,6 +35,14 @@ public class Upgrades {
         Upgrades.addUpgrade(new Fighters());
         Upgrades.addUpgrade(new Subsystems());
         Upgrades.addUpgrade(new Magazines());
+
+        RESOURCES_LIST.add("supplies");
+        RESOURCES_LIST.add("volatiles");
+        RESOURCES_LIST.add("organics");
+        RESOURCES_LIST.add("hand_weapons");
+        RESOURCES_LIST.add("metals");
+        RESOURCES_LIST.add("rare_metals");
+        RESOURCES_LIST.add("heavy_machinery");
     }
 
     public static void addUpgrade(Upgrade upgrade) {
@@ -63,26 +75,10 @@ public class Upgrades {
             for (int j = 0; j < Es_ModPlugin.getUpgradeCostMultipliers().length(); j++) {
                 final JSONObject entry = Es_ModPlugin.getUpgradeCostMultipliers().getJSONObject(j);
                 if (abilitySelected.getKey().equals(entry.getString("key"))) {
-                    float supplyRatio = (float) entry.getDouble("supplies");
-                    resourceCosts[0] = getUpgradeCost(supplyRatio, CARGO_BASE_VALUE[0], qualityFactor, upgradeCostByHull);
-
-                    float volatileRatio = (float) entry.getDouble("volatiles");
-                    resourceCosts[1] = getUpgradeCost(volatileRatio, CARGO_BASE_VALUE[1], qualityFactor, upgradeCostByHull);
-
-                    float organicsRatio = (float) entry.getDouble("organics");
-                    resourceCosts[2] = getUpgradeCost(organicsRatio, CARGO_BASE_VALUE[2], qualityFactor, upgradeCostByHull);
-
-                    float heavyWeaponRatio = (float) entry.getDouble("hand_weapons");
-                    resourceCosts[3] = getUpgradeCost(heavyWeaponRatio, CARGO_BASE_VALUE[3], qualityFactor, upgradeCostByHull);
-
-                    float metalsRatio = (float) entry.getDouble("metals");
-                    resourceCosts[4] = getUpgradeCost(metalsRatio, CARGO_BASE_VALUE[4], qualityFactor, upgradeCostByHull);
-
-                    float rareMetalRatio = (float) entry.getDouble("rare_metals");
-                    resourceCosts[5] = getUpgradeCost(rareMetalRatio, CARGO_BASE_VALUE[5], qualityFactor, upgradeCostByHull);
-
-                    float machineryRatio = (float) entry.getDouble("heavy_machinery");
-                    resourceCosts[6] = getUpgradeCost(machineryRatio, CARGO_BASE_VALUE[6], qualityFactor, upgradeCostByHull);
+                    for(int i = 0; i < 7; i++) {
+                        float ratio = (float) entry.getDouble(RESOURCES_LIST.get(i));
+                        resourceCosts[i] = getUpgradeCost(ratio, CARGO_BASE_VALUE[i], qualityFactor, upgradeCostByHull);
+                    }
                     break;
                 }
             }
@@ -96,29 +92,17 @@ public class Upgrades {
         return Math.round(multiplier * upgradeValueByHull / baseValue * shipQuality / Es_ModPlugin.getDividingRatio());
     }
 
-    public enum UpgradeKey {
-        ORDNANCE("Ordnance"),
-        WEAPONS("WeaponProficiency"),
-        LOGISTICS("Logistics"),
-        MOBILITY("Mobility"),
-        DURABILITY("Durability"),
-        TECHNOLOGY("Technology"),
-        FIGHTERS("Fighters"),
-        SUBSYSTEMS("Subsystems"),
-        MAGAZINES("Magazines");
+    public static float getCreditCost(MarketAPI market, float amount, int resource) {
+        return Math.max(market.getDemandPrice(RESOURCES_LIST.get(resource), amount, true), CARGO_BASE_VALUE[resource] * amount);
+    }
 
-        private final String key;
+    public static int getCreditCost(MarketAPI market, float[] resourceCosts, int level, int max) {
+        float finalCost = 0;
 
-        UpgradeKey(String key) {
-            this.key = key;
+        for(int i = 0; i < 7; i++) {
+            finalCost += getCreditCost(market, resourceCosts[i], i);
         }
 
-        public String getKey() {
-            return this.key;
-        }
-
-        public boolean compareKey(String otherKey) {
-            return key.equals(otherKey);
-        }
+        return (int) (finalCost + finalCost * (0.5 * Math.pow(2 - 0.5f * market.getFaction().getRelToPlayer().getRel(), (float) (1 + 3.25 * level / max))));
     }
 }

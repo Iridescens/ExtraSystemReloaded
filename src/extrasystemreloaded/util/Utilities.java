@@ -30,8 +30,8 @@ public class Utilities {
         public static String Congratulation = "Congratulation, the upgrade succeeded.";
         public static String Failure = "The upgrade failed.";
         public static String resourceHeader = "Resources available:";
-        public static String costHeader = "Upgrade cost:";
-        public static String tooExpensivePrefix = "   (About ";
+        public static String costHeader = "Upgrade cost: ";
+        public static String tooExpensivePrefix = "   (";
         public static String tooExpensiveSuffix = " in shortage.)";
         public static String quality1 = "The quality of your ship:";
         public static String chooseUpgrade = "Please choose an upgrade:";

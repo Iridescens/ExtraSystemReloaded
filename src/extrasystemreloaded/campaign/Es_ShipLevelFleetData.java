@@ -60,14 +60,12 @@ public class Es_ShipLevelFleetData implements Buff {
 		if(upgrade != null) {
 			if(this.getExtraSystems().getUpgrade(upgrade) >= upgrade.getMaxLevel(shipSelected.getHullSpec().getHullSize())) {
 				returnValue = "This ship cannot support any more upgrades of this type.";
-			} else {
-				returnValue = canUpgradeByResourceCosts(shipSelected, market, upgrade, this.getExtraSystems().getQuality(this.buffedShip));
 			}
 		}
 		return returnValue;
 	}
 
-	private String canUpgradeByResourceCosts(FleetMemberAPI shipSelected, MarketAPI market, Upgrade upgrade, float qualityFactor) {
+	public String canUpgradeByResourceCosts(FleetMemberAPI shipSelected, MarketAPI market, Upgrade upgrade, float qualityFactor) {
 		if(Es_ModPlugin.isDebugUpgradeCosts()) {
 			return null;
 		}
@@ -90,7 +88,7 @@ public class Es_ShipLevelFleetData implements Buff {
 			return null;
 		}
 
-		return "This upgrade requires more resources: " + sb.toString();
+		return sb.toString();
 	}
 
 	@Override
@@ -107,17 +105,14 @@ public class Es_ShipLevelFleetData implements Buff {
 		if (levels.shouldApplyHullmod()) {
 			ShipVariantAPI shipVariant = member.getVariant();
 
-			if(shipVariant.hasHullMod("es_shiplevelHM")) {
-				shipVariant.removeMod("es_shiplevelHM");
+			if(shipVariant.isStockVariant()) {
+				shipVariant = shipVariant.clone();
+				shipVariant.setGoalVariant(false);
+				shipVariant.setSource(VariantSource.REFIT);
+				shipVariant.setHullVariantId(Es_ModPlugin.VARIANT_PREFIX + member.getId());
+
+				member.setVariant(shipVariant, false, false);
 			}
-
-			shipVariant = shipVariant.clone();
-			shipVariant.setGoalVariant(false);
-			shipVariant.setSource(VariantSource.REFIT);
-			shipVariant.setHullVariantId(Es_ModPlugin.VARIANT_PREFIX + member.getId());
-
-
-			member.setVariant(shipVariant, false, false);
 
 			removeESHullModsFromVariant(shipVariant);
 

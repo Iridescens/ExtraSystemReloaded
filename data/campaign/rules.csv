@@ -7,7 +7,7 @@ RepairAvailable","SetShortcut ESMainMenu ""U"" true",,"25:ESMainMenu:Consider up
 ESMainMenu,DialogOptionSelected,"$option==ESMainMenu","ShowDefaultVisual
 $menuState = ESMainMenu
 $ExtraUpgradePageIndex = 0","Welcome to ExtraSystem Reloaded!
-Choose the function you want.","15:ESShipList:Consider an overhaul to ship's hull
+Choose the function you want.","15:ESShipList:Consider an overhaul to a ship
 90:ESDialogBack:Back",
 ESShipList,DialogOptionSelected,"$option==ESShipList","Es_ShipListDialog",,,
 ,,,,,,
@@ -31,7 +31,7 @@ ESShipExtraUpgradeConfirm,DialogOptionSelected,"$menuState==ESUpgrades
 Es_ShipPicked get
 Es_UpgradePicked exists $option","Es_UpgradePicked set $option
 Es_ShipUpgradeDialog ConfirmExtraUpgrade",,,
-ESShipExtraUpgradeApply,DialogOptionSelected,"$option==ESShipExtraUpgradeApply
+ESShipExtraUpgradeApply,DialogOptionSelected,"LocalOr $option ESShipExtraUpgradeApply ESShipExtraUpgradeApplyCredits
 Es_ShipPicked get
 Es_UpgradePicked get","Es_ShipUpgradeDialog ApplyExtraUpgrade",,,
 ,,,,,,

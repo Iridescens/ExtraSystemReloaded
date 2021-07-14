@@ -16,8 +16,8 @@ public class Durability extends Upgrade {
     private static final float ENGINE_HEALTH_MULT = 2f;
     private static final float EMP_TAKEN_MULT = -3f;
 
-    private static final float ARMOR_SCALAR = 75f;
-    private static final float ARMOR_QUALITY_MULT = 0.25f;
+    private static final float ARMOR_SCALAR = 100f;
+    private static final float ARMOR_QUALITY_MULT = 0.35f;
     @Override
     public String getKey() {
         return UPGRADE_KEY;
@@ -52,7 +52,7 @@ public class Durability extends Upgrade {
                     fm.getVariant().getHullSpec().getHitpoints());
 
             StatUtils.addPercentBonusToTooltip(tooltip, "  Armor durability: +%s (%s)",
-                    fm.getStats().getHullBonus().getPercentBonus(this.getBuffId()).getValue(),
+                    fm.getStats().getArmorBonus().getPercentBonus(this.getBuffId()).getValue(),
                     fm.getVariant().getHullSpec().getArmorRating());
 
 
