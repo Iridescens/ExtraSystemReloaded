@@ -95,7 +95,7 @@ public class Es_ShipLevelFleetData implements Buff {
 	public void apply(FleetMemberAPI member) {
 		if (member.getVariant() == null) {
 			return;
-		} else if(member.getVariant().isStockVariant()) {
+		} else if (member.getVariant().isStockVariant()) {
 			ShipVariantAPI v = member.getVariant().clone();
 			v.setSource(VariantSource.REFIT);
 			member.setVariant(v, false, false);
@@ -107,10 +107,7 @@ public class Es_ShipLevelFleetData implements Buff {
 
 			if(shipVariant.isStockVariant()) {
 				shipVariant = shipVariant.clone();
-				shipVariant.setGoalVariant(false);
 				shipVariant.setSource(VariantSource.REFIT);
-				shipVariant.setHullVariantId(Es_ModPlugin.VARIANT_PREFIX + member.getId());
-
 				member.setVariant(shipVariant, false, false);
 			}
 
@@ -121,19 +118,17 @@ public class Es_ShipLevelFleetData implements Buff {
 			List<String> slots = shipVariant.getModuleSlots();
 
 			if(slots != null && !slots.isEmpty()) {
+				log.info(String.format("found %s slots for ship %s", slots.size(), member.getShipName()));
 				for (int i = 0; i < slots.size(); ++i) {
 					ShipVariantAPI module = shipVariant.getModuleVariant(slots.get(i));
 
 					if (module != null) {
-						module = module.clone();
-						module.setGoalVariant(false);
-						module.setSource(VariantSource.REFIT);
-						shipVariant.setModuleVariant(slots.get(i), module);
+						if(module.isStockVariant()) {
+							module = module.clone();
+							module.setSource(VariantSource.REFIT);
+							shipVariant.setModuleVariant(slots.get(i), module);
+						}
 
-						module.setHullVariantId(
-								module.getHullVariantId().contains(shipVariant.getHullVariantId()) ?
-										module.getHullVariantId() :
-										shipVariant.getHullVariantId() + "_" + module.getHullVariantId());
 						module.addPermaMod("es_shiplevelHM");
 					}
 				}

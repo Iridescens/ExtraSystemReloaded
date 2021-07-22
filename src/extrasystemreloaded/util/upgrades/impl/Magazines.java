@@ -18,7 +18,7 @@ public class Magazines extends Upgrade {
     public static final String UPGRADE_KEY = "Magazines";
 
 
-    private static final float RELOAD_PER_SECOND_MULT = 0.1f;
+    private static final float RELOAD_PER_SECOND_MULT = 0.025f;
     private static final float MISSILE_MAGAZINE_MULT = 2f;
 
     @Override
