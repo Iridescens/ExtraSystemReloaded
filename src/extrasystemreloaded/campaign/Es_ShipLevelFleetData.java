@@ -118,7 +118,6 @@ public class Es_ShipLevelFleetData implements Buff {
 			List<String> slots = shipVariant.getModuleSlots();
 
 			if(slots != null && !slots.isEmpty()) {
-				log.info(String.format("found %s slots for ship %s", slots.size(), member.getShipName()));
 				for (int i = 0; i < slots.size(); ++i) {
 					ShipVariantAPI module = shipVariant.getModuleVariant(slots.get(i));
 
