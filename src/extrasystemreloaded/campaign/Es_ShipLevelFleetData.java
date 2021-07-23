@@ -194,15 +194,7 @@ public class Es_ShipLevelFleetData implements Buff {
 	public void advance(float days) {
 		interval.advance(days);
 		if (interval.intervalElapsed()) {
-			if (buffedShip != null && (
-					buffedShip.getFleetData() == null ||
-					buffedShip.getFleetData().getFleet() == null ||
-					buffedShip.getFleetData().getFleet().isAIMode() ||
-					!buffedShip.getFleetData().getFleet().isAlive())) {
-				expired = true;
-				Es_ModPlugin.removeData(buffedShip.getId());
-				removeESHullModsFromVariant(buffedShip.getVariant());
-			} else if (buffedShip == null) {
+			if (buffedShip == null) {
 				expired = true;
 			}
 		}

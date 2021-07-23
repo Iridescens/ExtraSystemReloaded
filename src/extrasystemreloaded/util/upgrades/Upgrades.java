@@ -4,18 +4,18 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.util.upgrades.impl.*;
 import org.apache.log4j.Level;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static extrasystemreloaded.Es_ModPlugin.HULLSIZE_TO_MAXLEVEL;
 
 public class Upgrades {
     private static final org.apache.log4j.Logger log = Global.getLogger(ESUpgrades.class);
@@ -52,7 +52,7 @@ public class Upgrades {
 
     public static ESUpgrades generateRandomStats(FleetMemberAPI fleetMember, int fp) {
         ShipAPI.HullSize hullSize = fleetMember.getHullSpec().getHullSize();
-        int maxlevel = ESUpgrades.HULLSIZE_TO_MAXLEVEL.get(hullSize);
+        int maxlevel = HULLSIZE_TO_MAXLEVEL.get(hullSize);
         float arg1 = fp/300f;
         ESUpgrades upgrades = new ESUpgrades();
         for(Upgrade name : UPGRADES_LIST) {

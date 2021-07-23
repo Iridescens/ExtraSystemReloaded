@@ -10,7 +10,6 @@ import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
 import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
-import extrasystemreloaded.util.upgrades.ESUpgrades;
 import extrasystemreloaded.util.upgrades.Upgrade;
 import extrasystemreloaded.util.upgrades.Upgrades;
 
@@ -118,7 +117,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
             Upgrade upgrade = Upgrades.UPGRADES_LIST.get(i);
             int level = buff.getExtraSystems().getUpgrade(upgrade.getKey());
             ShipAPI.HullSize hullSize = shipSelected.getHullSpec().getHullSize();
-            int max = upgrade.getMaxLevel() != -1 ? upgrade.getMaxLevel() : ESUpgrades.HULLSIZE_TO_MAXLEVEL.get(hullSize);
+            int max = upgrade.getMaxLevel(hullSize);
 
             String tooltip = canUpgrade(shipSelected, buff, hullSize, upgrade, playerFleet, currMarket);
             if(tooltip == null) {

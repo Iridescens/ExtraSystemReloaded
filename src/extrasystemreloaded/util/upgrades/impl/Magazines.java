@@ -33,7 +33,7 @@ public class Magazines extends Upgrade {
     }
 
     @Override
-    public void advanceInCombat(ShipAPI ship, float amount, int level, float quality) {
+    public void advanceInCombat(ShipAPI ship, float amount, int level, float quality, float hullSizeFactor) {
         CombatEngineAPI engine = Global.getCombatEngine();
         if (engine.isPaused() || !ship.isAlive()) {
             return;
@@ -43,7 +43,7 @@ public class Magazines extends Upgrade {
 
             float reloadRate = w.getAmmoPerSecond();
             if (w.usesAmmo() && reloadRate > 0) {
-                float nuCharge = reloadRate * (1f + (level * quality * RELOAD_PER_SECOND_MULT));
+                float nuCharge = reloadRate * (1f + (level * quality * RELOAD_PER_SECOND_MULT * hullSizeFactor));
                 w.getAmmoTracker().setAmmoPerSecond(nuCharge);
             }
         }

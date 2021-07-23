@@ -5,25 +5,9 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import java.util.HashMap;
 import java.util.Map;
 
+import static extrasystemreloaded.Es_ModPlugin.HULLSIZE_FACTOR;
+
 public class ESUpgrades {
-    public static final Map<ShipAPI.HullSize, Integer> HULLSIZE_TO_MAXLEVEL = new HashMap<>();
-    static {
-        ESUpgrades.HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.FRIGATE, 10);
-        ESUpgrades.HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.DESTROYER, 15);
-        ESUpgrades.HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.CRUISER, 20);
-        ESUpgrades.HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.CAPITAL_SHIP, 25);
-        ESUpgrades.HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.FIGHTER, 0);
-        ESUpgrades.HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.DEFAULT, 0);
-    }
-
-    private static final Map<ShipAPI.HullSize, Float> HULLSIZE_MAGNITUDE = new HashMap<>();
-    static {
-        HULLSIZE_MAGNITUDE.put(ShipAPI.HullSize.FRIGATE, 1f);
-        HULLSIZE_MAGNITUDE.put(ShipAPI.HullSize.DESTROYER, 0.666f);
-        HULLSIZE_MAGNITUDE.put(ShipAPI.HullSize.CRUISER, 0.5f);
-        HULLSIZE_MAGNITUDE.put(ShipAPI.HullSize.CAPITAL_SHIP, 0.4f);
-    }
-
     private final Map<String, Integer> upgrades;
 
     public ESUpgrades() {
@@ -35,7 +19,7 @@ public class ESUpgrades {
     }
 
     public float getHullSizeFactor(ShipAPI.HullSize hullSize) {
-        return HULLSIZE_MAGNITUDE.get(hullSize);
+        return HULLSIZE_FACTOR.get(hullSize);
     }
 
     public int getUpgrade(Upgrade upgrade) {

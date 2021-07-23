@@ -9,7 +9,6 @@ import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
 import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
 import extrasystemreloaded.util.Utilities;
-import extrasystemreloaded.util.upgrades.ESUpgrades;
 import extrasystemreloaded.util.upgrades.Upgrade;
 import extrasystemreloaded.util.upgrades.Upgrades;
 
@@ -41,7 +40,7 @@ public class Es_ShipDialog extends ESDialog {
             for (Upgrade upgrade : Upgrades.UPGRADES_LIST) {
                 int level = buff.getExtraSystems().getUpgrade(upgrade.getKey());
                 ShipAPI.HullSize hullSize = selectedShip.getHullSpec().getHullSize();
-                int max = upgrade.getMaxLevel() != -1 ? upgrade.getMaxLevel() : ESUpgrades.HULLSIZE_TO_MAXLEVEL.get(hullSize);
+                int max = upgrade.getMaxLevel(hullSize);
 
                 textPanel.addParagraph(upgrade.getName() + " (" + level + " / " + max + ")");
             }

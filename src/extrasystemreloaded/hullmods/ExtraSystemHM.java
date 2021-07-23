@@ -42,11 +42,12 @@ public class ExtraSystemHM extends BaseHullMod {
         Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
         ExtraSystems extraSystems = buff.getExtraSystems();
 
+        ShipAPI.HullSize hullSize = ship.getHullSize();
         float quality = extraSystems.getQuality(fm);
         for(Upgrade upgrade : Upgrades.UPGRADES_LIST) {
             int level = extraSystems.getUpgrade(upgrade);
             if(level <= 0) continue;
-            upgrade.advanceInCombat(ship, amount, level, quality);
+            upgrade.advanceInCombat(ship, amount, level, quality, extraSystems.getHullSizeFactor(hullSize));
         }
 
         for(Module module : Modules.MODULE_LIST) {
@@ -92,18 +93,9 @@ public class ExtraSystemHM extends BaseHullMod {
     public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
         FleetMemberAPI fm = ship.getFleetMember();
         if(fm == null) return;
+        if (fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID) == null) return;
 
         Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
-
-        if (buff == null) {
-            if(Es_ModPlugin.hasData(fm.getId())) {
-                Es_ModPlugin.applyBuff(fm);
-                buff = (Es_ShipLevelFleetData) fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
-            } else {
-                fm.getVariant().removePermaMod("es_shiplevelHM");
-                return;
-            }
-        }
 
         ExtraSystems extraSystems = buff.getExtraSystems();
 

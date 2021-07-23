@@ -14,7 +14,6 @@ public class esr_clearAllData implements BaseCommand {
         if ( context.isInCampaign() )
         {
             Es_ShipLevelFleetData.removeESHullmodsFromEveryVariant();
-            Global.getSector().getPersistentData().remove(Es_ModPlugin.ES_PERSISTENTQUALITYMAP);
             Global.getSector().getPersistentData().remove(Es_ModPlugin.ES_PERSISTENTUPGRADEMAP);
 
             return CommandResult.SUCCESS;

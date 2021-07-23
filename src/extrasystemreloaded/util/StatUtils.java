@@ -31,7 +31,7 @@ public class StatUtils {
     }
 
     public static float getDiminishingReturnsTotal(int level, int maxLevel, float quality, float scalar, float qualityMult, float hullSizeFactor) {
-        return scalar*( (quality * qualityMult) / (quality + 4) ) * level / maxLevel * hullSizeFactor;
+        return scalar*( (quality * qualityMult) / (quality + 4) ) * level * hullSizeFactor;
     }
 
     public static void addDoublePercentBonusToTooltip(TooltipMakerAPI tooltip, String format, float bonusPercent, float originalValue1, float originalValue2) {

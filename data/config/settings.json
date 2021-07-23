@@ -6,10 +6,18 @@
 	"upgradeCostMaxFactor":0.25,	
 	"upgradeCostMinFactor":0.05,	# bring this closer to 0, or even set to 0, if you think capitals are ridiculously expensive
 	"dividingRatio":20.0,	# higher is cheaper
-	"enabledAIUpgrade":false,	# do AI upgrade it's ships?
-	"maxQuality":3.0, #max quality for any ship
+	"maxQuality":3.0, #max quality for any ship,
+
+	"shipsKeepUpgradesOnDeath":false,
+
+	#below settings determine max upgrades for upgrades that do not have a max defined.
+	"frigateMaxUpgrades": 3,
+	"destroyerMaxUpgrades": 4,
+	"cruiserMaxUpgrades": 5,
+	"capitalMaxUpgrades": 6,
+	#the amount each upgrade contributes will scale to these values (so frigate at max level gets same buff as capital at max)
 
 	"ruleCommandPackages":[
-		"extrasystemreloaded.campaign.rulecmd",
+		"extrasystemreloaded.campaign.rulecmd"
 	]
 }

@@ -7,6 +7,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
 
+import static extrasystemreloaded.Es_ModPlugin.HULLSIZE_TO_MAXLEVEL;
 import static extrasystemreloaded.campaign.Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID;
 
 public abstract class Upgrade {
@@ -27,7 +28,7 @@ public abstract class Upgrade {
     }
 
     public int getMaxLevel(ShipAPI.HullSize hullSize) {
-        return getMaxLevel() != -1 ? getMaxLevel() : ESUpgrades.HULLSIZE_TO_MAXLEVEL.get(hullSize);
+        return getMaxLevel() != -1 ? getMaxLevel() : HULLSIZE_TO_MAXLEVEL.get(hullSize);
     }
 
     public int getLevel(ESUpgrades upgrades) {
@@ -38,7 +39,7 @@ public abstract class Upgrade {
 
     }
 
-    public void advanceInCombat(ShipAPI ship, float amount, int level, float quality) {
+    public void advanceInCombat(ShipAPI ship, float amount, int level, float quality, float hullSizeFactor) {
 
     }
 
