@@ -11,10 +11,10 @@
 	"shipsKeepUpgradesOnDeath":false,
 
 	#below settings determine max upgrades for upgrades that do not have a max defined.
-	"frigateMaxUpgrades": 3,
-	"destroyerMaxUpgrades": 4,
-	"cruiserMaxUpgrades": 5,
-	"capitalMaxUpgrades": 6,
+	"frigateMaxUpgrades": 10,
+	"destroyerMaxUpgrades": 15,
+	"cruiserMaxUpgrades": 20,
+	"capitalMaxUpgrades": 25,
 	#the amount each upgrade contributes will scale to these values (so frigate at max level gets same buff as capital at max)
 
 	"ruleCommandPackages":[

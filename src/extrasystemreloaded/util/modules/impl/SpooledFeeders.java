@@ -70,8 +70,6 @@ public class SpooledFeeders extends Module {
         stats.getDynamic().getMod(Stats.MEDIUM_BALLISTIC_MOD).modifyFlat(getBuffId(), -2);
         stats.getDynamic().getMod(Stats.SMALL_BALLISTIC_MOD).modifyFlat(getBuffId(), -1);
 
-        stats.getDynamic().getMod(Stats.LARGE_ENERGY_MOD).modifyFlat(getBuffId(), 2);
-        stats.getDynamic().getMod(Stats.MEDIUM_ENERGY_MOD).modifyFlat(getBuffId(), 1);
-        //stats.getDynamic().getMod(Stats.SMALL_ENERGY_MOD).modifyFlat(getBuffId(), 0);
+        stats.getEnergyWeaponFluxCostMod().modifyPercent(getBuffId(), 25f);
     }
 }

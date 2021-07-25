@@ -61,7 +61,7 @@ public class PlasmaFluxCatalyst extends Module {
     public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, Es_ShipLevelFleetData buff) {
         ExtraSystems systems = buff.getExtraSystems();
         if (systems.hasModule(this.getKey())) {
-            tooltip.addPara(this.getName() + ": Reduces energy weapon OP costs by 1/2/4. Increases ballistic weapon OP costs by 0/1/2.", Color.orange, 5);
+            tooltip.addPara(this.getName() + ": Reduces energy weapon OP costs by 1/2/4. Increases ballistic weapon flux costs by 25%.", Color.orange, 5);
         }
     }
 
@@ -72,9 +72,6 @@ public class PlasmaFluxCatalyst extends Module {
         stats.getDynamic().getMod(Stats.MEDIUM_ENERGY_MOD).modifyFlat(getBuffId(), -2);
         stats.getDynamic().getMod(Stats.SMALL_ENERGY_MOD).modifyFlat(getBuffId(), -1);
 
-        stats.getDynamic().getMod(Stats.LARGE_BALLISTIC_MOD).modifyFlat(getBuffId(), 2);
-        stats.getDynamic().getMod(Stats.MEDIUM_BALLISTIC_MOD).modifyFlat(getBuffId(), 1);
-        //stats.getDynamic().getMod(Stats.SMALL_BALLISTIC_MOD).modifyFlat(getBuffId(), 0);
-
+        stats.getBallisticWeaponFluxCostMod().modifyPercent(getBuffId(), 25f);
     }
 }
