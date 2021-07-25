@@ -17,19 +17,19 @@ public class Logistics extends Upgrade {
     private static final float MAX_FUEL_MULT = 2f;
 
 
-    private static final float CR_TO_DEPLOY_SCALAR = -55f;
+    private static final float CR_TO_DEPLOY_SCALAR = -8.5f;
     private static final float CR_TO_DEPLOY_QUALITY_MULT = 0.9f;
-    private static final float MIN_CREW_SCALAR = -55f;
+    private static final float MIN_CREW_SCALAR = -8.5f;
     private static final float MIN_CREW_QUALITY_MULT = 0.5f;
-    private static final float FUEL_USE_SCALAR = -30f;
+    private static final float FUEL_USE_SCALAR = -5f;
     private static final float FUEL_USE_QUALITY_MULT = 3f;
-    private static final float SUPPLIES_MONTH_SCALAR = -55f;
+    private static final float SUPPLIES_MONTH_SCALAR = -8.5f;
     private static final float SUPPLIES_MONTH_QUALITY_MULT = 2f;
-    private static final float SUPPLIES_RECOVERY_SCALAR = -55f;
+    private static final float SUPPLIES_RECOVERY_SCALAR = -8.5f;
     private static final float SUPPLIES_RECOVERY_QUALITY_MULT = 2f;
-    private static final float CR_RECOVERY_RATE_SCALAR = 50f;
+    private static final float CR_RECOVERY_RATE_SCALAR = 7.75f;
     private static final float CR_RECOVERY_RATE_QUALITY_MULT = 2f;
-    private static final float REPAIR_RATE_SCALAR = 55f;
+    private static final float REPAIR_RATE_SCALAR = 8.5f;
     private static final float REPAIR_RATE_QUALITY_MULT = 1.5f;
 
     @Override

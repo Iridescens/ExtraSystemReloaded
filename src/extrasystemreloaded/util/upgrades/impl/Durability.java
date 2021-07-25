@@ -16,7 +16,7 @@ public class Durability extends Upgrade {
     private static final float ENGINE_HEALTH_MULT = 2f;
     private static final float EMP_TAKEN_MULT = -3f;
 
-    private static final float ARMOR_SCALAR = 100f;
+    private static final float ARMOR_SCALAR = 12.5f;
     private static final float ARMOR_QUALITY_MULT = 0.35f;
     @Override
     public String getKey() {

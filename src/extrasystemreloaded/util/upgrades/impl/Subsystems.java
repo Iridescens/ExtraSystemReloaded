@@ -1,6 +1,7 @@
 package extrasystemreloaded.util.upgrades.impl;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
@@ -12,8 +13,7 @@ import java.awt.*;
 public class Subsystems extends Upgrade {
     public static final String UPGRADE_KEY = "Subsystems";
 
-    private static final float PEAK_CR_MULT = 4.75f;
-    private static final float PEAK_CR_HULLSIZE_FACTOR = 1.75f;
+    private static final float PEAK_CR_MULT = 1.75f;
     private static final float CR_LOSS_MULT = -0.25f; //this value is a post-scaling of the other two factors.
     //if they are reduced, this will be reduced as well.
 
@@ -30,10 +30,19 @@ public class Subsystems extends Upgrade {
     @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float hullSizeFactor, int level, float quality) {
 
-        //curve made to affect frigates disproportionately higher than capitals.
-        double v = level * quality * PEAK_CR_MULT * Math.pow(hullSizeFactor + 1, PEAK_CR_HULLSIZE_FACTOR);
+        double v = level * quality * PEAK_CR_MULT * hullSizeFactor;
+        if (fm.getHullSpec().getHullSize() == ShipAPI.HullSize.CAPITAL_SHIP) {
+            v *= 1;
+        } else if (fm.getHullSpec().getHullSize() == ShipAPI.HullSize.CRUISER) {
+            v *= 1.5;
+        } else if (fm.getHullSpec().getHullSize() == ShipAPI.HullSize.DESTROYER) {
+            v *= 2.5;
+        } else {
+            v *= 7.;
+        }
+
         stats.getPeakCRDuration().modifyPercent(this.getBuffId(), (float) v);
-        stats.getCRLossPerSecondPercent().modifyPercent(this.getBuffId(), (float) (CR_LOSS_MULT * v));
+        stats.getCRLossPerSecondPercent().modifyPercent(this.getBuffId(), (float) Math.max(CR_LOSS_MULT * v, -90f));
     }
 
     @Override

@@ -8,6 +8,7 @@ import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
 import extrasystemreloaded.campaign.battle.EngagementListener;
 import extrasystemreloaded.campaign.salvage.SalvageListener;
 import extrasystemreloaded.util.ExtraSystems;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +19,8 @@ import java.util.Map;
 
 
 public class Es_ModPlugin extends BaseModPlugin {
+	private static final Logger log = Logger.getLogger(Es_ModPlugin.class);
+
 	private static final String ES_UPGRADECOST_MULTS_FILE = "data/config/skill_resource_ratio.csv";
 	private static JSONArray UPGRADE_COST_MULTIPLIERS = null;
     private static float UPGRADE_COST_MINFACTOR = Global.getSettings().getFloat("upgradeCostMinFactor");
@@ -152,6 +155,7 @@ public class Es_ModPlugin extends BaseModPlugin {
 
 		for(ShipAPI.HullSize hullSize : HULLSIZE_TO_MAXLEVEL.keySet()) {
 			HULLSIZE_FACTOR.put(hullSize, lowestMax / HULLSIZE_TO_MAXLEVEL.get(hullSize));
+			log.info(String.format("hullSize %s has hullsizeFactor %s", hullSize.name(), HULLSIZE_FACTOR.get(hullSize)));
 		}
 	}
 

@@ -192,11 +192,8 @@ public class Utilities {
             return false;
         List<CargoStackAPI> playerCargoStacks = playerFleet.getCargo().getStacksCopy();
 
-        System.out.println("Searching for special item " + id + ".");
-
         for (CargoStackAPI cargoStack : playerCargoStacks) {
             if (cargoStack.isSpecialStack() && cargoStack.getSpecialDataIfSpecial().getId().equals(id) && cargoStack.getSize() > 0) {
-                System.out.println("Found special item " + cargoStack.getDisplayName() + ", with size " + cargoStack.getSize() + ".");
                 return true;
             }
         }
