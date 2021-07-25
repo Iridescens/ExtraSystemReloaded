@@ -23,7 +23,7 @@ public class Logistics extends Upgrade {
     private static final float MIN_CREW_QUALITY_MULT = 0.5f;
     private static final float FUEL_USE_SCALAR = -5f;
     private static final float FUEL_USE_QUALITY_MULT = 3f;
-    private static final float SUPPLIES_MONTH_SCALAR = -8.5f;
+    private static final float SUPPLIES_MONTH_SCALAR = -4.5f;
     private static final float SUPPLIES_MONTH_QUALITY_MULT = 2f;
     private static final float SUPPLIES_RECOVERY_SCALAR = -8.5f;
     private static final float SUPPLIES_RECOVERY_QUALITY_MULT = 2f;
