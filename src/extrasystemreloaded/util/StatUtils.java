@@ -10,7 +10,7 @@ import extrasystemreloaded.hullmods.ExtraSystemHM;
 import java.text.DecimalFormat;
 
 public class StatUtils {
-    private static final DecimalFormat FLOATING_FORMAT = new DecimalFormat("#.##");
+    private static final DecimalFormat FLOATING_FORMAT = new DecimalFormat("#");
 
     private StatUtils() {
 

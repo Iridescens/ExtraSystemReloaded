@@ -13,7 +13,7 @@ import java.awt.*;
 public class Subsystems extends Upgrade {
     public static final String UPGRADE_KEY = "Subsystems";
 
-    private static final float PEAK_CR_MULT = 1.75f;
+    private static final float PEAK_CR_MULT = 2f;
     private static final float CR_LOSS_MULT = -0.25f; //this value is a post-scaling of the other two factors.
     //if they are reduced, this will be reduced as well.
 
@@ -38,7 +38,7 @@ public class Subsystems extends Upgrade {
         } else if (fm.getHullSpec().getHullSize() == ShipAPI.HullSize.DESTROYER) {
             v *= 2.5;
         } else {
-            v *= 7.;
+            v *= 7;
         }
 
         stats.getPeakCRDuration().modifyPercent(this.getBuffId(), (float) v);
