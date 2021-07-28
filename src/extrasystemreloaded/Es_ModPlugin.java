@@ -26,7 +26,7 @@ public class Es_ModPlugin extends BaseModPlugin {
     private static float UPGRADE_COST_MINFACTOR = Global.getSettings().getFloat("upgradeCostMinFactor");
     private static float UPGRADE_COST_MAXFACTOR = Global.getSettings().getFloat("upgradeCostMaxFactor");
     private static float DIVIDING_RATIO = Global.getSettings().getFloat("dividingRatio");
-    private static boolean USE_SHIP_ID_FOR_QUALITY_CALCULATION = Global.getSettings().getBoolean("useShipIdForQualityCalculation");
+    private static boolean USE_RANDOM_QUALITY = Global.getSettings().getBoolean("useRandomQuality");
     private static float BASE_QUALITY = Global.getSettings().getFloat("baseQuality");
 	private static float MAX_QUALITY = Global.getSettings().getFloat("maxQuality");
 	private static boolean UPGRADE_ALWAYS_SUCCEED = Global.getSettings().getBoolean("upgradeAlwaysSucceed");
@@ -69,7 +69,13 @@ public class Es_ModPlugin extends BaseModPlugin {
 			Global.getSector().getPersistentData().put(ES_PERSISTENTUPGRADEMAP, new HashMap<String, ExtraSystems>());
 		}
 
-		loadPersistentData();
+		ShipUpgradeData = (Map<String, ExtraSystems>) Global.getSector().getPersistentData().get(ES_PERSISTENTUPGRADEMAP);
+
+		for(FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
+			if(!ShipUpgradeData.containsKey(fm.getId())) continue;
+
+			applyBuff(fm);
+		}
 	}
 
 	public static void applyBuff(FleetMemberAPI fm) {
@@ -82,18 +88,6 @@ public class Es_ModPlugin extends BaseModPlugin {
 	public static void removeBuff(FleetMemberAPI fm) {
 		if(fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID) != null) {
 			fm.getBuffManager().removeBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
-		}
-	}
-
-
-	@SuppressWarnings("unchecked")
-	public static void loadPersistentData(){
-		ShipUpgradeData = (Map<String, ExtraSystems>) Global.getSector().getPersistentData().get(ES_PERSISTENTUPGRADEMAP);
-
-		for(FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
-			if(!ShipUpgradeData.containsKey(fm.getId())) continue;
-
-			applyBuff(fm);
 		}
 	}
 
@@ -121,7 +115,7 @@ public class Es_ModPlugin extends BaseModPlugin {
 			UPGRADE_ALWAYS_SUCCEED = settings.getBoolean("upgradeAlwaysSucceed");
 			UPGRADE_FAILURE_MINCHANCE = (float) settings.getDouble("baseFailureMinFactor");
 
-            USE_SHIP_ID_FOR_QUALITY_CALCULATION = Global.getSettings().getBoolean("useShipIdForQualityCalculation");
+            USE_RANDOM_QUALITY = Global.getSettings().getBoolean("useRandomQuality");
             BASE_QUALITY = (float) settings.getDouble("baseQuality");
 			MAX_QUALITY = (float) settings.getDouble("maxQuality");
 
@@ -177,8 +171,8 @@ public class Es_ModPlugin extends BaseModPlugin {
 		return UPGRADE_FAILURE_MINCHANCE;
 	}
 
-	public static boolean getUseShipIdForQuality() {
-        return USE_SHIP_ID_FOR_QUALITY_CALCULATION;
+	public static boolean useRandomQuality() {
+        return USE_RANDOM_QUALITY;
     }
 
     public static float getBaseQuality() {

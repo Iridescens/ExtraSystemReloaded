@@ -9,7 +9,9 @@ import extrasystemreloaded.util.modules.Module;
 import extrasystemreloaded.util.upgrades.ESUpgrades;
 import extrasystemreloaded.util.upgrades.Upgrade;
 
-import static extrasystemreloaded.Es_ModPlugin.getUseShipIdForQuality;
+import java.util.concurrent.ThreadLocalRandom;
+
+import static extrasystemreloaded.Es_ModPlugin.useRandomQuality;
 
 public class ExtraSystems {
     public ExtraSystems(ESUpgrades upgrades, ESModules modules, float quality) {
@@ -51,22 +53,8 @@ public class ExtraSystems {
     }
 
     private float generateQuality(FleetMemberAPI member) {
-        if (getUseShipIdForQuality()) {
-            String id = member.getId();
-            char[] ids = id.toCharArray();
-            float sum = 0f;
-            for (int i = 0; i < ids.length; i++) {
-                sum += ids[i];
-                if ( i%2 == 0 ) {
-                    sum *= ids[i];
-                } else {
-                    sum /= ids[i];
-                }
-            }
-            while( sum > 1f ) {
-                sum /= 10f;
-            }
-            sum += 0.5f;
+        if (useRandomQuality()) {
+            float sum = 0.5f + 0.05f * ThreadLocalRandom.current().nextInt(0, 20);
             return sum;
         }
         return Es_ModPlugin.getBaseQuality();

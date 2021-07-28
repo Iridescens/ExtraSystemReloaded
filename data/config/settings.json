@@ -1,7 +1,7 @@
 {
 	"upgradeAlwaysSucceed":true,	# no more gambling
 		"baseFailureMinFactor":0.4,
-	"useShipIdForQualityCalculation":true,	# may not affect existing ships
+	"useRandomQuality":true,	# may not affect existing ships
 		"baseQuality":1.0,	# when useShipIdForQualityCalculation is false
 	"upgradeCostMaxFactor":0.25,	
 	"upgradeCostMinFactor":0.05,	# bring this closer to 0, or even set to 0, if you think capitals are ridiculously expensive

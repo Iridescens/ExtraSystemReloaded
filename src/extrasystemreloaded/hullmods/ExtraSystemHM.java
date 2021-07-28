@@ -18,6 +18,8 @@ import org.apache.log4j.Logger;
 
 import java.awt.*;
 
+import static extrasystemreloaded.util.StatUtils.formatFloat;
+
 public class ExtraSystemHM extends BaseHullMod {
     public static final Logger log = Logger.getLogger(ExtraSystemHM.class);
     private static Color color = new Color(94, 206, 226);
@@ -123,7 +125,7 @@ public class ExtraSystemHM extends BaseHullMod {
         float quality = buff.getExtraSystems().getQuality(fm);
         String qname = Utilities.getQualityName(quality);
 
-        tooltip.addPara("The ship is of %s quality, which affected base upgrade values by %s multiplier (following numbers are final calculations):", 0, Utilities.getQualityColor(quality),qname,""+String.format("%.3f",quality));
+        tooltip.addPara("The ship is of %s %s quality:", 0, Utilities.getQualityColor(quality), formatFloat(quality * 100) + "%", qname);
 
         for(Module module : Modules.MODULE_LIST) {
             module.modifyToolTip(tooltip, fm, buff);

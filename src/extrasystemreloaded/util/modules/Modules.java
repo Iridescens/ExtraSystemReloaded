@@ -12,15 +12,15 @@ public class Modules {
     public static final List<Module> MODULE_LIST = new ArrayList<>();
 
     static {
-        Modules.addUpgrade(new SpooledFeeders());
-        Modules.addUpgrade(new PlasmaFluxCatalyst());
-        Modules.addUpgrade(new FusionMissileIgnition());
-        Modules.addUpgrade(new HangarForge());
-        Modules.addUpgrade(new EqualizerCore());
+        Modules.addModule(new SpooledFeeders());
+        Modules.addModule(new PlasmaFluxCatalyst());
+        Modules.addModule(new FusionMissileIgnition());
+        Modules.addModule(new HangarForge());
+        Modules.addModule(new EqualizerCore());
     }
 
-    public static void addUpgrade(Module upgrade) {
-        CORES.put(upgrade.getName(), upgrade);
-        MODULE_LIST.add(upgrade);
+    public static void addModule(Module module) {
+        CORES.put(module.getName(), module);
+        MODULE_LIST.add(module);
     }
 }

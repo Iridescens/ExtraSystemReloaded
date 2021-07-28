@@ -14,7 +14,7 @@ public class Weapons extends Upgrade {
 
     private static final float WEAPON_HEALTH_MULT = 2f;
 
-    private static final float RANGE_SCALAR = 4.5f;
+    private static final float RANGE_SCALAR = 1.25f;
     private static final float RANGE_QUALITY_MULT = 2f;
 
     private static final float DAMAGE_SCALAR = 5.25f;

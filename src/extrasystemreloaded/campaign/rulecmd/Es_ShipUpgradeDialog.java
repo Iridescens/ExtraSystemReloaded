@@ -16,6 +16,7 @@ import extrasystemreloaded.util.upgrades.Upgrades;
 import java.awt.*;
 
 import static extrasystemreloaded.util.Utilities.*;
+import static extrasystemreloaded.util.upgrades.Upgrades.getCreditCost;
 import static extrasystemreloaded.util.upgrades.Upgrades.getUpgradeCosts;
 
 public class Es_ShipUpgradeDialog extends ESDialog {
@@ -30,9 +31,11 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
     private static final String FUNCTIONTYPE_CONFIRM = "ConfirmExtraUpgrade";
 
-    private static final String OPTION_APPLY = "ESShipExtraUpgradeApply";
+    private static final String OPTION_APPLY_RESOURCES = "ESShipExtraUpgradeApplyResources";
     private static final String OPTION_APPLY_CREDITS = "ESShipExtraUpgradeApplyCredits";
-    private static final String FUNCTIONTYPE_APPLY = "ApplyExtraUpgrade";
+
+    private static final String FUNCTIONTYPE_APPLY_RESOURCES = "ApplyExtraUpgradeResources";
+    private static final String FUNCTIONTYPE_APPLY_CREDITS = "ApplyExtraUpgradeCredits";
 
     @Override
     protected void process(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
@@ -69,9 +72,18 @@ public class Es_ShipUpgradeDialog extends ESDialog {
                     options.addOption("Back to upgrades", RULE_DIALOG_OPTION);
                 }
                 break;
-            case FUNCTIONTYPE_APPLY:
+            case FUNCTIONTYPE_APPLY_RESOURCES:
                 if (selectedShip != null && selectedUpgrade != null) {
-                    doAbilityPurchase(context, textPanel, options, visual);
+                    doAbilityUpgrade(context, textPanel, options, visual);
+                    takeUpgradeResources(context, textPanel, options, visual);
+                    populateAbilityPurchasedOptions(context, textPanel, options, visual);
+                    options.addOption("Back to upgrades", RULE_DIALOG_OPTION);
+                }
+                break;
+            case FUNCTIONTYPE_APPLY_CREDITS:
+                if (selectedShip != null && selectedUpgrade != null) {
+                    doAbilityUpgrade(context, textPanel, options, visual);
+                    takeUpgradeCredits(context, textPanel, options, visual);
                     populateAbilityPurchasedOptions(context, textPanel, options, visual);
                     options.addOption("Back to upgrades", RULE_DIALOG_OPTION);
                 }
@@ -174,7 +186,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
             options.addOption(
                     String.format(OptionName.Confirm, level, max),
-                    OPTION_APPLY,
+                    OPTION_APPLY_RESOURCES,
                     buff.getCanUpgradeWithImpossibleTooltip(abilitySelected, currMarket)
             );
 
@@ -188,15 +200,15 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
             if (level >= max) {
                 textPanel.addParagraph(TextTip.ability2 + "(" + level + ")", Color.yellow);
-                options.setEnabled(OPTION_APPLY, false);
+                options.setEnabled(OPTION_APPLY_RESOURCES, false);
                 options.setEnabled(OPTION_APPLY_CREDITS, false);
             } else {
                 boolean isCanLevelUp = appendUpgradeCostText(context, textPanel, options, visual, level, max);
                 if (!isCanLevelUp) {
-                    options.setEnabled(OPTION_APPLY, false);
+                    options.setEnabled(OPTION_APPLY_RESOURCES, false);
 
                     String tooltip = "You need additional resources: " + buff.canUpgradeByResourceCosts(selectedShip, currMarket, abilitySelected, buff.getExtraSystems().getQuality(selectedShip));
-                    options.setTooltip(OPTION_APPLY, tooltip);
+                    options.setTooltip(OPTION_APPLY_RESOURCES, tooltip);
                 }
 
                 isCanLevelUp = context.getPlayerFleet().getCargo().getCredits().get() >= creditCost;
@@ -224,7 +236,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
 
 
-            options.addOption(OptionName.Repurchase  + " (" + level + " / " + max + ")", OPTION_APPLY);
+            options.addOption(OptionName.Repurchase  + " (" + level + " / " + max + ")", OPTION_APPLY_RESOURCES);
 
             float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, level, buff.getExtraSystems().getQuality(selectedShip));
             int creditCost = Upgrades.getCreditCost(currMarket, resourceCosts, level, max);
@@ -236,15 +248,15 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
             if (level >= max) {
                 textPanel.addParagraph(TextTip.ability2 + "(" + level + ")", Color.yellow);
-                options.setEnabled(OPTION_APPLY, false);
+                options.setEnabled(OPTION_APPLY_RESOURCES, false);
                 options.setEnabled(OPTION_APPLY_CREDITS, false);
             } else {
                 boolean isCanLevelUp = appendUpgradeCostText(context, textPanel, options, visual, level, max);
                 if (!isCanLevelUp) {
-                    options.setEnabled(OPTION_APPLY, false);
+                    options.setEnabled(OPTION_APPLY_RESOURCES, false);
 
                     String tooltip = "You need additional resources: " + buff.canUpgradeByResourceCosts(selectedShip, currMarket, abilitySelected, buff.getExtraSystems().getQuality(selectedShip));
-                    options.setTooltip(OPTION_APPLY, tooltip);
+                    options.setTooltip(OPTION_APPLY_RESOURCES, tooltip);
                 }
 
                 isCanLevelUp = context.getPlayerFleet().getCargo().getCredits().get() >= creditCost;
@@ -258,12 +270,10 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         }
     }
 
-    private void doAbilityPurchase(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
-        MarketAPI currMarket = context.getCurrMarket();
+    private void doAbilityUpgrade(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
         FleetMemberAPI selectedShip = context.getSelectedShip();
         Es_ShipLevelFleetData buff = context.getBuff();
         Upgrade abilitySelected = context.getSelectedUpgrade();
-        CampaignFleetAPI playerFleet = context.getPlayerFleet();
 
         ShipAPI.HullSize hullSize = selectedShip.getHullSpec().getHullSize();
         int max = abilitySelected.getMaxLevel(hullSize);
@@ -286,6 +296,16 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         } else {
             textPanel.addParagraph(TextTip.Failure, Color.red);
         }
+    }
+
+    private void takeUpgradeResources(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
+        MarketAPI currMarket = context.getCurrMarket();
+        FleetMemberAPI selectedShip = context.getSelectedShip();
+        Es_ShipLevelFleetData buff = context.getBuff();
+        Upgrade abilitySelected = context.getSelectedUpgrade();
+        CampaignFleetAPI playerFleet = context.getPlayerFleet();
+
+        int currentLevel = buff.getExtraSystems().getUpgrade(abilitySelected);
 
         if (!Es_ModPlugin.isDebugUpgradeCosts()) {
             float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, currentLevel, buff.getExtraSystems().getQuality(selectedShip));
@@ -313,6 +333,24 @@ public class Es_ShipUpgradeDialog extends ESDialog {
             removeCommodity(playerCargo, "metals", resourceCosts[4]);
             removeCommodity(playerCargo, "rare_metals", resourceCosts[5]);
             removeCommodity(playerCargo, "heavy_machinery", resourceCosts[6]);
+        }
+    }
+
+
+    private void takeUpgradeCredits(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
+        MarketAPI currMarket = context.getCurrMarket();
+        FleetMemberAPI selectedShip = context.getSelectedShip();
+        Es_ShipLevelFleetData buff = context.getBuff();
+        Upgrade abilitySelected = context.getSelectedUpgrade();
+        CampaignFleetAPI playerFleet = context.getPlayerFleet();
+
+        int currentLevel = buff.getExtraSystems().getUpgrade(abilitySelected);
+
+        if (!Es_ModPlugin.isDebugUpgradeCosts()) {
+            float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, currentLevel, buff.getExtraSystems().getQuality(selectedShip));
+            float creditCost = getCreditCost(currMarket, resourceCosts, currentLevel, abilitySelected.getMaxLevel());
+
+            playerFleet.getCargo().getCredits().subtract(creditCost);
         }
     }
 

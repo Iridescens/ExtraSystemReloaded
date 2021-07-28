@@ -31,9 +31,13 @@ ESShipExtraUpgradeConfirm,DialogOptionSelected,"$menuState==ESUpgrades
 Es_ShipPicked get
 Es_UpgradePicked exists $option","Es_UpgradePicked set $option
 Es_ShipUpgradeDialog ConfirmExtraUpgrade",,,
-ESShipExtraUpgradeApply,DialogOptionSelected,"LocalOr $option ESShipExtraUpgradeApply ESShipExtraUpgradeApplyCredits
+ESShipExtraUpgradeApplyResources,DialogOptionSelected,"$option==ESShipExtraUpgradeApplyResources
 Es_ShipPicked get
-Es_UpgradePicked get","Es_ShipUpgradeDialog ApplyExtraUpgrade",,,
+Es_UpgradePicked get","Es_ShipUpgradeDialog ApplyExtraUpgradeResources",,,
+ESShipExtraUpgradeApplyCredits,DialogOptionSelected,"$option==ESShipExtraUpgradeApplyCredits
+Es_ShipPicked get
+Es_UpgradePicked get","Es_ShipUpgradeDialog ApplyExtraUpgradeCredits",,,
+
 ,,,,,,
 ESShipModulesPicked,DialogOptionSelected,"$option==ESShipModulesPicked
 Es_ShipPicked get","$menuState = ESModules
