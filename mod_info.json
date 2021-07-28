@@ -2,7 +2,7 @@
     "id": "extra_system_reloaded",
     "name": "Extra System Reloaded",
     "author": "Created by Originem. Reloaded by Iridescens",
-    "version": "0.7.0",
+    "version": "0.7.1",
     "description": "*Requires Console Commands*\n\nUpgrade ships at non-hostile markets!",
     "gameVersion": "0.95a",
     "jars": ["jars/ExtraSystemCore.jar"],
