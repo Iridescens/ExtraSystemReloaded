@@ -10,10 +10,10 @@ import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.FleetMemberUtils;
 import extrasystemreloaded.util.Utilities;
-import extrasystemreloaded.util.modules.Module;
-import extrasystemreloaded.util.modules.Modules;
-import extrasystemreloaded.util.upgrades.Upgrade;
-import extrasystemreloaded.util.upgrades.Upgrades;
+import extrasystemreloaded.augments.Augment;
+import extrasystemreloaded.augments.AugmentsHandler;
+import extrasystemreloaded.upgrades.Upgrade;
+import extrasystemreloaded.upgrades.UpgradesHandler;
 import org.apache.log4j.Logger;
 
 import java.awt.*;
@@ -46,15 +46,15 @@ public class ExtraSystemHM extends BaseHullMod {
 
         ShipAPI.HullSize hullSize = ship.getHullSize();
         float quality = extraSystems.getQuality(fm);
-        for(Upgrade upgrade : Upgrades.UPGRADES_LIST) {
+        for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = extraSystems.getUpgrade(upgrade);
             if(level <= 0) continue;
             upgrade.advanceInCombat(ship, amount, level, quality, extraSystems.getHullSizeFactor(hullSize));
         }
 
-        for(Module module : Modules.MODULE_LIST) {
-            if(!extraSystems.hasModule(module)) continue;
-            module.advanceInCombat(ship, amount, quality);
+        for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
+            if(!extraSystems.hasModule(augment)) continue;
+            augment.advanceInCombat(ship, amount, quality);
         }
     }
 
@@ -79,12 +79,13 @@ public class ExtraSystemHM extends BaseHullMod {
 
         float quality = extraSystems.getQuality(fm);
 
-        for(Module module : Modules.MODULE_LIST) {
-            if(!extraSystems.hasModule(module)) continue;
-            module.applyUpgradeToStats(fm, stats, quality, id);
+        for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
+            if(!extraSystems.hasModule(augment)) continue;
+
+            augment.applyUpgradeToStats(fm, stats, quality, id);
         }
 
-        for(Upgrade upgrade : Upgrades.UPGRADES_LIST) {
+        for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = extraSystems.getUpgrade(upgrade);
             if(level <= 0) continue;
             upgrade.applyUpgradeToStats(fm, stats, extraSystems.getHullSizeFactor(hullSize), extraSystems.getUpgrade(upgrade), quality);
@@ -103,9 +104,9 @@ public class ExtraSystemHM extends BaseHullMod {
 
         float quality = extraSystems.getQuality(fm);
 
-        for(Module module : Modules.MODULE_LIST) {
-            if(!extraSystems.hasModule(module)) continue;
-            module.applyAfterShipCreation(fm, ship, quality, id);
+        for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
+            if(!extraSystems.hasModule(augment)) continue;
+            augment.applyAfterShipCreation(fm, ship, quality, id);
         }
     }
 
@@ -127,13 +128,13 @@ public class ExtraSystemHM extends BaseHullMod {
 
         tooltip.addPara("The ship is of %s %s quality:", 0, Utilities.getQualityColor(quality), formatFloat(quality * 100) + "%", qname);
 
-        for(Module module : Modules.MODULE_LIST) {
-            module.modifyToolTip(tooltip, fm, buff);
+        for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
+            augment.modifyToolTip(tooltip, fm, buff);
             tooltip.setParaFontDefault();
             tooltip.setParaFontColor(tooltipColor);
         }
 
-        for(Upgrade upgrade : Upgrades.UPGRADES_LIST) {
+        for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             upgrade.modifyToolTip(tooltip, fm, buff);
             tooltip.setParaFontDefault();
             tooltip.setParaFontColor(tooltipColor);

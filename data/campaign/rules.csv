@@ -39,20 +39,20 @@ Es_ShipPicked get
 Es_UpgradePicked get","Es_ShipUpgradeDialog ApplyExtraUpgradeCredits",,,
 
 ,,,,,,
-ESShipModulesPicked,DialogOptionSelected,"$option==ESShipModulesPicked
-Es_ShipPicked get","$menuState = ESModules
-Es_ShipModulesDialog ModulesSelected",,,
-ESShipModulesPREV,DialogOptionSelected,"$option==ESShipModulesPREV","$ExtraUpgradePageIndex--
-Es_ShipModulesDialog ChangedPage",,,
-ESShipModulesNEXT,DialogOptionSelected,"$option==ESShipModulesNEXT","$ExtraUpgradePageIndex++
-Es_ShipModulesDialog ChangedPage",,,
-ESShipModulesConfirm,DialogOptionSelected,"$menuState==ESModules
+ESShipAugmentsPicked,DialogOptionSelected,"$option==ESShipAugmentsPicked
+Es_ShipPicked get","$menuState = ESAugments
+Es_ShipAugmentsDialog AugmentsSelected",,,
+ESShipAugmentsPREV,DialogOptionSelected,"$option==ESShipAugmentsPREV","$ExtraUpgradePageIndex--
+Es_ShipAugmentsDialog ChangedPage",,,
+ESShipAugmentsNEXT,DialogOptionSelected,"$option==ESShipAugmentsNEXT","$ExtraUpgradePageIndex++
+Es_ShipAugmentsDialog ChangedPage",,,
+ESShipAugmentsConfirm,DialogOptionSelected,"$menuState==ESAugments
 Es_ShipPicked get
-Es_ModulePicked exists $option","Es_ModulePicked set $option
-Es_ShipModulesDialog ConfirmModulePurchase",,,
-ESShipModuleApply,DialogOptionSelected,"$option==ESShipModuleApply
+Es_AugmentPicked exists $option","Es_AugmentPicked set $option
+Es_ShipAugmentsDialog ConfirmAugmentPurchase",,,
+ESShipAugmentApply,DialogOptionSelected,"$option==ESShipAugmentApply
 Es_ShipPicked get
-Es_ModulePicked get","Es_ShipModulesDialog ApplyModule",,,
+Es_AugmentPicked get","Es_ShipAugmentsDialog ApplyAugment",,,
 ,,,,,,
 ESDialogBack,DialogOptionSelected,"$option==ESDialogBack","ShowDefaultVisual
 $menuState = main 0

@@ -6,14 +6,15 @@ import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
+import extrasystemreloaded.augments.Augment;
 
 import java.util.List;
 import java.util.Map;
 
-import static extrasystemreloaded.upgrades.UpgradesHandler.UPGRADES;
+import static extrasystemreloaded.augments.AugmentsHandler.AUGMENT_LIST;
 
-public class Es_UpgradePicked extends BaseCommandPlugin {
-    private static final org.apache.log4j.Logger log = Global.getLogger(Es_UpgradePicked.class);
+public class Es_AugmentPicked extends BaseCommandPlugin {
+    private static final org.apache.log4j.Logger log = Global.getLogger(Es_AugmentPicked.class);
     @Override
     public boolean execute(String ruleId, InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
 
@@ -23,20 +24,20 @@ public class Es_UpgradePicked extends BaseCommandPlugin {
 
             switch (action) {
                 case "remove":
-                    memory.set("$UpgradeId", null);
+                    memory.set("$ModuleId", null);
                     break;
                 case "exists":
-                    String upgradeId = params.get(1).getString(memoryMap);
-                    for(String upgradeKey : UPGRADES.keySet()) {
-                        if(upgradeKey.equals(upgradeId)) {
+                    String moduleId = params.get(1).getString(memoryMap);
+                    for(Augment augment : AUGMENT_LIST) {
+                        if(augment.getKey().equals(moduleId)) {
                             return true;
                         }
                     }
                     return false;
                 case "get":
-                    return memory.get("$UpgradeId") != null;
+                    return memory.get("$ModuleId") != null;
                 case "set":
-                    memory.set("$UpgradeId", params.get(1).getString(memoryMap));
+                    memory.set("$ModuleId", params.get(1).getString(memoryMap));
                 default:
                     break;
             }

@@ -8,15 +8,15 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.campaign.BuffManager;
-import extrasystemreloaded.util.modules.Module;
-import extrasystemreloaded.util.upgrades.Upgrade;
+import extrasystemreloaded.augments.Augment;
+import extrasystemreloaded.upgrades.Upgrade;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static extrasystemreloaded.util.modules.Modules.MODULE_LIST;
-import static extrasystemreloaded.util.upgrades.Upgrades.UPGRADES;
+import static extrasystemreloaded.augments.AugmentsHandler.AUGMENT_LIST;
+import static extrasystemreloaded.upgrades.UpgradesHandler.UPGRADES;
 
 public class ESDialogContext {
     private InteractionDialogAPI dialog;
@@ -38,7 +38,7 @@ public class ESDialogContext {
     private float shipBaseValue;
 
     private Es_ShipLevelFleetData buff;
-    private Module selectedModule;
+    private Augment selectedAugment;
     private Upgrade selectedUpgrade;
     private float shipQuality;
 
@@ -101,9 +101,9 @@ public class ESDialogContext {
 
         Object coreId = localMemory.get("$ModuleId");
         if(coreId != null) {
-            for(Module module : MODULE_LIST) {
-                if(module.getKey().equals((String) coreId)) {
-                    selectedModule = module;
+            for(Augment augment : AUGMENT_LIST) {
+                if(augment.getKey().equals((String) coreId)) {
+                    selectedAugment = augment;
                 }
             }
         }
@@ -179,8 +179,8 @@ public class ESDialogContext {
         return selectedUpgrade;
     }
 
-    public Module getSelectedCore() {
-        return selectedModule;
+    public Augment getSelectedCore() {
+        return selectedAugment;
     }
 
     public FleetMemberAPI getSelectedShip() {

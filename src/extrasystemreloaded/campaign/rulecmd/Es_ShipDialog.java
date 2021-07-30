@@ -9,8 +9,8 @@ import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
 import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
 import extrasystemreloaded.util.Utilities;
-import extrasystemreloaded.util.upgrades.Upgrade;
-import extrasystemreloaded.util.upgrades.Upgrades;
+import extrasystemreloaded.upgrades.Upgrade;
+import extrasystemreloaded.upgrades.UpgradesHandler;
 
 import java.awt.*;
 
@@ -37,7 +37,7 @@ public class Es_ShipDialog extends ESDialog {
             textPanel.appendToLastParagraph(" " + shipQualityText);
             textPanel.highlightLastInLastPara(shipQualityText, getQualityColor(shipQuality));
 
-            for (Upgrade upgrade : Upgrades.UPGRADES_LIST) {
+            for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
                 int level = buff.getExtraSystems().getUpgrade(upgrade.getKey());
                 ShipAPI.HullSize hullSize = selectedShip.getHullSpec().getHullSize();
                 int max = upgrade.getMaxLevel(hullSize);
@@ -60,7 +60,7 @@ public class Es_ShipDialog extends ESDialog {
                 options.setEnabled(Es_ShipUpgradeDialog.RULE_DIALOG_OPTION, false);
             }
 
-            options.addOption("Modules", Es_ShipModulesDialog.RULE_DIALOG_OPTION, null);
+            options.addOption("Augments", Es_ShipAugmentsDialog.RULE_DIALOG_OPTION, null);
         }
 
         options.addOption("Back to ship list", Es_ShipListDialog.RULE_DIALOG_OPTION);

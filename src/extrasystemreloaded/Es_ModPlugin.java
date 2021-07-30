@@ -149,7 +149,6 @@ public class Es_ModPlugin extends BaseModPlugin {
 
 		for(ShipAPI.HullSize hullSize : HULLSIZE_TO_MAXLEVEL.keySet()) {
 			HULLSIZE_FACTOR.put(hullSize, lowestMax / HULLSIZE_TO_MAXLEVEL.get(hullSize));
-			log.info(String.format("hullSize %s has hullsizeFactor %s", hullSize.name(), HULLSIZE_FACTOR.get(hullSize)));
 		}
 	}
 

@@ -3,26 +3,26 @@ package extrasystemreloaded.util;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.Es_ModPlugin;
+import extrasystemreloaded.augments.Augment;
 import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
-import extrasystemreloaded.util.modules.ESModules;
-import extrasystemreloaded.util.modules.Module;
-import extrasystemreloaded.util.upgrades.ESUpgrades;
-import extrasystemreloaded.util.upgrades.Upgrade;
+import extrasystemreloaded.augments.ESAugments;
+import extrasystemreloaded.upgrades.ESUpgrades;
+import extrasystemreloaded.upgrades.Upgrade;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 import static extrasystemreloaded.Es_ModPlugin.useRandomQuality;
 
 public class ExtraSystems {
-    public ExtraSystems(ESUpgrades upgrades, ESModules modules, float quality) {
+    public ExtraSystems(ESUpgrades upgrades, ESAugments modules, float quality) {
         this.upgrades = upgrades != null ? upgrades : new ESUpgrades();
-        this.modules = modules != null ? modules : new ESModules();
+        this.modules = modules != null ? modules : new ESAugments();
         this.qualityFactor = quality >= 0 ? quality : -1;
     }
 
     public ExtraSystems(FleetMemberAPI fleetMemberAPI) {
         this.upgrades = new ESUpgrades();
-        this.modules = new ESModules();
+        this.modules = new ESAugments();
         this.qualityFactor = generateQuality(fleetMemberAPI);
     }
 
@@ -73,9 +73,9 @@ public class ExtraSystems {
     }
 
     //modules
-    protected ESModules modules;
+    protected ESAugments modules;
 
-    protected ESModules getESModules() {
+    protected ESAugments getESModules() {
         return modules;
     }
 
@@ -83,12 +83,12 @@ public class ExtraSystems {
         return modules.hasModule(key);
     }
 
-    public boolean hasModule(Module module) {
-        return hasModule(module.getKey());
+    public boolean hasModule(Augment augment) {
+        return hasModule(augment.getKey());
     }
 
-    public void putModule(Module module) {
-        modules.putModule(module);
+    public void putModule(Augment augment) {
+        modules.putModule(augment);
     }
 
     public void removeModule(String key) {

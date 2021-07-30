@@ -10,14 +10,14 @@ import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
 import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
-import extrasystemreloaded.util.upgrades.Upgrade;
-import extrasystemreloaded.util.upgrades.Upgrades;
+import extrasystemreloaded.upgrades.Upgrade;
+import extrasystemreloaded.upgrades.UpgradesHandler;
 
 import java.awt.*;
 
 import static extrasystemreloaded.util.Utilities.*;
-import static extrasystemreloaded.util.upgrades.Upgrades.getCreditCost;
-import static extrasystemreloaded.util.upgrades.Upgrades.getUpgradeCosts;
+import static extrasystemreloaded.upgrades.UpgradesHandler.getCreditCost;
+import static extrasystemreloaded.upgrades.UpgradesHandler.getUpgradeCosts;
 
 public class Es_ShipUpgradeDialog extends ESDialog {
     public static final String RULE_MENUSTATE = "ESUpgrades";
@@ -125,8 +125,8 @@ public class Es_ShipUpgradeDialog extends ESDialog {
             textPanel.addParagraph(TextTip.chooseUpgrade);
         }
 
-        for (int i = upgradePageIndex * 5; i < Math.min(upgradePageIndex * 5 + 5, Upgrades.UPGRADES_LIST.size()); i++) {
-            Upgrade upgrade = Upgrades.UPGRADES_LIST.get(i);
+        for (int i = upgradePageIndex * 5; i < Math.min(upgradePageIndex * 5 + 5, UpgradesHandler.UPGRADES_LIST.size()); i++) {
+            Upgrade upgrade = UpgradesHandler.UPGRADES_LIST.get(i);
             int level = buff.getExtraSystems().getUpgrade(upgrade.getKey());
             ShipAPI.HullSize hullSize = shipSelected.getHullSpec().getHullSize();
             int max = upgrade.getMaxLevel(hullSize);
@@ -145,7 +145,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         if (upgradePageIndex == 0) {
             options.setEnabled(OPTION_PREVPAGE, false);
         }
-        if (upgradePageIndex * NumUpgradesPerPage + 5 >= Upgrades.UPGRADES_LIST.size()) {
+        if (upgradePageIndex * NumUpgradesPerPage + 5 >= UpgradesHandler.UPGRADES_LIST.size()) {
             options.setEnabled(OPTION_NEXTPAGE, false);
         }
     }
@@ -160,7 +160,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         int max = upgrade.getMaxLevel(hullSize);
 
         float[] resourceCosts = getUpgradeCosts(selectedShip, upgrade, buff.getExtraSystems().getUpgrade(upgrade), buff.getExtraSystems().getQuality(selectedShip));
-        int creditCost = Upgrades.getCreditCost(currMarket, resourceCosts, level, max);
+        int creditCost = UpgradesHandler.getCreditCost(currMarket, resourceCosts, level, max);
 
         int remainingCredits = (int) (creditCost - fleet.getCargo().getCredits().get());
         boolean byCredits = remainingCredits <= 0;
@@ -191,7 +191,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
             );
 
             float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, level, buff.getExtraSystems().getQuality(selectedShip));
-            int creditCost = Upgrades.getCreditCost(currMarket, resourceCosts, level, max);
+            int creditCost = UpgradesHandler.getCreditCost(currMarket, resourceCosts, level, max);
             options.addOption(
                     String.format("Buy for %s credits (%s / %s)", creditCost, level, max),
                     OPTION_APPLY_CREDITS,
@@ -239,7 +239,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
             options.addOption(OptionName.Repurchase  + " (" + level + " / " + max + ")", OPTION_APPLY_RESOURCES);
 
             float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, level, buff.getExtraSystems().getQuality(selectedShip));
-            int creditCost = Upgrades.getCreditCost(currMarket, resourceCosts, level, max);
+            int creditCost = UpgradesHandler.getCreditCost(currMarket, resourceCosts, level, max);
             options.addOption(
                     String.format("Purchase again for %s credits (%s / %s)", creditCost, level, max),
                     OPTION_APPLY_CREDITS,
@@ -370,7 +370,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
                 possibility = (float) Math.cos(Math.PI * level * 0.5f / max) * (1f - Es_ModPlugin.getUpgradeFailureMinChance()) + Es_ModPlugin.getUpgradeFailureMinChance();
             }
 
-            int creditCost = Upgrades.getCreditCost(currMarket, resourceCosts, level, max);
+            int creditCost = UpgradesHandler.getCreditCost(currMarket, resourceCosts, level, max);
             textPanel.addParagraph(TextTip.costHeader + creditCost + " credits OR resources listed", Color.green);
             textPanel.addParagraph("-----------------------", Color.gray);
 

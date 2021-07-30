@@ -11,7 +11,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageEntityGeneratorOld;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageEntity;
 import com.fs.starfarer.api.util.Misc;
-import extrasystemreloaded.util.upgrades.ESUpgrades;
+import extrasystemreloaded.upgrades.ESUpgrades;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +84,7 @@ public class SalvageListener implements ShowLootListener {
 
         if(addItems > 0) {
             SalvageEntityGenDataSpec.DropData data = new SalvageEntityGenDataSpec.DropData();
-            data.group = "esr_module";
+            data.group = "esr_augment";
             data.chances = addItems;
 
             List<SalvageEntityGenDataSpec.DropData> newDropData = new ArrayList<>();

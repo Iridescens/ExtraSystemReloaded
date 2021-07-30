@@ -11,8 +11,8 @@ import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.util.IntervalUtil;
 import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.util.ExtraSystems;
-import extrasystemreloaded.util.upgrades.Upgrade;
-import extrasystemreloaded.util.upgrades.Upgrades;
+import extrasystemreloaded.upgrades.Upgrade;
+import extrasystemreloaded.upgrades.UpgradesHandler;
 import org.apache.log4j.Logger;
 import org.lazywizard.console.Console;
 
@@ -71,7 +71,7 @@ public class Es_ShipLevelFleetData implements Buff {
 		}
 
 		StringBuilder sb = new StringBuilder();
-		float[] resourceCosts = Upgrades.getUpgradeCosts(shipSelected, upgrade, this.getExtraSystems().getUpgrade(upgrade), qualityFactor);
+		float[] resourceCosts = UpgradesHandler.getUpgradeCosts(shipSelected, upgrade, this.getExtraSystems().getUpgrade(upgrade), qualityFactor);
 		for (int i = 0; i < resourceCosts.length; ++i) {
 			String name = RESOURCE_NAME.get(i);
 
