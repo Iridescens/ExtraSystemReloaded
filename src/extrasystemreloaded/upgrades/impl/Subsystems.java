@@ -4,7 +4,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
+import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.upgrades.Upgrade;
 
@@ -46,8 +46,8 @@ public class Subsystems extends Upgrade {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, Es_ShipLevelFleetData buff) {
-        int level = buff.getExtraSystems().getUpgrade(this);
+    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
+        int level = systems.getUpgrade(this);
 
         if (level > 0) {
             tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));

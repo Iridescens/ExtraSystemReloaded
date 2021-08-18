@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.OPCostListener;
 import extrasystemreloaded.util.Utilities;
@@ -77,9 +76,8 @@ public class SpooledFeeders extends Augment {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, Es_ShipLevelFleetData buff) {
-        ExtraSystems systems = buff.getExtraSystems();
-        if (systems.hasModule(this.getKey())) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
+        if (systems.hasAugment(this.getKey())) {
             tooltip.addPara(this.getName() + ": Reduces ballistic weapon OP costs by 1/2/4. Increases energy weapon OP costs by 0/1/2.", Color.orange, 5);
         }
     }

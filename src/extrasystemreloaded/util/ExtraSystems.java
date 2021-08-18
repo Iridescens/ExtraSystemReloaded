@@ -23,7 +23,7 @@ public class ExtraSystems {
     public ExtraSystems(FleetMemberAPI fleetMemberAPI) {
         this.upgrades = new ESUpgrades();
         this.modules = new ESAugments();
-        this.qualityFactor = generateQuality(fleetMemberAPI);
+        this.qualityFactor = generateQuality();
     }
 
     public boolean shouldApplyHullmod() {
@@ -40,19 +40,12 @@ public class ExtraSystems {
 
     public float getQuality() {
         if(qualityFactor < 0) {
-            qualityFactor = Es_ModPlugin.getBaseQuality();
+            qualityFactor = generateQuality();
         }
         return qualityFactor;
     }
 
-    public float getQuality(FleetMemberAPI member) {
-        if(qualityFactor < 0) {
-            qualityFactor = generateQuality(member);
-        }
-        return qualityFactor;
-    }
-
-    private float generateQuality(FleetMemberAPI member) {
+    private float generateQuality() {
         if (useRandomQuality()) {
             float sum = 0.5f + 0.05f * ThreadLocalRandom.current().nextInt(0, 20);
             return sum;
@@ -69,7 +62,7 @@ public class ExtraSystems {
         if(buff.getExtraSystems() == null)
             return true;
 
-        return Es_ModPlugin.getMaxQuality() > buff.getExtraSystems().getQuality(member);
+        return Es_ModPlugin.getMaxQuality() > buff.getExtraSystems().getQuality();
     }
 
     //modules
@@ -79,12 +72,12 @@ public class ExtraSystems {
         return modules;
     }
 
-    public boolean hasModule(String key) {
+    public boolean hasAugment(String key) {
         return modules.hasModule(key);
     }
 
-    public boolean hasModule(Augment augment) {
-        return hasModule(augment.getKey());
+    public boolean hasAugment(Augment augment) {
+        return hasAugment(augment.getKey());
     }
 
     public void putModule(Augment augment) {

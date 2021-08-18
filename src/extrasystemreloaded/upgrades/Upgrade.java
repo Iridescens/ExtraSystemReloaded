@@ -5,7 +5,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
+import extrasystemreloaded.util.ExtraSystems;
 
 import static extrasystemreloaded.Es_ModPlugin.HULLSIZE_TO_MAXLEVEL;
 import static extrasystemreloaded.campaign.Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID;
@@ -43,5 +43,5 @@ public abstract class Upgrade {
 
     }
 
-    public abstract void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, Es_ShipLevelFleetData buff);
+    public abstract void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems);
 }

@@ -8,7 +8,6 @@ import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.WeaponRangeModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.Utilities;
 import extrasystemreloaded.augments.Augment;
@@ -58,9 +57,8 @@ public class EqualizerCore extends Augment {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, Es_ShipLevelFleetData buff) {
-        ExtraSystems systems = buff.getExtraSystems();
-        if (systems.hasModule(this.getKey())) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
+        if (systems.hasAugment(this.getKey())) {
             tooltip.addPara(this.getName() + ": Reduces recoil by 25%. Increases weapon turn rate by 50%. Autofire leading is nearly perfected. " +
                     "Weapons with at most 550 range have range increased by 200. Weapons with at least 800 range have range reduced by -150.", Color.red, 5);
         }

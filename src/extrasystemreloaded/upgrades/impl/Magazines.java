@@ -7,7 +7,6 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.upgrades.Upgrade;
@@ -55,10 +54,9 @@ public class Magazines extends Upgrade {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, Es_ShipLevelFleetData buff) {
-        ExtraSystems systems = buff.getExtraSystems();
+    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
         int level = systems.getUpgrade(this.getKey());
-        float quality = systems.getQuality(fm);
+        float quality = systems.getQuality();
 
         if (level > 0) {
             tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));

@@ -66,13 +66,13 @@ public class Es_ShipAugmentsDialog extends ESDialog {
             case FUNCTIONTYPE_CONFIRM:
                 if (selectedShip != null && selectedUpgrade != null) {
                     populateAbilityPurchaseConfirmationOptions(context, textPanel, options, visual);
-                    options.addOption("Back to modules", RULE_DIALOG_OPTION);
+                    options.addOption("Back to augments", RULE_DIALOG_OPTION);
                 }
                 break;
             case FUNCTIONTYPE_APPLY:
                 if (selectedShip != null && selectedUpgrade != null) {
                     doAbilityPurchase(context, textPanel, options, visual);
-                    options.addOption("Back to modules", RULE_DIALOG_OPTION);
+                    options.addOption("Back to augments", RULE_DIALOG_OPTION);
                 }
                 break;
             default:
@@ -100,7 +100,7 @@ public class Es_ShipAugmentsDialog extends ESDialog {
 
         for (int i = upgradePageIndex * 5; i < Math.min(upgradePageIndex * 5 + 5, AugmentsHandler.AUGMENT_LIST.size()); i++) {
             Augment augment = AugmentsHandler.AUGMENT_LIST.get(i);
-            boolean hasCore = buff.getExtraSystems().hasModule(augment);
+            boolean hasCore = buff.getExtraSystems().hasAugment(augment);
 
             if (hasCore) {
                 String tooltip = "You already have this module.";
@@ -132,7 +132,7 @@ public class Es_ShipAugmentsDialog extends ESDialog {
             textPanel.addPara(abilitySelected.getTextDescription());
 
             options.addOption(
-                    "Install module",
+                    "Install augment",
                     OPTION_APPLY,
                     null
             );

@@ -24,6 +24,7 @@ public class ExtraSystemHM extends BaseHullMod {
     public static final Logger log = Logger.getLogger(ExtraSystemHM.class);
     private static Color color = new Color(94, 206, 226);
     private static Color tooltipColor = new Color(220, 220, 220, 255);
+    private ExtraSystems extraSystems = null;
 
     @Override
     public boolean affectsOPCosts() {
@@ -35,17 +36,50 @@ public class ExtraSystemHM extends BaseHullMod {
         return color;
     }
 
-    @Override
-    public void advanceInCombat(ShipAPI ship, float amount) {
+    public ExtraSystems getExtraSystems(ShipAPI ship) {
+        if(this.extraSystems != null)
+            return this.extraSystems;
+
         FleetMemberAPI fm = ship.getFleetMember();
-        if (fm == null) return;
-        if (fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID) == null) return;
+        if (fm == null) return null;
+
+        return getExtraSystems(fm);
+    }
+
+    public ExtraSystems getExtraSystems(MutableShipStatsAPI stats) {
+        if(this.extraSystems != null)
+            return this.extraSystems;
+
+        FleetMemberAPI fm = FleetMemberUtils.findMemberForStats(stats);
+        if(fm == null) return null;
+
+        return getExtraSystems(fm);
+    }
+
+    public ExtraSystems getExtraSystems(FleetMemberAPI fm) {
+        if(this.extraSystems != null)
+            return this.extraSystems;
+
+        if (fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID) == null) {
+            if (Es_ModPlugin.hasData(fm.getId())) {
+                Es_ModPlugin.applyBuff(fm);
+            }
+        }
 
         Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
-        ExtraSystems extraSystems = buff.getExtraSystems();
+        if(buff == null) return null;
+
+        this.extraSystems = buff.getExtraSystems();
+
+        return this.extraSystems;
+    }
+
+    @Override
+    public void advanceInCombat(ShipAPI ship, float amount) {
+        ExtraSystems extraSystems = this.getExtraSystems(ship);
 
         ShipAPI.HullSize hullSize = ship.getHullSize();
-        float quality = extraSystems.getQuality(fm);
+        float quality = extraSystems.getQuality();
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = extraSystems.getUpgrade(upgrade);
             if(level <= 0) continue;
@@ -53,7 +87,7 @@ public class ExtraSystemHM extends BaseHullMod {
         }
 
         for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
-            if(!extraSystems.hasModule(augment)) continue;
+            if(!extraSystems.hasAugment(augment)) continue;
             augment.advanceInCombat(ship, amount, quality);
         }
     }
@@ -62,25 +96,17 @@ public class ExtraSystemHM extends BaseHullMod {
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         FleetMemberAPI fm = FleetMemberUtils.findMemberForStats(stats);
         if(fm == null) return;
+        ExtraSystems extraSystems = this.getExtraSystems(fm);
 
-        Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
-
-        if (buff == null) {
-            if(Es_ModPlugin.hasData(fm.getId())) {
-                Es_ModPlugin.applyBuff(fm);
-                buff = (Es_ShipLevelFleetData) fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
-            } else {
-                fm.getVariant().removePermaMod("es_shiplevelHM");
-                return;
-            }
+        if (extraSystems == null) {
+            fm.getVariant().removePermaMod("es_shiplevelHM");
+            return;
         }
 
-        ExtraSystems extraSystems = buff.getExtraSystems();
-
-        float quality = extraSystems.getQuality(fm);
+        float quality = extraSystems.getQuality();
 
         for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
-            if(!extraSystems.hasModule(augment)) continue;
+            if(!extraSystems.hasAugment(augment)) continue;
 
             augment.applyUpgradeToStats(fm, stats, quality, id);
         }
@@ -96,16 +122,13 @@ public class ExtraSystemHM extends BaseHullMod {
     public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
         FleetMemberAPI fm = ship.getFleetMember();
         if(fm == null) return;
-        if (fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID) == null) return;
+        ExtraSystems extraSystems = this.getExtraSystems(fm);
+        if(extraSystems == null) return;
 
-        Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
-
-        ExtraSystems extraSystems = buff.getExtraSystems();
-
-        float quality = extraSystems.getQuality(fm);
+        float quality = extraSystems.getQuality();
 
         for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
-            if(!extraSystems.hasModule(augment)) continue;
+            if(!extraSystems.hasAugment(augment)) continue;
             augment.applyAfterShipCreation(fm, ship, quality, id);
         }
     }
@@ -120,22 +143,23 @@ public class ExtraSystemHM extends BaseHullMod {
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI.HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
         FleetMemberAPI fm = ship.getFleetMember();
-        if (fm == null) { return; }
-        Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
-        if (buff == null) { return; }
-        float quality = buff.getExtraSystems().getQuality(fm);
+        if(fm == null) return;
+        ExtraSystems extraSystems = this.getExtraSystems(fm);
+        if(extraSystems == null) return;
+
+        float quality = extraSystems.getQuality();
         String qname = Utilities.getQualityName(quality);
 
         tooltip.addPara("The ship is of %s %s quality:", 0, Utilities.getQualityColor(quality), formatFloat(quality * 100) + "%", qname);
 
         for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
-            augment.modifyToolTip(tooltip, fm, buff);
+            augment.modifyToolTip(tooltip, fm, extraSystems);
             tooltip.setParaFontDefault();
             tooltip.setParaFontColor(tooltipColor);
         }
 
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            upgrade.modifyToolTip(tooltip, fm, buff);
+            upgrade.modifyToolTip(tooltip, fm, extraSystems);
             tooltip.setParaFontDefault();
             tooltip.setParaFontColor(tooltipColor);
         }

@@ -85,7 +85,7 @@ public class ESDialogContext {
                 }
                 buff = (Es_ShipLevelFleetData) thisBuff;
 
-                shipQuality = buff.getExtraSystems().getQuality(selectedShip);
+                shipQuality = buff.getExtraSystems().getQuality();
                 shipBaseValue = selectedShip.getHullSpec().getBaseValue();
             }
         }

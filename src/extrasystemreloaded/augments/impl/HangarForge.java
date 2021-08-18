@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.Utilities;
 import extrasystemreloaded.augments.Augment;
@@ -60,9 +59,8 @@ public class HangarForge extends Augment {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, Es_ShipLevelFleetData buff) {
-        ExtraSystems systems = buff.getExtraSystems();
-        if (systems.hasModule(this.getKey())) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
+        if (systems.hasAugment(this.getKey())) {
             tooltip.setParaFontColor(Color.YELLOW);
             tooltip.addPara(this.getName() + ": Reduces fighter replacement rates by %s. " +
                             "Reduces the rate at which replacement rate degrades by %s.", 5, Color.orange,

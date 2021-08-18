@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
+import extrasystemreloaded.util.ExtraSystems;
 
 public abstract class Augment {
     public abstract String getKey();
@@ -42,5 +43,5 @@ public abstract class Augment {
 
     }
 
-    public abstract void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, Es_ShipLevelFleetData buff);
+    public abstract void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems);
 }

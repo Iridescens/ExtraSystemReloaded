@@ -118,7 +118,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
             textPanel.addParagraph(TextTip.quality1);
 
-            float quality = buff.getExtraSystems().getQuality(shipSelected);
+            float quality = buff.getExtraSystems().getQuality();
             String text = Math.round(quality * 100f) / 100f + getQualityName(quality);
             textPanel.appendToLastParagraph(text);
             textPanel.highlightLastInLastPara(text, getQualityColor(quality));
@@ -159,12 +159,12 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         int level = buff.getExtraSystems().getUpgrade(upgrade);
         int max = upgrade.getMaxLevel(hullSize);
 
-        float[] resourceCosts = getUpgradeCosts(selectedShip, upgrade, buff.getExtraSystems().getUpgrade(upgrade), buff.getExtraSystems().getQuality(selectedShip));
+        float[] resourceCosts = getUpgradeCosts(selectedShip, upgrade, buff.getExtraSystems().getUpgrade(upgrade), buff.getExtraSystems().getQuality());
         int creditCost = UpgradesHandler.getCreditCost(currMarket, resourceCosts, level, max);
 
         int remainingCredits = (int) (creditCost - fleet.getCargo().getCredits().get());
         boolean byCredits = remainingCredits <= 0;
-        String resourceText = buff.canUpgradeByResourceCosts(selectedShip, currMarket, upgrade, buff.getExtraSystems().getQuality(selectedShip));
+        String resourceText = buff.canUpgradeByResourceCosts(selectedShip, currMarket, upgrade, buff.getExtraSystems().getQuality());
         boolean byResources = resourceText == null;
         if(!byCredits && !byResources) {
             return String.format("You cannot afford this upgrade. You need %s credits or the following resources: %s", remainingCredits, resourceText);
@@ -190,7 +190,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
                     buff.getCanUpgradeWithImpossibleTooltip(abilitySelected, currMarket)
             );
 
-            float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, level, buff.getExtraSystems().getQuality(selectedShip));
+            float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, level, buff.getExtraSystems().getQuality());
             int creditCost = UpgradesHandler.getCreditCost(currMarket, resourceCosts, level, max);
             options.addOption(
                     String.format("Buy for %s credits (%s / %s)", creditCost, level, max),
@@ -207,7 +207,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
                 if (!isCanLevelUp) {
                     options.setEnabled(OPTION_APPLY_RESOURCES, false);
 
-                    String tooltip = "You need additional resources: " + buff.canUpgradeByResourceCosts(selectedShip, currMarket, abilitySelected, buff.getExtraSystems().getQuality(selectedShip));
+                    String tooltip = "You need additional resources: " + buff.canUpgradeByResourceCosts(selectedShip, currMarket, abilitySelected, buff.getExtraSystems().getQuality());
                     options.setTooltip(OPTION_APPLY_RESOURCES, tooltip);
                 }
 
@@ -238,7 +238,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
             options.addOption(OptionName.Repurchase  + " (" + level + " / " + max + ")", OPTION_APPLY_RESOURCES);
 
-            float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, level, buff.getExtraSystems().getQuality(selectedShip));
+            float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, level, buff.getExtraSystems().getQuality());
             int creditCost = UpgradesHandler.getCreditCost(currMarket, resourceCosts, level, max);
             options.addOption(
                     String.format("Purchase again for %s credits (%s / %s)", creditCost, level, max),
@@ -255,7 +255,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
                 if (!isCanLevelUp) {
                     options.setEnabled(OPTION_APPLY_RESOURCES, false);
 
-                    String tooltip = "You need additional resources: " + buff.canUpgradeByResourceCosts(selectedShip, currMarket, abilitySelected, buff.getExtraSystems().getQuality(selectedShip));
+                    String tooltip = "You need additional resources: " + buff.canUpgradeByResourceCosts(selectedShip, currMarket, abilitySelected, buff.getExtraSystems().getQuality());
                     options.setTooltip(OPTION_APPLY_RESOURCES, tooltip);
                 }
 
@@ -308,7 +308,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         int currentLevel = buff.getExtraSystems().getUpgrade(abilitySelected);
 
         if (!Es_ModPlugin.isDebugUpgradeCosts()) {
-            float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, currentLevel, buff.getExtraSystems().getQuality(selectedShip));
+            float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, currentLevel, buff.getExtraSystems().getQuality());
 
             if (currMarket != null
                     && currMarket.getSubmarket(Submarkets.SUBMARKET_STORAGE) != null
@@ -347,7 +347,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         int currentLevel = buff.getExtraSystems().getUpgrade(abilitySelected);
 
         if (!Es_ModPlugin.isDebugUpgradeCosts()) {
-            float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, currentLevel, buff.getExtraSystems().getQuality(selectedShip));
+            float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, currentLevel, buff.getExtraSystems().getQuality());
             float creditCost = getCreditCost(currMarket, resourceCosts, currentLevel, abilitySelected.getMaxLevel());
 
             playerFleet.getCargo().getCredits().subtract(creditCost);
@@ -363,7 +363,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
         boolean isCanLevelUp = true;
         if (!Es_ModPlugin.isDebugUpgradeCosts()) {
-            float[] resourceCosts = getUpgradeCosts(shipSelected, abilitySelected, level, buff.getExtraSystems().getQuality(shipSelected));
+            float[] resourceCosts = getUpgradeCosts(shipSelected, abilitySelected, level, buff.getExtraSystems().getQuality());
 
             float possibility = 1f;
             if (!Es_ModPlugin.isUpgradeAlwaysSucceed() && level != 0) {
