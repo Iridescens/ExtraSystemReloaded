@@ -37,9 +37,6 @@ public class ExtraSystemHM extends BaseHullMod {
     }
 
     public ExtraSystems getExtraSystems(ShipAPI ship) {
-        if(this.extraSystems != null)
-            return this.extraSystems;
-
         FleetMemberAPI fm = ship.getFleetMember();
         if (fm == null) return null;
 
@@ -47,9 +44,6 @@ public class ExtraSystemHM extends BaseHullMod {
     }
 
     public ExtraSystems getExtraSystems(MutableShipStatsAPI stats) {
-        if(this.extraSystems != null)
-            return this.extraSystems;
-
         FleetMemberAPI fm = FleetMemberUtils.findMemberForStats(stats);
         if(fm == null) return null;
 
@@ -57,9 +51,6 @@ public class ExtraSystemHM extends BaseHullMod {
     }
 
     public ExtraSystems getExtraSystems(FleetMemberAPI fm) {
-        if(this.extraSystems != null)
-            return this.extraSystems;
-
         if (fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID) == null) {
             if (Es_ModPlugin.hasData(fm.getId())) {
                 Es_ModPlugin.applyBuff(fm);
@@ -69,9 +60,7 @@ public class ExtraSystemHM extends BaseHullMod {
         Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
         if(buff == null) return null;
 
-        this.extraSystems = buff.getExtraSystems();
-
-        return this.extraSystems;
+        return buff.getExtraSystems();
     }
 
     @Override

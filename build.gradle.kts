@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 object Variables {
     // Note: On Linux, if you installed Starsector into ~/something, you have to write /home/<user>/ instead of ~/
     val starsectorDirectory = "C:/Games/Starsector"
-    val modVersion = "0.7.4"
+    val modVersion = "0.7.5"
     val jarFileName = "ExtraSystemCore.jar"
 
     val modId = "extra_system_reloaded"
@@ -50,6 +50,7 @@ dependencies {
 
     //compileOnly(fileTree("$starsectorModDirectory/LazyLib/jars") { include("*.jar") })
     compileOnly(fileTree("$starsectorModDirectory/Console Commands/jars") { include("*.jar") })
+    //compileOnly(fileTree("$starsectorModDirectory/DroneLib/jars") { include("*.jar") })
 
     // Starsector jars and dependencies
     implementation(fileTree(starsectorCoreDirectory) {
