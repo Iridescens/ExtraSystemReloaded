@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 //////////////////////
 // VARIABLES TO CHANGE
 
@@ -11,13 +9,13 @@ object Variables {
 
     val modId = "extra_system_reloaded"
     val modName = "Extra System Reloaded"
-    val author = "Created by Originem. Reloaded by Iridescens"
+    val author = "Created by Originem. Reloaded by Iridescens & President Matt Damon"
     val description = "Upgrade ships at non-hostile markets!"
     val gameVersion = "0.95a-RC15"
     val jars = arrayOf("jars/$jarFileName")
     val modPlugin = "extrasystemreloaded.Es_ModPlugin"
     val isUtilityMod = false
-    val masterVersionFile = "https://raw.githubusercontent.com/githubname/githubrepo/master/$modId.version"
+    val masterVersionFile = "https://raw.githubusercontent.com/Iridescens/ExtraSystemReloaded/master/$modId.version"
     val modThreadId = "13089"
 
     val modFolderName = modName.replace(" ", "-")
