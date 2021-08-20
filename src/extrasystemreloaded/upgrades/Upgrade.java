@@ -8,7 +8,6 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.util.ExtraSystems;
 
 import static extrasystemreloaded.Es_ModPlugin.HULLSIZE_TO_MAXLEVEL;
-import static extrasystemreloaded.campaign.Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID;
 
 public abstract class Upgrade {
     public abstract String getKey();
@@ -20,7 +19,7 @@ public abstract class Upgrade {
     public abstract String getDescription();
 
     public String getBuffId() {
-        return Es_LEVEL_FUNCTION_ID + getName();
+        return "ESR_" + getName();
     }
 
     public int getMaxLevel() {

@@ -9,7 +9,8 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
-import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
+import extrasystemreloaded.hullmods.ExtraSystemHM;
+import extrasystemreloaded.util.ExtraSystems;
 
 import java.awt.*;
 
@@ -41,8 +42,7 @@ public class Es_ShipQualityDialog extends ESDialog {
         String functionType = context.getFunctionType();
         CampaignFleetAPI playerFleet = context.getPlayerFleet();
         FleetMemberAPI selectedShip = context.getSelectedShip();
-        String shipSelectedId = context.getSelectedShip().getId();
-        Es_ShipLevelFleetData buff = context.getBuff();
+        ExtraSystems buff = context.getBuff();
         float shipQuality = context.getShipQuality();
         float shipBaseValue = context.getShipBaseValue();
         float estimatedOverhaulCost = Math.round(shipBaseValue * (float) Math.pow(shipQuality, 2) / 2 * 100f) / 100f;
@@ -69,7 +69,7 @@ public class Es_ShipQualityDialog extends ESDialog {
                     if (!isAbleToPayForQualityUpgrade(context.getPlayerFleet(), estimatedOverhaulCost)) {
                         options.setEnabled("ESShipQualityApply", false);
                         options.setTooltip("ESShipQualityApply", "Insufficient credits");
-                    } else if (!buff.getExtraSystems().canUpgradeQuality(selectedShip)) {
+                    } else if (!canUpgrade(buff, selectedShip)) {
                         options.setEnabled("ESShipQualityApply", false);
                         options.setTooltip("ESShipQualityApply", "The quality of this ship has reached its peak.");
                     }
@@ -81,8 +81,9 @@ public class Es_ShipQualityDialog extends ESDialog {
                     float newQuality = Math.round((shipQuality + bonusQuality) * 1000f) / 1000f; // qualityFactor + bonus
                     newQuality = Math.min(newQuality, Es_ModPlugin.getMaxQuality());
 
-                    buff.getExtraSystems().putQuality(newQuality);
-                    buff.save();
+                    buff.putQuality(newQuality);
+                    buff.save(selectedShip);
+                    ExtraSystemHM.addToFleetMember(selectedShip);
 
                     if(!Es_ModPlugin.isDebugUpgradeCosts()) {
                         playerFleet.getCargo().getCredits().subtract(estimatedOverhaulCost);
@@ -92,7 +93,7 @@ public class Es_ShipQualityDialog extends ESDialog {
                     textPanel.addParagraph(text2);
                     textPanel.highlightLastInLastPara("" + newQuality, getQualityColor(newQuality));
 
-                    if(buff.getExtraSystems().canUpgradeQuality(selectedShip)) {
+                    if(buff.canUpgradeQuality(selectedShip)) {
                         String shipQualityText = "On-site team estimates that another overhaul would cost %s credits for a quality increase of %s.";
                         textPanel.addParagraph(String.format(shipQualityText, estimatedOverhaulCost, bonusQuality));
                         textPanel.highlightLastInLastPara("" + estimatedOverhaulCost, Color.green);
@@ -113,6 +114,10 @@ public class Es_ShipQualityDialog extends ESDialog {
             default:
                 break;
         }
+    }
+
+    private boolean canUpgrade(ExtraSystems buff, FleetMemberAPI selectedShip) {
+        return buff == null || buff.canUpgradeQuality(selectedShip);
     }
 
     private boolean isAbleToPayForQualityUpgrade(CampaignFleetAPI fleet, float cost) {

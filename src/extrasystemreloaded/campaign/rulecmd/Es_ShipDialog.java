@@ -7,7 +7,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
-import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
+import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.Utilities;
 import extrasystemreloaded.upgrades.Upgrade;
 import extrasystemreloaded.upgrades.UpgradesHandler;
@@ -27,7 +27,7 @@ public class Es_ShipDialog extends ESDialog {
 
         FleetMemberAPI selectedShip = context.getSelectedShip();
         if (selectedShip != null) {
-            Es_ShipLevelFleetData buff = context.getBuff();
+            ExtraSystems buff = context.getBuff();
             float shipQuality = context.getShipQuality();
 
             visual.showFleetMemberInfo(selectedShip);
@@ -38,8 +38,9 @@ public class Es_ShipDialog extends ESDialog {
             textPanel.highlightLastInLastPara(shipQualityText, getQualityColor(shipQuality));
 
             for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-                int level = buff.getExtraSystems().getUpgrade(upgrade.getKey());
                 ShipAPI.HullSize hullSize = selectedShip.getHullSpec().getHullSize();
+
+                int level = buff.getUpgrade(upgrade);
                 int max = upgrade.getMaxLevel(hullSize);
 
                 textPanel.addParagraph(upgrade.getName() + " (" + level + " / " + max + ")");
@@ -49,12 +50,12 @@ public class Es_ShipDialog extends ESDialog {
             textPanel.addParagraph("Pick an operation");
 
             options.addOption("Quality", Es_ShipQualityDialog.RULE_DIALOG_OPTION, null);
-            if(!buff.getExtraSystems().canUpgradeQuality(selectedShip)) {
+            if(!buff.canUpgradeQuality(selectedShip)) {
                 options.setEnabled(Es_ShipQualityDialog.RULE_DIALOG_OPTION, false);
                 options.setTooltip(Es_ShipQualityDialog.RULE_DIALOG_OPTION, "The quality of this ship has reached its peak.");
             }
 
-            String cantUpgrade = buff.getCanUpgradeWithImpossibleTooltip();
+            String cantUpgrade = buff.getCanUpgradeWithImpossibleTooltip(selectedShip);
             options.addOption("Upgrades", Es_ShipUpgradeDialog.RULE_DIALOG_OPTION, cantUpgrade);
             if(cantUpgrade != null) {
                 options.setEnabled(Es_ShipUpgradeDialog.RULE_DIALOG_OPTION, false);

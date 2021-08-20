@@ -41,7 +41,9 @@ public class FleetMemberUtils {
             } else if (member.getVariant().getStatsForOpCosts() != null) {
                 if (member.getVariant().getStatsForOpCosts() == stats) {
                     fm = member;
-                } else if (member.getVariant().getStatsForOpCosts().getEntity() != null && member.getVariant().getStatsForOpCosts().getEntity() == stats.getEntity()) {
+                } else if (stats.getEntity() != null && member.getVariant().getStatsForOpCosts().getEntity() == stats.getEntity()) {
+                    fm = member;
+                } else if (stats.getFleetMember() != null && member.getVariant().getStatsForOpCosts().getFleetMember() == stats.getFleetMember()) {
                     fm = member;
                 }
             }
@@ -55,7 +57,9 @@ public class FleetMemberUtils {
                     if(variant.getStatsForOpCosts() != null) {
                         if (variant.getStatsForOpCosts() == stats) {
                             fm = member;
-                        } else if (variant.getStatsForOpCosts().getEntity() != null && stats.getEntity() == variant.getStatsForOpCosts().getEntity()) {
+                        } else if (stats.getEntity() != null && stats.getEntity() == variant.getStatsForOpCosts().getEntity()) {
+                            fm = member;
+                        } else if (stats.getFleetMember() != null && variant.getStatsForOpCosts().getFleetMember() == fm) {
                             fm = member;
                         }
 

@@ -10,6 +10,7 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.campaign.BuffManager;
 import extrasystemreloaded.augments.Augment;
 import extrasystemreloaded.upgrades.Upgrade;
+import extrasystemreloaded.util.ExtraSystems;
 
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +38,7 @@ public class ESDialogContext {
     private FleetMemberAPI selectedShip;
     private float shipBaseValue;
 
-    private Es_ShipLevelFleetData buff;
+    private ExtraSystems buff;
     private Augment selectedAugment;
     private Upgrade selectedUpgrade;
     private float shipQuality;
@@ -78,14 +79,8 @@ public class ESDialogContext {
         if (shipSelectedId != null) {
             selectedShip = getSelectedShip(shipSelectedId);
             if(selectedShip != null) {
-                BuffManager.Buff thisBuff = selectedShip.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
-                if (!(thisBuff instanceof Es_ShipLevelFleetData)) {
-                    selectedShip.getBuffManager().addBuff(new Es_ShipLevelFleetData(selectedShip));
-                    thisBuff = selectedShip.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
-                }
-                buff = (Es_ShipLevelFleetData) thisBuff;
-
-                shipQuality = buff.getExtraSystems().getQuality();
+                buff = ExtraSystems.getForFleetMember(selectedShip);
+                shipQuality = buff.getQuality();
                 shipBaseValue = selectedShip.getHullSpec().getBaseValue();
             }
         }
@@ -187,7 +182,7 @@ public class ESDialogContext {
         return selectedShip;
     }
 
-    public Es_ShipLevelFleetData getBuff() {
+    public ExtraSystems getBuff() {
         return buff;
     }
 }

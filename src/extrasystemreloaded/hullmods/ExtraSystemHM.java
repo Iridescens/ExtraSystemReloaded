@@ -3,10 +3,10 @@ package extrasystemreloaded.hullmods;
 import com.fs.starfarer.api.combat.BaseHullMod;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import extrasystemreloaded.Es_ModPlugin;
-import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.FleetMemberUtils;
 import extrasystemreloaded.util.Utilities;
@@ -17,6 +17,8 @@ import extrasystemreloaded.upgrades.UpgradesHandler;
 import org.apache.log4j.Logger;
 
 import java.awt.*;
+import java.util.Iterator;
+import java.util.List;
 
 import static extrasystemreloaded.util.StatUtils.formatFloat;
 
@@ -25,6 +27,51 @@ public class ExtraSystemHM extends BaseHullMod {
     private static Color color = new Color(94, 206, 226);
     private static Color tooltipColor = new Color(220, 220, 220, 255);
     private ExtraSystems extraSystems = null;
+
+    public static void addToFleetMember(FleetMemberAPI fm) {
+        if (fm.getVariant() == null) {
+            return;
+        }
+
+        ExtraSystems levels = ExtraSystems.getForFleetMember(fm);
+        if (levels.shouldApplyHullmod()) {
+            ShipVariantAPI shipVariant = fm.getVariant();
+
+            if(shipVariant.isStockVariant() || shipVariant.getSource() != VariantSource.REFIT) {
+                shipVariant = shipVariant.clone();
+                shipVariant.setOriginalVariant(null);
+                shipVariant.setSource(VariantSource.REFIT);
+                fm.setVariant(shipVariant, false, false);
+            }
+
+            shipVariant.addPermaMod("es_shiplevelHM");
+
+            List<String> slots = shipVariant.getModuleSlots();
+
+            Iterator<String> moduleIterator = shipVariant.getStationModules().keySet().iterator();
+            while(moduleIterator.hasNext()) {
+                String moduleVariantId = moduleIterator.next();
+                ShipVariantAPI moduleVariant = shipVariant.getModuleVariant(moduleIterator.next());
+
+                if (moduleVariant != null) {
+                    if(moduleVariant.isStockVariant() || shipVariant.getSource() != VariantSource.REFIT) {
+                        moduleVariant = moduleVariant.clone();
+                        moduleVariant.setOriginalVariant(null);
+                        moduleVariant.setSource(VariantSource.REFIT);
+                        shipVariant.setModuleVariant(moduleVariantId, moduleVariant);
+                    }
+
+                    moduleVariant.addPermaMod("es_shiplevelHM");
+                }
+            }
+
+            fm.updateStats();
+        }
+    }
+
+    public static void removeFromFleetMember(FleetMemberAPI fm) {
+
+    }
 
     @Override
     public boolean affectsOPCosts() {
@@ -51,6 +98,9 @@ public class ExtraSystemHM extends BaseHullMod {
     }
 
     public ExtraSystems getExtraSystems(FleetMemberAPI fm) {
+        return ExtraSystems.getForFleetMember(fm);
+
+        /*
         if (fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID) == null) {
             if (Es_ModPlugin.hasData(fm.getId())) {
                 Es_ModPlugin.applyBuff(fm);
@@ -60,7 +110,7 @@ public class ExtraSystemHM extends BaseHullMod {
         Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
         if(buff == null) return null;
 
-        return buff.getExtraSystems();
+        return buff.getExtraSystems();*/
     }
 
     @Override
@@ -83,8 +133,16 @@ public class ExtraSystemHM extends BaseHullMod {
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
+        ExtraSystemHM.log.info("[ExtraSystemsHM] applyEffectsBeforeShipCreation");
+        ExtraSystemHM.log.info(String.format("[ExtraSystemsHM] stats getEntity %s getFleetMember %s", stats.getEntity(), stats.getFleetMember()));
+
         FleetMemberAPI fm = FleetMemberUtils.findMemberForStats(stats);
-        if(fm == null) return;
+        if(fm == null) {
+            ExtraSystemHM.log.info("[ExtraSystemsHM] could not find a fleet member for this stats object!");
+            return;
+        } else {
+            ExtraSystemHM.log.info(String.format("[ExtraSystemsHM] found fleet member %s", fm));
+        }
         ExtraSystems extraSystems = this.getExtraSystems(fm);
 
         if (extraSystems == null) {
@@ -97,12 +155,15 @@ public class ExtraSystemHM extends BaseHullMod {
         for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
             if(!extraSystems.hasAugment(augment)) continue;
 
+            ExtraSystemHM.log.info(String.format("[ExtraSystemsHM] FleetMember has augment %s installed", augment.getName()));
             augment.applyUpgradeToStats(fm, stats, quality, id);
         }
 
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = extraSystems.getUpgrade(upgrade);
             if(level <= 0) continue;
+
+            ExtraSystemHM.log.info(String.format("[ExtraSystemsHM] FleetMember has upgrade %s at level %s installed", upgrade.getName(), level));
             upgrade.applyUpgradeToStats(fm, stats, extraSystems.getHullSizeFactor(hullSize), extraSystems.getUpgrade(upgrade), quality);
         }
     }
@@ -154,5 +215,17 @@ public class ExtraSystemHM extends BaseHullMod {
         }
     }
 
+    public static void removeESHullModsFromVariant(ShipVariantAPI v) {
+        v.removePermaMod("es_shiplevelHM");
 
+        List<String> slots = v.getModuleSlots();
+        if (slots == null || slots.isEmpty()) return;
+
+        for(int i = 0; i < slots.size(); ++i) {
+            ShipVariantAPI module = v.getModuleVariant(slots.get(i));
+            if (module != null) {
+                removeESHullModsFromVariant(module);
+            }
+        }
+    }
 }

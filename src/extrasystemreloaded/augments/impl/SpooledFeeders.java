@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.OPCostListener;
 import extrasystemreloaded.util.Utilities;
@@ -84,7 +85,10 @@ public class SpooledFeeders extends Augment {
 
     @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
+        ExtraSystemHM.log.info("[SpooledFeeders] applying upgrades before ship creation to stats");
+
         if(!stats.hasListenerOfClass(ESR_SpooledFeederListener.class)) {
+            ExtraSystemHM.log.info("[SpooledFeeders] stats did not have a spooled feeder listener!");
             stats.addListener(new ESR_SpooledFeederListener());
         }
     }

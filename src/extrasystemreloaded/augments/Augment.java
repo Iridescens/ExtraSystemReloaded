@@ -5,7 +5,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
 import extrasystemreloaded.util.ExtraSystems;
 
 public abstract class Augment {
@@ -22,7 +21,7 @@ public abstract class Augment {
     }
 
     public String getBuffId() {
-        return Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID + "_" + getKey();
+        return "ESR_" + getKey();
     }
 
     public abstract boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm);

@@ -12,8 +12,9 @@ import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.augments.Augment;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
-import extrasystemreloaded.campaign.Es_ShipLevelFleetData;
 import extrasystemreloaded.augments.AugmentsHandler;
+import extrasystemreloaded.hullmods.ExtraSystemHM;
+import extrasystemreloaded.util.ExtraSystems;
 
 import java.awt.*;
 
@@ -88,7 +89,7 @@ public class Es_ShipAugmentsDialog extends ESDialog {
         MarketAPI currMarket = context.getCurrMarket();
         CampaignFleetAPI playerFleet = context.getPlayerFleet();
         FleetMemberAPI shipSelected = context.getSelectedShip();
-        Es_ShipLevelFleetData buff = context.getBuff();
+        ExtraSystems buff = context.getBuff();
 
         boolean newPage = functionType.equals(FUNCTIONTYPE_CHANGEDPAGE);
 
@@ -100,10 +101,10 @@ public class Es_ShipAugmentsDialog extends ESDialog {
 
         for (int i = upgradePageIndex * 5; i < Math.min(upgradePageIndex * 5 + 5, AugmentsHandler.AUGMENT_LIST.size()); i++) {
             Augment augment = AugmentsHandler.AUGMENT_LIST.get(i);
-            boolean hasCore = buff.getExtraSystems().hasAugment(augment);
+            boolean hasCore = buff.hasAugment(augment);
 
             if (hasCore) {
-                String tooltip = "You already have this module.";
+                String tooltip = "You already have this augment.";
 
                 options.addOption(augment.getName(), augment.getKey(), tooltip);
                 options.setEnabled(augment.getKey(), false);
@@ -149,7 +150,7 @@ public class Es_ShipAugmentsDialog extends ESDialog {
     private void doAbilityPurchase(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
         MarketAPI currMarket = context.getCurrMarket();
         FleetMemberAPI selectedShip = context.getSelectedShip();
-        Es_ShipLevelFleetData buff = context.getBuff();
+        ExtraSystems buff = context.getBuff();
         Augment abilitySelected = context.getSelectedCore();
         CampaignFleetAPI playerFleet = context.getPlayerFleet();
 
@@ -159,8 +160,9 @@ public class Es_ShipAugmentsDialog extends ESDialog {
             abilitySelected.removeItemsFromFleet(playerFleet, selectedShip);
         }
 
-        buff.getExtraSystems().putModule(abilitySelected);
-        buff.save();
+        buff.putAugment(abilitySelected);
+        buff.save(selectedShip);
+        ExtraSystemHM.addToFleetMember(selectedShip);
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);
         textPanel.addParagraph(TextTip.Congratulation, Color.yellow);

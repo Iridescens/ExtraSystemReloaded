@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.Es_ModPlugin;
+import extrasystemreloaded.hullmods.ExtraSystemHM;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class EngagementListener extends BaseCampaignEventListener {
             fms.addAll(playerResult.getDestroyed());
 
         for(FleetMemberAPI fm : fms) {
-            Es_ModPlugin.removeBuff(fm);
+            ExtraSystemHM.removeFromFleetMember(fm);
             Es_ModPlugin.removeData(fm.getId());
         }
     }

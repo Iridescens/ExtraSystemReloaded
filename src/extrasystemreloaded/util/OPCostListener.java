@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.WeaponOPCostModifier;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
+import extrasystemreloaded.hullmods.ExtraSystemHM;
 
 import java.util.Map;
 
