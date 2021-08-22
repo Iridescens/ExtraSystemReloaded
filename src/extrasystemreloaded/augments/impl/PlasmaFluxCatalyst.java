@@ -79,7 +79,7 @@ public class PlasmaFluxCatalyst extends Augment {
     @Override
     public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
         if (systems.hasAugment(this.getKey())) {
-            tooltip.addPara(this.getName() + ": Reduces energy weapon OP costs by 1/2/4. Increases ballistic weapon flux costs by 25%.", Color.orange, 5);
+            tooltip.addPara(this.getName() + ": Reduces energy weapon OP costs by 1/2/4. Increases ballistic weapon OP costs by 0/1/2.", Color.orange, 5);
         }
     }
 

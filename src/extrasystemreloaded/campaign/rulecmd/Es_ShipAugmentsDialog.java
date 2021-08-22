@@ -109,7 +109,7 @@ public class Es_ShipAugmentsDialog extends ESDialog {
                 options.addOption(augment.getName(), augment.getKey(), tooltip);
                 options.setEnabled(augment.getKey(), false);
             } else {
-                options.addOption(augment.getName(), augment.getKey(), augment.getDescription());
+                options.addOption(augment.getName(), augment.getKey(), augment.getTooltip());
             }
         }
 

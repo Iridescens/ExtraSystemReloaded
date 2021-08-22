@@ -85,10 +85,7 @@ public class SpooledFeeders extends Augment {
 
     @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
-        ExtraSystemHM.log.info("[SpooledFeeders] applying upgrades before ship creation to stats");
-
         if(!stats.hasListenerOfClass(ESR_SpooledFeederListener.class)) {
-            ExtraSystemHM.log.info("[SpooledFeeders] stats did not have a spooled feeder listener!");
             stats.addListener(new ESR_SpooledFeederListener());
         }
     }
