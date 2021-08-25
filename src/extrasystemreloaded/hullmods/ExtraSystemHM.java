@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
+import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.FleetMemberUtils;
@@ -15,6 +16,7 @@ import extrasystemreloaded.augments.AugmentsHandler;
 import extrasystemreloaded.upgrades.Upgrade;
 import extrasystemreloaded.upgrades.UpgradesHandler;
 import org.apache.log4j.Logger;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.util.Iterator;
@@ -34,8 +36,8 @@ public class ExtraSystemHM extends BaseHullMod {
         }
 
         ExtraSystems levels = ExtraSystems.getForFleetMember(fm);
-        if (levels.shouldApplyHullmod()) {
-            ShipVariantAPI shipVariant = fm.getVariant();
+        ShipVariantAPI shipVariant = fm.getVariant();
+        if (levels.shouldApplyHullmod() && !shipVariant.hasHullMod("es_shiplevelHM")) {
 
             if(shipVariant.isStockVariant() || shipVariant.getSource() != VariantSource.REFIT) {
                 shipVariant = shipVariant.clone();
@@ -99,26 +101,15 @@ public class ExtraSystemHM extends BaseHullMod {
 
     public ExtraSystems getExtraSystems(FleetMemberAPI fm) {
         return ExtraSystems.getForFleetMember(fm);
-
-        /*
-        if (fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID) == null) {
-            if (Es_ModPlugin.hasData(fm.getId())) {
-                Es_ModPlugin.applyBuff(fm);
-            }
-        }
-
-        Es_ShipLevelFleetData buff = (Es_ShipLevelFleetData) fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
-        if(buff == null) return null;
-
-        return buff.getExtraSystems();*/
     }
 
     @Override
     public void advanceInCombat(ShipAPI ship, float amount) {
         ExtraSystems extraSystems = this.getExtraSystems(ship);
+        if(extraSystems == null) return;
 
         ShipAPI.HullSize hullSize = ship.getHullSize();
-        float quality = extraSystems.getQuality();
+        float quality = extraSystems.getQuality(ship.getFleetMember());
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = extraSystems.getUpgrade(upgrade);
             if(level <= 0) continue;
@@ -133,16 +124,9 @@ public class ExtraSystemHM extends BaseHullMod {
 
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
-        ExtraSystemHM.log.info("[ExtraSystemsHM] applyEffectsBeforeShipCreation");
-        ExtraSystemHM.log.info(String.format("[ExtraSystemsHM] stats getEntity %s getFleetMember %s", stats.getEntity(), stats.getFleetMember()));
-
         FleetMemberAPI fm = FleetMemberUtils.findMemberForStats(stats);
-        if(fm == null) {
-            ExtraSystemHM.log.info("[ExtraSystemsHM] could not find a fleet member for this stats object!");
-            return;
-        } else {
-            ExtraSystemHM.log.info(String.format("[ExtraSystemsHM] found fleet member %s", fm));
-        }
+        if(fm == null) return;
+
         ExtraSystems extraSystems = this.getExtraSystems(fm);
 
         if (extraSystems == null) {
@@ -150,12 +134,11 @@ public class ExtraSystemHM extends BaseHullMod {
             return;
         }
 
-        float quality = extraSystems.getQuality();
+        float quality = extraSystems.getQuality(fm);
 
         for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
             if(!extraSystems.hasAugment(augment)) continue;
 
-            ExtraSystemHM.log.info(String.format("[ExtraSystemsHM] FleetMember has augment %s installed", augment.getName()));
             augment.applyUpgradeToStats(fm, stats, quality, id);
         }
 
@@ -163,7 +146,6 @@ public class ExtraSystemHM extends BaseHullMod {
             int level = extraSystems.getUpgrade(upgrade);
             if(level <= 0) continue;
 
-            ExtraSystemHM.log.info(String.format("[ExtraSystemsHM] FleetMember has upgrade %s at level %s installed", upgrade.getName(), level));
             upgrade.applyUpgradeToStats(fm, stats, extraSystems.getHullSizeFactor(hullSize), extraSystems.getUpgrade(upgrade), quality);
         }
     }
@@ -175,7 +157,7 @@ public class ExtraSystemHM extends BaseHullMod {
         ExtraSystems extraSystems = this.getExtraSystems(fm);
         if(extraSystems == null) return;
 
-        float quality = extraSystems.getQuality();
+        float quality = extraSystems.getQuality(fm);
 
         for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
             if(!extraSystems.hasAugment(augment)) continue;
@@ -194,24 +176,43 @@ public class ExtraSystemHM extends BaseHullMod {
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI.HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
         FleetMemberAPI fm = ship.getFleetMember();
         if(fm == null) return;
+
         ExtraSystems extraSystems = this.getExtraSystems(fm);
         if(extraSystems == null) return;
 
-        float quality = extraSystems.getQuality();
+        float quality = extraSystems.getQuality(fm);
         String qname = Utilities.getQualityName(quality);
 
-        tooltip.addPara("The ship is of %s %s quality:", 0, Utilities.getQualityColor(quality), formatFloat(quality * 100) + "%", qname);
+        tooltip.addPara("The ship is of %s %s quality.", 0, Utilities.getQualityColor(quality), formatFloat(quality * 100) + "%", qname);
 
+        boolean expand = Keyboard.isKeyDown(Keyboard.getKeyIndex("F1"));
+
+        boolean addedAugmentSection = false;
         for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
-            augment.modifyToolTip(tooltip, fm, extraSystems);
+            if(!addedAugmentSection) {
+                addedAugmentSection = true;
+                tooltip.addSectionHeading("Augments", Alignment.MID, 6);
+            }
+            augment.modifyToolTip(tooltip, fm, extraSystems, expand);
             tooltip.setParaFontDefault();
             tooltip.setParaFontColor(tooltipColor);
         }
 
+        boolean addedUpgradeSection = false;
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            upgrade.modifyToolTip(tooltip, fm, extraSystems);
+            if(!addedUpgradeSection) {
+                addedUpgradeSection = true;
+                tooltip.addSectionHeading("Upgrades", Alignment.MID, 6);
+            }
+            upgrade.modifyToolTip(tooltip, fm, extraSystems, expand);
             tooltip.setParaFontDefault();
             tooltip.setParaFontColor(tooltipColor);
+        }
+
+        if(expand) {
+            tooltip.addPara("Press F1 to show less information.", 10, new Color(236, 196, 0), "F1");
+        } else {
+            tooltip.addPara("Hold F1 to show more information.", 10, new Color(115, 147, 189), "F1");
         }
     }
 

@@ -59,12 +59,15 @@ public class HangarForge extends Augment {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         if (systems.hasAugment(this.getKey())) {
-            tooltip.setParaFontColor(Color.YELLOW);
-            tooltip.addPara(this.getName() + ": Reduces fighter replacement rates by %s. " +
-                            "Reduces the rate at which replacement rate degrades by %s.", 5, Color.orange,
-                    FIGHTER_REPLACEMENT_RATE_BONUS + "%", RATE_DECREASE_MODIFIER + "%");
+            if (expand) {
+                tooltip.addPara(this.getName() + ": Reduces fighter replacement rates by %s. " +
+                                "Reduces the rate at which replacement rate degrades by %s.", 5, Color.GREEN,
+                        FIGHTER_REPLACEMENT_RATE_BONUS + "%", RATE_DECREASE_MODIFIER + "%");
+            } else {
+                tooltip.addPara(this.getName(), Color.GREEN, 5);
+            }
         }
     }
 

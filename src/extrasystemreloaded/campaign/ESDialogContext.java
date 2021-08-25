@@ -80,7 +80,7 @@ public class ESDialogContext {
             selectedShip = getSelectedShip(shipSelectedId);
             if(selectedShip != null) {
                 buff = ExtraSystems.getForFleetMember(selectedShip);
-                shipQuality = buff.getQuality();
+                shipQuality = buff.getQuality(selectedShip);
                 shipBaseValue = selectedShip.getHullSpec().getBaseValue();
             }
         }

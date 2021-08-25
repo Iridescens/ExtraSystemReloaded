@@ -41,26 +41,30 @@ public class Durability extends Upgrade {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         int level = systems.getUpgrade(this);
 
         if (level > 0) {
-            tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
+            if(expand) {
+                tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Hull durability: +%s (%s)",
-                    fm.getStats().getHullBonus().getPercentBonus(this.getBuffId()).getValue(),
-                    fm.getVariant().getHullSpec().getHitpoints());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Hull durability: +%s (%s)",
+                        fm.getStats().getHullBonus().getPercentBonus(this.getBuffId()).getValue(),
+                        fm.getVariant().getHullSpec().getHitpoints());
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Armor durability: +%s (%s)",
-                    fm.getStats().getArmorBonus().getPercentBonus(this.getBuffId()).getValue(),
-                    fm.getVariant().getHullSpec().getArmorRating());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Armor durability: +%s (%s)",
+                        fm.getStats().getArmorBonus().getPercentBonus(this.getBuffId()).getValue(),
+                        fm.getVariant().getHullSpec().getArmorRating());
 
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Engines durability: +%s",
-                    fm.getStats().getEngineHealthBonus().getPercentBonus(this.getBuffId()).getValue());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Engines durability: +%s",
+                        fm.getStats().getEngineHealthBonus().getPercentBonus(this.getBuffId()).getValue());
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  EMP damage taken: %s",
-                    fm.getStats().getEmpDamageTakenMult().getPercentStatMod(this.getBuffId()).getValue());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  EMP damage taken: %s",
+                        fm.getStats().getEmpDamageTakenMult().getPercentStatMod(this.getBuffId()).getValue());
+            } else {
+                tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));
+            }
         }
     }
 }

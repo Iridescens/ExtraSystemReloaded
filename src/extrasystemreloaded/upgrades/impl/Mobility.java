@@ -42,25 +42,29 @@ public class Mobility extends Upgrade {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         int level = systems.getUpgrade(this);
 
         if (level > 0) {
-            tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
+            if(expand) {
+                tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Maximum speed: +%s (%s)",
-                    fm.getStats().getMaxSpeed().getPercentStatMod(this.getBuffId()).getValue(),
-                    fm.getStats().getMaxSpeed().getBaseValue());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Maximum speed: +%s (%s)",
+                        fm.getStats().getMaxSpeed().getPercentStatMod(this.getBuffId()).getValue(),
+                        fm.getStats().getMaxSpeed().getBaseValue());
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Acceleration and deceleration: +%s",
-                    fm.getStats().getAcceleration().getPercentStatMod(this.getBuffId()).getValue());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Acceleration and deceleration: +%s",
+                        fm.getStats().getAcceleration().getPercentStatMod(this.getBuffId()).getValue());
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Maximum turn rate and turn acceleration: +%s",
-                    fm.getStats().getMaxTurnRate().getPercentStatMod(this.getBuffId()).getValue());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Maximum turn rate and turn acceleration: +%s",
+                        fm.getStats().getMaxTurnRate().getPercentStatMod(this.getBuffId()).getValue());
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Maximum burn level: +%s (%s)",
-                    fm.getStats().getMaxBurnLevel().getPercentStatMod(this.getBuffId()).getValue(),
-                    fm.getStats().getMaxBurnLevel().getBaseValue());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Maximum burn level: +%s (%s)",
+                        fm.getStats().getMaxBurnLevel().getPercentStatMod(this.getBuffId()).getValue(),
+                        fm.getStats().getMaxBurnLevel().getBaseValue());
+            } else {
+                tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));
+            }
         }
     }
 }

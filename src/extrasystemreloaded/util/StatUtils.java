@@ -11,6 +11,7 @@ import java.text.DecimalFormat;
 
 public class StatUtils {
     private static final DecimalFormat FLOATING_FORMAT = new DecimalFormat("#");
+    private static final DecimalFormat FLOATING_FORMAT_UNROUNDED = new DecimalFormat("#.##");
 
     private StatUtils() {
 
@@ -70,16 +71,16 @@ public class StatUtils {
         tooltip.addPara(format, 0, Misc.getHighlightColor(), formatFloat(bonusPercent) + "%");
     }
 
-    public static String getStatPercentBonusString(String format, float bonusPercent, float originalValue) {
-        return String.format(format, formatFloat(bonusPercent) + "%", formatFloat(bonusPercent * 0.01f * originalValue));
+    public static void addPercentBonusToTooltipUnrounded(TooltipMakerAPI tooltip, String format, float bonusPercent, float originalValue) {
+        tooltip.addPara(format, 0, Misc.getHighlightColor(), formatFloatUnrounded(bonusPercent) + "%", formatFloatUnrounded(originalValue * 0.01f * bonusPercent));
+    }
+
+    public static String formatFloatUnrounded(float theFloat) {
+        return FLOATING_FORMAT_UNROUNDED.format(theFloat);
     }
 
     public static String formatFloat(float theFloat) {
         return FLOATING_FORMAT.format(theFloat);
-    }
-
-    private static String roundFloat(float theFloat) {
-        return Integer.toString(Math.round(theFloat));
     }
 
     private static class FloatHolder {

@@ -53,6 +53,9 @@ Es_ShipAugmentsDialog ConfirmAugmentPurchase",,,
 ESShipAugmentApply,DialogOptionSelected,"$option==ESShipAugmentApply
 Es_ShipPicked get
 Es_AugmentPicked get","Es_ShipAugmentsDialog ApplyAugment",,,
+ESShipAugmentDestroy,DialogOptionSelected,"$option==ESShipAugmentDestroy
+Es_ShipPicked get
+Es_AugmentPicked get","Es_ShipAugmentsDialog DestroyAugment",,,
 ,,,,,,
 ESDialogBack,DialogOptionSelected,"$option==ESDialogBack","ShowDefaultVisual
 $menuState = main 0

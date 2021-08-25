@@ -77,9 +77,13 @@ public class PlasmaFluxCatalyst extends Augment {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         if (systems.hasAugment(this.getKey())) {
-            tooltip.addPara(this.getName() + ": Reduces energy weapon OP costs by 1/2/4. Increases ballistic weapon OP costs by 0/1/2.", Color.orange, 5);
+            if(expand) {
+                tooltip.addPara(this.getName() + ": Reduces energy weapon OP costs by 1/2/4. Increases ballistic weapon OP costs by 0/1/2.", Color.blue, 5);
+            } else {
+                tooltip.addPara(this.getName(), Color.blue, 5);
+            }
         }
     }
 
@@ -90,7 +94,7 @@ public class PlasmaFluxCatalyst extends Augment {
         }
     }
 
-    private static class ESR_PlasmaCatalystListener extends OPCostListener {
+    private class ESR_PlasmaCatalystListener extends OPCostListener {
         @Override
         protected Map<WeaponAPI.WeaponType, Map<WeaponAPI.WeaponSize, Integer>> getModifierMap() {
             return OP_MODIFIERS;

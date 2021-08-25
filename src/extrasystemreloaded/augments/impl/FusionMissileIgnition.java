@@ -68,9 +68,13 @@ public class FusionMissileIgnition extends Augment {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         if (systems.hasAugment(this.getKey())) {
-            tooltip.addPara(this.getName() + ": Reduces missile weapon OP costs by 0/1/2.", Color.orange, 5);
+            if (expand) {
+                tooltip.addPara(this.getName() + ": Reduces missile weapon OP costs by 0/1/2.", Color.magenta, 5);
+            } else {
+                tooltip.addPara(this.getName(), Color.magenta, 5);
+            }
         }
     }
 
@@ -81,7 +85,7 @@ public class FusionMissileIgnition extends Augment {
         }
     }
 
-    private static class ESR_FusionIgnitorListener extends OPCostListener {
+    private class ESR_FusionIgnitorListener extends OPCostListener {
         @Override
         protected Map<WeaponAPI.WeaponType, Map<WeaponAPI.WeaponSize, Integer>> getModifierMap() {
             return OP_MODIFIERS;

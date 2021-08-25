@@ -74,43 +74,47 @@ public class Logistics extends Upgrade {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         int level = systems.getUpgrade(this);
 
         if (level > 0) {
-            tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
+            if(expand) {
+                tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  CR per deployment: %s (%s)",
-                    fm.getStats().getCRPerDeploymentPercent().getPercentBonus(this.getBuffId()).getValue(),
-                    fm.getVariant().getHullSpec().getCRToDeploy());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  CR per deployment: %s (%s)",
+                        fm.getStats().getCRPerDeploymentPercent().getPercentBonus(this.getBuffId()).getValue(),
+                        fm.getVariant().getHullSpec().getCRToDeploy());
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Less required crew: %s (%s)",
-                    fm.getStats().getMinCrewMod().getPercentBonus(this.getBuffId()).getValue(),
-                    fm.getVariant().getHullSpec().getMinCrew());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Less required crew: %s (%s)",
+                        fm.getStats().getMinCrewMod().getPercentBonus(this.getBuffId()).getValue(),
+                        fm.getVariant().getHullSpec().getMinCrew());
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  More crew space: +%s (%s)",
-                    fm.getStats().getMaxCrewMod().getPercentBonus(this.getBuffId()).getValue(),
-                    fm.getVariant().getHullSpec().getMaxCrew());
-            StatUtils.addPercentBonusToTooltip(tooltip, "  More cargo space: +%s (%s)",
-                    fm.getStats().getCargoMod().getPercentBonus(this.getBuffId()).getValue(),
-                    fm.getVariant().getHullSpec().getCargo());
-            StatUtils.addPercentBonusToTooltip(tooltip, "  More fuel space: +%s (%s)",
-                    fm.getStats().getFuelMod().getPercentBonus(this.getBuffId()).getValue(),
-                    fm.getVariant().getHullSpec().getFuel());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  More crew space: +%s (%s)",
+                        fm.getStats().getMaxCrewMod().getPercentBonus(this.getBuffId()).getValue(),
+                        fm.getVariant().getHullSpec().getMaxCrew());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  More cargo space: +%s (%s)",
+                        fm.getStats().getCargoMod().getPercentBonus(this.getBuffId()).getValue(),
+                        fm.getVariant().getHullSpec().getCargo());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  More fuel space: +%s (%s)",
+                        fm.getStats().getFuelMod().getPercentBonus(this.getBuffId()).getValue(),
+                        fm.getVariant().getHullSpec().getFuel());
 
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Repairs and recovery rates: +%s (%s)",
-                    fm.getStats().getBaseCRRecoveryRatePercentPerDay().getPercentStatMod(this.getBuffId()).getValue(),
-                    fm.getStats().getBaseCRRecoveryRatePercentPerDay().getBaseValue());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Repairs and recovery rates: +%s (%s)",
+                        fm.getStats().getBaseCRRecoveryRatePercentPerDay().getPercentStatMod(this.getBuffId()).getValue(),
+                        fm.getStats().getBaseCRRecoveryRatePercentPerDay().getBaseValue());
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Fuel consumption: %s (%s)",
-                    fm.getStats().getFuelUseMod().getPercentBonus(this.getBuffId()).getValue(),
-                    fm.getVariant().getHullSpec().getFuelPerLY());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Fuel consumption: %s (%s)",
+                        fm.getStats().getFuelUseMod().getPercentBonus(this.getBuffId()).getValue(),
+                        fm.getVariant().getHullSpec().getFuelPerLY());
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Overall supplies consumption rates: %s (%s)",
-                    fm.getStats().getSuppliesPerMonth().getPercentStatMod(this.getBuffId()).getValue(),
-                    fm.getStats().getSuppliesPerMonth().getBaseValue());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Overall supplies consumption rates: %s (%s)",
+                        fm.getStats().getSuppliesPerMonth().getPercentStatMod(this.getBuffId()).getValue(),
+                        fm.getStats().getSuppliesPerMonth().getBaseValue());
+            } else {
+                tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));
+            }
         }
     }
 }

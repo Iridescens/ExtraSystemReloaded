@@ -35,6 +35,9 @@ public class Es_ShipAugmentsDialog extends ESDialog {
     private static final String OPTION_APPLY = "ESShipAugmentApply";
     private static final String FUNCTIONTYPE_APPLY = "ApplyAugment";
 
+    private static final String OPTION_DESTROY = "ESShipAugmentDestroy";
+    private static final String FUNCTIONTYPE_DESTROY = "DestroyAugment";
+
     @Override
     protected void process(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
         options.clearOptions();
@@ -76,6 +79,12 @@ public class Es_ShipAugmentsDialog extends ESDialog {
                     options.addOption("Back to augments", RULE_DIALOG_OPTION);
                 }
                 break;
+            case FUNCTIONTYPE_DESTROY:
+                if (selectedShip != null && selectedUpgrade != null) {
+                    doAbilityDestroy(context, textPanel, options, visual);
+                    options.addOption("Back to augments", RULE_DIALOG_OPTION);
+                }
+                break;
             default:
                 break;
 
@@ -101,16 +110,7 @@ public class Es_ShipAugmentsDialog extends ESDialog {
 
         for (int i = upgradePageIndex * 5; i < Math.min(upgradePageIndex * 5 + 5, AugmentsHandler.AUGMENT_LIST.size()); i++) {
             Augment augment = AugmentsHandler.AUGMENT_LIST.get(i);
-            boolean hasCore = buff.hasAugment(augment);
-
-            if (hasCore) {
-                String tooltip = "You already have this augment.";
-
-                options.addOption(augment.getName(), augment.getKey(), tooltip);
-                options.setEnabled(augment.getKey(), false);
-            } else {
-                options.addOption(augment.getName(), augment.getKey(), augment.getTooltip());
-            }
+            options.addOption(augment.getName(), augment.getKey(), augment.getTooltip());
         }
 
         options.addOption("Previous page", OPTION_PREVPAGE);
@@ -126,23 +126,32 @@ public class Es_ShipAugmentsDialog extends ESDialog {
     private void populateAbilityPurchaseConfirmationOptions(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
         FleetMemberAPI shipSelected = context.getSelectedShip();
         Augment abilitySelected = context.getSelectedCore();
+        ExtraSystems buff = context.getBuff();
 
         if (shipSelected != null && abilitySelected != null) {
-            boolean canInstall = abilitySelected.canApply(context.getPlayerFleet(), shipSelected);
-
             textPanel.addPara(abilitySelected.getTextDescription());
 
-            options.addOption(
-                    "Install augment",
-                    OPTION_APPLY,
-                    null
-            );
+            if(buff.hasAugment(abilitySelected)) {
+                options.addOption(
+                        "Destroy augment",
+                        OPTION_DESTROY,
+                        null
+                );
+            } else {
+                boolean canInstall = abilitySelected.canApply(context.getPlayerFleet(), shipSelected);
 
-            if (!canInstall) {
-                textPanel.addPara(abilitySelected.getUnableToApplyTooltip(context.getPlayerFleet(), shipSelected), Color.red);
+                options.addOption(
+                        "Install augment",
+                        OPTION_APPLY,
+                        null
+                );
 
-                options.setTooltip(OPTION_APPLY, abilitySelected.getUnableToApplyTooltip(context.getPlayerFleet(), shipSelected));
-                options.setEnabled(OPTION_APPLY, false);
+                if (!canInstall) {
+                    textPanel.addPara(abilitySelected.getUnableToApplyTooltip(context.getPlayerFleet(), shipSelected), Color.red);
+
+                    options.setTooltip(OPTION_APPLY, abilitySelected.getUnableToApplyTooltip(context.getPlayerFleet(), shipSelected));
+                    options.setEnabled(OPTION_APPLY, false);
+                }
             }
         }
     }
@@ -161,6 +170,23 @@ public class Es_ShipAugmentsDialog extends ESDialog {
         }
 
         buff.putAugment(abilitySelected);
+        buff.save(selectedShip);
+        ExtraSystemHM.addToFleetMember(selectedShip);
+
+        Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);
+        textPanel.addParagraph(TextTip.Congratulation, Color.yellow);
+
+    }
+
+    private void doAbilityDestroy(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
+        MarketAPI currMarket = context.getCurrMarket();
+        FleetMemberAPI selectedShip = context.getSelectedShip();
+        ExtraSystems buff = context.getBuff();
+        Augment abilitySelected = context.getSelectedCore();
+
+        ShipAPI.HullSize hullSize = selectedShip.getHullSpec().getHullSize();
+
+        buff.removeModule(abilitySelected);
         buff.save(selectedShip);
         ExtraSystemHM.addToFleetMember(selectedShip);
 

@@ -57,10 +57,14 @@ public class EqualizerCore extends Augment {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         if (systems.hasAugment(this.getKey())) {
-            tooltip.addPara(this.getName() + ": Reduces recoil by 25%. Increases weapon turn rate by 50%. Autofire leading is nearly perfected. " +
-                    "Weapons with at most 550 range have range increased by 200. Weapons with at least 800 range have range reduced by -150.", Color.red, 5);
+            if(expand) {
+                tooltip.addPara(this.getName() + ": Reduces recoil by 25%. Increases weapon turn rate by 50%. Autofire leading is nearly perfected. " +
+                        "Weapons with at most 550 range have range increased by 200. Weapons with at least 800 range have range reduced by -150.", Color.red, 5);
+            } else {
+                tooltip.addPara(this.getName(), Color.red, 5);
+            }
         }
     }
 
@@ -83,7 +87,7 @@ public class EqualizerCore extends Augment {
     }
 
     // Our range listener
-    private static class ESR_EqualizerCoreListener implements WeaponRangeModifier {
+    private class ESR_EqualizerCoreListener implements WeaponRangeModifier {
 
         @Override
         public float getWeaponRangePercentMod(ShipAPI ship, WeaponAPI weapon) {

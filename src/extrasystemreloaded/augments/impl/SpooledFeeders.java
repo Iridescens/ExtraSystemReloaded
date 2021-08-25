@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.OPCostListener;
 import extrasystemreloaded.util.Utilities;
@@ -77,9 +76,13 @@ public class SpooledFeeders extends Augment {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         if (systems.hasAugment(this.getKey())) {
-            tooltip.addPara(this.getName() + ": Reduces ballistic weapon OP costs by 1/2/4. Increases energy weapon OP costs by 0/1/2.", Color.orange, 5);
+            if(expand) {
+                tooltip.addPara(this.getName() + ": Reduces ballistic weapon OP costs by 1/2/4. Increases energy weapon OP costs by 0/1/2.", Color.lightGray, 5);
+            } else {
+                tooltip.addPara(this.getName(), Color.lightGray, 5);
+            }
         }
     }
 
@@ -90,7 +93,7 @@ public class SpooledFeeders extends Augment {
         }
     }
 
-    private static class ESR_SpooledFeederListener extends OPCostListener {
+    private class ESR_SpooledFeederListener extends OPCostListener {
         @Override
         protected Map<WeaponAPI.WeaponType, Map<WeaponAPI.WeaponSize, Integer>> getModifierMap() {
             return OP_MODIFIERS;

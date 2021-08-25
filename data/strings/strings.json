@@ -22,7 +22,8 @@
 		"PlasmaCatalyst":"Plasma Flux Catalyst",
 		"FusionIgnition":"Fusion Missile Ignitors",
 		"HangarForge": "Hangar Forge",
-		"EqualizerCore": "Equalizer Core"
+		"EqualizerCore": "Equalizer Core",
+		"PhasefieldEngine": "Phasefield Engine"
 	},
 	"Options":{
 		"leave":"Leave",

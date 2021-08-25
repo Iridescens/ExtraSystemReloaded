@@ -86,48 +86,52 @@ public class Technology extends Upgrade {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         int level = systems.getUpgrade(this);
 
         if (level > 0) {
-            tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
+            if(expand) {
+                tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-            StatUtils.addDoublePercentBonusToTooltip(tooltip, "  Flux capacity and dissipation: +%s (%s, %s)",
-                    fm.getStats().getFluxCapacity().getPercentStatMod(this.getBuffId()).getValue(),
-                    fm.getStats().getFluxCapacity().getBaseValue(), fm.getStats().getFluxDissipation().getBaseValue());
+                StatUtils.addDoublePercentBonusToTooltip(tooltip, "  Flux capacity and dissipation: +%s (%s, %s)",
+                        fm.getStats().getFluxCapacity().getPercentStatMod(this.getBuffId()).getValue(),
+                        fm.getStats().getFluxCapacity().getBaseValue(), fm.getStats().getFluxDissipation().getBaseValue());
 
-            StatUtils.addDoublePercentBonusToTooltip(tooltip, "  Sensor strength and profile: +/- %s (%s, %s)",
-                    fm.getStats().getSensorStrength().getPercentStatMod(this.getBuffId()).getValue(),
-                    fm.getStats().getSensorStrength().getBaseValue(), fm.getStats().getSensorProfile().getBaseValue());
+                StatUtils.addDoublePercentBonusToTooltip(tooltip, "  Sensor strength and profile: +/- %s (%s, %s)",
+                        fm.getStats().getSensorStrength().getPercentStatMod(this.getBuffId()).getValue(),
+                        fm.getStats().getSensorStrength().getBaseValue(), fm.getStats().getSensorProfile().getBaseValue());
 
-            if (fm.getHullSpec() != null &&
-                    (fm.getHullSpec().getShieldType() == ShieldAPI.ShieldType.FRONT ||
-                            fm.getHullSpec().getShieldType() == ShieldAPI.ShieldType.OMNI)) {
+                if (fm.getHullSpec() != null &&
+                        (fm.getHullSpec().getShieldType() == ShieldAPI.ShieldType.FRONT ||
+                                fm.getHullSpec().getShieldType() == ShieldAPI.ShieldType.OMNI)) {
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Shield damage taken: %s (%s)",
-                        fm.getStats().getShieldDamageTakenMult().getPercentStatMod(this.getBuffId()).getValue(),
-                        fm.getStats().getShieldDamageTakenMult().getBaseValue());
+                    StatUtils.addPercentBonusToTooltipUnrounded(tooltip, "  Shield damage taken: %s (%s)",
+                            fm.getStats().getShieldDamageTakenMult().getPercentStatMod(this.getBuffId()).getValue(),
+                            fm.getStats().getShieldDamageTakenMult().getBaseValue());
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Shield upkeep: %s (%s)",
-                        fm.getStats().getShieldUpkeepMult().getPercentStatMod(this.getBuffId()).getValue(),
-                        fm.getStats().getShieldUpkeepMult().getBaseValue());
+                    StatUtils.addPercentBonusToTooltipUnrounded(tooltip, "  Shield upkeep: %s (%s)",
+                            fm.getStats().getShieldUpkeepMult().getPercentStatMod(this.getBuffId()).getValue(),
+                            fm.getStats().getShieldUpkeepMult().getBaseValue());
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Shield unfold rate: +%s",
-                        fm.getStats().getShieldUnfoldRateMult().getPercentStatMod(this.getBuffId()).getValue());
+                    StatUtils.addPercentBonusToTooltip(tooltip, "  Shield unfold rate: +%s",
+                            fm.getStats().getShieldUnfoldRateMult().getPercentStatMod(this.getBuffId()).getValue());
 
-            } else if (fm.getHullSpec() != null &&
-                    fm.getHullSpec().getShieldType() == ShieldAPI.ShieldType.PHASE) {
+                } else if (fm.getHullSpec() != null &&
+                        fm.getHullSpec().getShieldType() == ShieldAPI.ShieldType.PHASE) {
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Phase cloak activation cost: %s (%s)",
-                        fm.getStats().getPhaseCloakActivationCostBonus().getPercentBonus(this.getBuffId()).getValue(),
-                        fm.getVariant().getHullSpec().getShieldSpec().getPhaseCost());
+                    StatUtils.addPercentBonusToTooltip(tooltip, "  Phase cloak activation cost: %s (%s)",
+                            fm.getStats().getPhaseCloakActivationCostBonus().getPercentBonus(this.getBuffId()).getValue(),
+                            fm.getVariant().getHullSpec().getShieldSpec().getPhaseCost());
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Phase cloak upkeep cost: %s (%s)",
-                        fm.getStats().getPhaseCloakUpkeepCostBonus().getPercentBonus(this.getBuffId()).getValue(),
-                        fm.getVariant().getHullSpec().getShieldSpec().getPhaseUpkeep());
+                    StatUtils.addPercentBonusToTooltip(tooltip, "  Phase cloak upkeep cost: %s (%s)",
+                            fm.getStats().getPhaseCloakUpkeepCostBonus().getPercentBonus(this.getBuffId()).getValue(),
+                            fm.getVariant().getHullSpec().getShieldSpec().getPhaseUpkeep());
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Phase cloak cooldown: %s",
-                        fm.getStats().getPhaseCloakCooldownBonus().getPercentBonus(this.getBuffId()).getValue());
+                    StatUtils.addPercentBonusToTooltip(tooltip, "  Phase cloak cooldown: %s",
+                            fm.getStats().getPhaseCloakCooldownBonus().getPercentBonus(this.getBuffId()).getValue());
+                }
+            } else {
+                tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));
             }
         }
     }

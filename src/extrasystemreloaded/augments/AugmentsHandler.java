@@ -17,6 +17,7 @@ public class AugmentsHandler {
         AugmentsHandler.addModule(new FusionMissileIgnition());
         AugmentsHandler.addModule(new HangarForge());
         AugmentsHandler.addModule(new EqualizerCore());
+        AugmentsHandler.addModule(new PhasefieldEngine());
     }
 
     public static void addModule(Augment augment) {

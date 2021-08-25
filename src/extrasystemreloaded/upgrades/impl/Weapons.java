@@ -66,23 +66,27 @@ public class Weapons extends Upgrade {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         int level = systems.getUpgrade(this);
 
         if (level > 0) {
-            tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
+            if(expand) {
+                tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Weapons range: +%s",
-                    fm.getStats().getBallisticWeaponRangeBonus().getPercentBonus(this.getBuffId()).getValue());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Weapons range: +%s",
+                        fm.getStats().getBallisticWeaponRangeBonus().getPercentBonus(this.getBuffId()).getValue());
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Weapons damage: +%s",
-                    fm.getStats().getBallisticWeaponDamageMult().getPercentStatMod(this.getBuffId()).getValue());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Weapons damage: +%s",
+                        fm.getStats().getBallisticWeaponDamageMult().getPercentStatMod(this.getBuffId()).getValue());
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Weapons rate of fire: +%s",
-                    fm.getStats().getBallisticRoFMult().getPercentStatMod(this.getBuffId()).getValue());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Weapons rate of fire: +%s",
+                        fm.getStats().getBallisticRoFMult().getPercentStatMod(this.getBuffId()).getValue());
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Weapon mounts durability: +%s",
-                    fm.getStats().getWeaponHealthBonus().getPercentBonus(this.getBuffId()).getValue());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Weapon mounts durability: +%s",
+                        fm.getStats().getWeaponHealthBonus().getPercentBonus(this.getBuffId()).getValue());
+            } else {
+                tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));
+            }
         }
     }
 }

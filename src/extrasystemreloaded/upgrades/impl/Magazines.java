@@ -54,18 +54,22 @@ public class Magazines extends Upgrade {
     }
 
     @Override
-    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems) {
+    public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         int level = systems.getUpgrade(this.getKey());
-        float quality = systems.getQuality();
+        float quality = systems.getQuality(fm);
 
         if (level > 0) {
-            tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
+            if(expand) {
+                tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Bonus missile ammunition: +%s",
-                    fm.getStats().getMissileAmmoBonus().getPercentBonus(this.getBuffId()).getValue());
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Bonus missile ammunition: +%s",
+                        fm.getStats().getMissileAmmoBonus().getPercentBonus(this.getBuffId()).getValue());
 
-            StatUtils.addPercentBonusToTooltip(tooltip, "  Magazine reload speed: +%s per second",
-                    level * quality * RELOAD_PER_SECOND_MULT);
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Magazine reload speed: +%s per second",
+                        level * quality * RELOAD_PER_SECOND_MULT);
+            } else {
+                tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));
+            }
         }
     }
 }

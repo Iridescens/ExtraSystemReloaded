@@ -68,12 +68,7 @@ public class Es_ModPlugin extends BaseModPlugin {
 		Global.getSector().addTransientListener(new EngagementListener(false));
 
 		loadConfig();
-
-    	if (Global.getSector().getPersistentData().get(ES_PERSISTENTUPGRADEMAP)==null) {
-			Global.getSector().getPersistentData().put(ES_PERSISTENTUPGRADEMAP, new HashMap<String, ExtraSystems>());
-		}
-
-		ShipUpgradeData = (Map<String, ExtraSystems>) Global.getSector().getPersistentData().get(ES_PERSISTENTUPGRADEMAP);
+		loadUpgradeData();
 
 		for(FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
 			if(!ShipUpgradeData.containsKey(fm.getId())) continue;
@@ -82,23 +77,42 @@ public class Es_ModPlugin extends BaseModPlugin {
 		}
 	}
 
+	public static void loadUpgradeData() {
+		if(Global.getSector().getPersistentData().get(ES_PERSISTENTUPGRADEMAP)==null) {
+			Global.getSector().getPersistentData().put(ES_PERSISTENTUPGRADEMAP, new HashMap<String, ExtraSystems>());
+		}
+		ShipUpgradeData = (Map<String, ExtraSystems>) Global.getSector().getPersistentData().get(ES_PERSISTENTUPGRADEMAP);
+	}
 
-	public static void removeBuff(FleetMemberAPI fm) {
-		/*
-		if(fm.getBuffManager().getBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID) != null) {
-			fm.getBuffManager().removeBuff(Es_ShipLevelFleetData.Es_LEVEL_FUNCTION_ID);
-		}*/
+	public static ExtraSystems getData(String shipId) {
+		if(ShipUpgradeData == null) {
+			loadUpgradeData();
+		}
+
+		return ShipUpgradeData.get(shipId);
 	}
 
 	public static boolean hasData(String shipId) {
+		if(ShipUpgradeData == null) {
+			loadUpgradeData();
+		}
+
 		return ShipUpgradeData.containsKey(shipId);
 	}
 
 	public static void saveData(String shipId, ExtraSystems systems) {
+		if(ShipUpgradeData == null) {
+			loadUpgradeData();
+		}
+
 		ShipUpgradeData.put(shipId, systems);
 	}
 
 	public static void removeData(String shipId) {
+		if(ShipUpgradeData == null) {
+			loadUpgradeData();
+		}
+
 		ShipUpgradeData.remove(shipId);
 	}
 

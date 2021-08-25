@@ -20,13 +20,9 @@ import static extrasystemreloaded.util.Utilities.RESOURCE_NAME;
 import static extrasystemreloaded.util.Utilities.getFleetCargoMap;
 
 public class ExtraSystems {
-    public static boolean fleetMemberHasUpgrades(FleetMemberAPI fm) {
-        return ShipUpgradeData.containsKey(fm.getId());
-    }
-
     public static ExtraSystems getForFleetMember(FleetMemberAPI fm) {
-        if(ShipUpgradeData.containsKey(fm.getId())) {
-            return ShipUpgradeData.get(fm.getId());
+        if(Es_ModPlugin.hasData(fm.getId())) {
+            return Es_ModPlugin.getData(fm.getId());
         }
         return new ExtraSystems(fm);
     }
@@ -37,10 +33,10 @@ public class ExtraSystems {
         this.qualityFactor = quality >= 0 ? quality : -1;
     }
 
-    public ExtraSystems(FleetMemberAPI fleetMemberAPI) {
+    public ExtraSystems(FleetMemberAPI fm) {
         this.upgrades = new ESUpgrades();
         this.modules = new ESAugments();
-        this.qualityFactor = generateQuality();
+        this.qualityFactor = generateQuality(fm);
     }
 
     public boolean shouldApplyHullmod() {
@@ -59,26 +55,26 @@ public class ExtraSystems {
         this.qualityFactor = qualityFactor;
     }
 
-    public float getQuality() {
+    public float getQuality(FleetMemberAPI fm) {
         if(qualityFactor < 0) {
-            qualityFactor = generateQuality();
+            qualityFactor = generateQuality(fm);
         }
         return qualityFactor;
     }
 
-    public static float generateQuality() {
-        Random random = new Random();
-        random.setSeed(UUID.nameUUIDFromBytes(Global.getSector().getSeedString().getBytes()).getMostSignificantBits());
-
+    public static float generateQuality(FleetMemberAPI fm) {
         if (useRandomQuality()) {
+            Random random = new Random();
+            random.setSeed(UUID.nameUUIDFromBytes((Global.getSector().getSeedString() + fm.getId()).getBytes()).getMostSignificantBits());
+
             float sum = 0.5f + 0.05f * random.nextInt(20);
             return sum;
         }
         return Es_ModPlugin.getBaseQuality();
     }
 
-    public boolean canUpgradeQuality(FleetMemberAPI member) {
-        return Es_ModPlugin.getMaxQuality() > getQuality();
+    public boolean canUpgradeQuality(FleetMemberAPI fm) {
+        return Es_ModPlugin.getMaxQuality() > getQuality(fm);
     }
 
     //augments
@@ -100,8 +96,8 @@ public class ExtraSystems {
         modules.putModule(augment);
     }
 
-    public void removeModule(String key) {
-        modules.removeModule(key);
+    public void removeModule(Augment augment) {
+        modules.removeModule(augment);
     }
 
     //upgrades
