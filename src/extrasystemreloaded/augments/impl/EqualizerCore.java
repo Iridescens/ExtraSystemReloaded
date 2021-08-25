@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.WeaponRangeModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.Utilities;
 import extrasystemreloaded.augments.Augment;
@@ -16,6 +17,7 @@ import java.awt.*;
 
 public class EqualizerCore extends Augment {
     private static final String ITEM = "esr_equalizercore";
+    private static final Color[] tooltipColors = {Color.red, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
 
     @Override
     public String getKey() {
@@ -60,10 +62,12 @@ public class EqualizerCore extends Augment {
     public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         if (systems.hasAugment(this.getKey())) {
             if(expand) {
-                tooltip.addPara(this.getName() + ": Reduces recoil by 25%. Increases weapon turn rate by 50%. Autofire leading is nearly perfected. " +
-                        "Weapons with at most 550 range have range increased by 200. Weapons with at least 800 range have range reduced by -150.", Color.red, 5);
+                tooltip.addPara("%s: Reduces recoil by %s. Increases weapon turn rate by %s. Autofire leading is %s. " +
+                        "Weapons with at most %s have range increased by %s. Weapons with at least %s have range reduced by %s.", 5,
+                        tooltipColors,
+                        this.getName(), "25%", "50%", "nearly perfected", "550 range", "200", "800 range", "-150");
             } else {
-                tooltip.addPara(this.getName(), Color.red, 5);
+                tooltip.addPara(this.getName(), tooltipColors[0], 5);
             }
         }
     }

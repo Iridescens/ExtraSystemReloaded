@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.Utilities;
 import extrasystemreloaded.augments.Augment;
@@ -15,6 +16,7 @@ import java.awt.*;
 public class HangarForge extends Augment {
     public static final String MODULE_KEY = "HangarForge";
     private static final String ITEM = "esr_hangarforge";
+    private static final Color[] tooltipColors = {Color.GREEN, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
 
     private static final float RATE_DECREASE_MODIFIER = 50f;
     private static final float FIGHTER_REPLACEMENT_RATE_BONUS = 20f;
@@ -62,11 +64,12 @@ public class HangarForge extends Augment {
     public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         if (systems.hasAugment(this.getKey())) {
             if (expand) {
-                tooltip.addPara(this.getName() + ": Reduces fighter replacement rates by %s. " +
-                                "Reduces the rate at which replacement rate degrades by %s.", 5, Color.GREEN,
-                        FIGHTER_REPLACEMENT_RATE_BONUS + "%", RATE_DECREASE_MODIFIER + "%");
+                tooltip.addPara("%s: Reduces fighter replacement rates by %s. " +
+                                "Reduces the rate at which replacement rate degrades by %s.", 5,
+                        tooltipColors,
+                        this.getName(), FIGHTER_REPLACEMENT_RATE_BONUS + "%", RATE_DECREASE_MODIFIER + "%");
             } else {
-                tooltip.addPara(this.getName(), Color.GREEN, 5);
+                tooltip.addPara(this.getName(), tooltipColors[0], 5);
             }
         }
     }

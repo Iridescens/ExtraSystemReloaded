@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.OPCostListener;
 import extrasystemreloaded.util.Utilities;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 public class FusionMissileIgnition extends Augment {
     private static final String ITEM = "esr_fusionmissileignitor";
+    private static final Color[] tooltipColors = {Color.magenta, ExtraSystemHM.infoColor};
 
     private static Map<WeaponAPI.WeaponSize, Integer> OP_MODIFIER_MISSILE = new HashMap() {{
         put(WeaponAPI.WeaponSize.SMALL, -1);
@@ -71,9 +73,9 @@ public class FusionMissileIgnition extends Augment {
     public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         if (systems.hasAugment(this.getKey())) {
             if (expand) {
-                tooltip.addPara(this.getName() + ": Reduces missile weapon OP costs by 0/1/2.", Color.magenta, 5);
+                tooltip.addPara("%s: Reduces missile weapon OP costs by %s.", 5, tooltipColors, this.getName(), "0/1/2");
             } else {
-                tooltip.addPara(this.getName(), Color.magenta, 5);
+                tooltip.addPara(this.getName(), tooltipColors[0], 5);
             }
         }
     }

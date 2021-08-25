@@ -8,6 +8,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
 import extrasystemreloaded.augments.Augment;
+import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.Utilities;
 import org.lwjgl.util.vector.Vector2f;
@@ -16,6 +17,7 @@ import java.awt.*;
 
 public class PhasefieldEngine extends Augment {
     private static final String ITEM = "esr_phaseengine";
+    private static final Color[] tooltipColors = {Color.PINK, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
 
     @Override
     public String getKey() {
@@ -62,9 +64,10 @@ public class PhasefieldEngine extends Augment {
     public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         if (systems.hasAugment(this.getKey())) {
             if (expand) {
-                tooltip.addPara(this.getName() + ": Every 60 seconds a killing blow or a projectile that deals more than 1000 damage is completely absorbed.", Color.PINK, 5);
+                tooltip.addPara("%s: Every %s a killing blow or a projectile that deals more than %s damage is completely absorbed.", 5, tooltipColors,
+                                                        this.getName(), "60 seconds", "1000");
             } else {
-                tooltip.addPara(this.getName(), Color.PINK, 5);
+                tooltip.addPara(this.getName(), tooltipColors[0], 5);
             }
         }
     }
@@ -80,10 +83,6 @@ public class PhasefieldEngine extends Augment {
         } else {
             ESR_PhasefieldEngineListener listener = ship.getListeners(ESR_PhasefieldEngineListener.class).get(0);
             listener.advanceInterval(amount);
-
-            if(listener.canConsume()) {
-                ship.addAfterimage(Color.magenta, 0, 0, 0, 0, 0.1f, 0, 0.1f, 0.1f, true, true, false);
-            }
         }
     }
 
@@ -91,6 +90,7 @@ public class PhasefieldEngine extends Augment {
     private class ESR_PhasefieldEngineListener implements DamageTakenModifier {
         private final ShipAPI ship;
         private IntervalUtil consumeInterval = new IntervalUtil(60, 60);
+        private IntervalUtil ghostInterval = new IntervalUtil(2f, 2f);
         private boolean consume = true;
 
         public ESR_PhasefieldEngineListener(ShipAPI ship) {
@@ -102,7 +102,15 @@ public class PhasefieldEngine extends Augment {
         }
 
         public void advanceInterval(float time) {
-            if (consume) return;
+            if (consume) {
+                ghostInterval.advance(time);
+                if(ghostInterval.intervalElapsed()) {
+                    ship.addAfterimage(new Color(255, 0, 255, 50), 0, 0, 0, 0, 0f, 1f, 2f, 1f, true, true, true);
+                    ship.addAfterimage(new Color(255, 0, 255), 0, 0, 0, 0, 5f, 1f, 2f, 0.75f, true, false, false);
+                    ghostInterval.setInterval(10f, 10f);
+                }
+                return;
+            }
 
             consumeInterval.advance(time);
             if (consumeInterval.intervalElapsed()) {

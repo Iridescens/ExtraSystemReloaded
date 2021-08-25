@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.OPCostListener;
 import extrasystemreloaded.util.Utilities;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class SpooledFeeders extends Augment {
     public static final String MODULE_KEY = "SpooledFeeders";
     private static final String ITEM = "esr_ammospool";
+    private static final Color[] tooltipColors = {Color.lightGray, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
 
     private static Map<WeaponAPI.WeaponSize, Integer> OP_MODIFIER_BALLISTIC = new HashMap() {{
         put(WeaponAPI.WeaponSize.SMALL, -1);
@@ -79,9 +81,10 @@ public class SpooledFeeders extends Augment {
     public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         if (systems.hasAugment(this.getKey())) {
             if(expand) {
-                tooltip.addPara(this.getName() + ": Reduces ballistic weapon OP costs by 1/2/4. Increases energy weapon OP costs by 0/1/2.", Color.lightGray, 5);
+                tooltip.addPara("%s: Reduces ballistic weapon OP costs by %s. Increases energy weapon OP costs by %s.", 5, tooltipColors,
+                        this.getName(), "1/2/4", "0/1/2");
             } else {
-                tooltip.addPara(this.getName(), Color.lightGray, 5);
+                tooltip.addPara(this.getName(), tooltipColors[0], 5);
             }
         }
     }

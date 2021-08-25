@@ -28,6 +28,7 @@ public class ExtraSystemHM extends BaseHullMod {
     public static final Logger log = Logger.getLogger(ExtraSystemHM.class);
     private static Color color = new Color(94, 206, 226);
     private static Color tooltipColor = new Color(220, 220, 220, 255);
+    public static Color infoColor = new Color(236, 196, 0);
     private ExtraSystems extraSystems = null;
 
     public static void addToFleetMember(FleetMemberAPI fm) {
@@ -53,7 +54,7 @@ public class ExtraSystemHM extends BaseHullMod {
             Iterator<String> moduleIterator = shipVariant.getStationModules().keySet().iterator();
             while(moduleIterator.hasNext()) {
                 String moduleVariantId = moduleIterator.next();
-                ShipVariantAPI moduleVariant = shipVariant.getModuleVariant(moduleIterator.next());
+                ShipVariantAPI moduleVariant = shipVariant.getModuleVariant(moduleVariantId);
 
                 if (moduleVariant != null) {
                     if(moduleVariant.isStockVariant() || shipVariant.getSource() != VariantSource.REFIT) {
@@ -85,13 +86,6 @@ public class ExtraSystemHM extends BaseHullMod {
         return color;
     }
 
-    public ExtraSystems getExtraSystems(ShipAPI ship) {
-        FleetMemberAPI fm = ship.getFleetMember();
-        if (fm == null) return null;
-
-        return getExtraSystems(fm);
-    }
-
     public ExtraSystems getExtraSystems(MutableShipStatsAPI stats) {
         FleetMemberAPI fm = FleetMemberUtils.findMemberForStats(stats);
         if(fm == null) return null;
@@ -105,11 +99,14 @@ public class ExtraSystemHM extends BaseHullMod {
 
     @Override
     public void advanceInCombat(ShipAPI ship, float amount) {
-        ExtraSystems extraSystems = this.getExtraSystems(ship);
+        FleetMemberAPI fm = FleetMemberUtils.findMemberFromShip(ship);
+        if(fm == null) return;
+
+        ExtraSystems extraSystems = this.getExtraSystems(fm);
         if(extraSystems == null) return;
 
         ShipAPI.HullSize hullSize = ship.getHullSize();
-        float quality = extraSystems.getQuality(ship.getFleetMember());
+        float quality = extraSystems.getQuality(fm);
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = extraSystems.getUpgrade(upgrade);
             if(level <= 0) continue;
@@ -152,8 +149,9 @@ public class ExtraSystemHM extends BaseHullMod {
 
     @Override
     public void applyEffectsAfterShipCreation(ShipAPI ship, String id) {
-        FleetMemberAPI fm = ship.getFleetMember();
+        FleetMemberAPI fm = FleetMemberUtils.findMemberFromShip(ship);
         if(fm == null) return;
+
         ExtraSystems extraSystems = this.getExtraSystems(fm);
         if(extraSystems == null) return;
 
@@ -167,18 +165,25 @@ public class ExtraSystemHM extends BaseHullMod {
 
     @Override
     public String getDescriptionParam(int index, ShipAPI.HullSize hullSize, ShipAPI ship) {
-        FleetMemberAPI fm = ship.getFleetMember();
+        FleetMemberAPI fm = FleetMemberUtils.findMemberFromShip(ship);
         if(fm == null) return "SHIP NOT FOUND";
+        if(fm.getShipName() == null) {
+            return "SHIP NOT FOUND";
+        }
         return fm.getShipName();
     }
 
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI.HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
-        FleetMemberAPI fm = ship.getFleetMember();
+        FleetMemberAPI fm = FleetMemberUtils.findMemberFromShip(ship);
         if(fm == null) return;
+        if(fm.getShipName() == null) {
+            tooltip.addPara("Ship modules do not support tooltips.", 0);
+            return;
+        }
 
         ExtraSystems extraSystems = this.getExtraSystems(fm);
-        if(extraSystems == null) return;
+        if (extraSystems == null) return;
 
         float quality = extraSystems.getQuality(fm);
         String qname = Utilities.getQualityName(quality);
@@ -188,8 +193,8 @@ public class ExtraSystemHM extends BaseHullMod {
         boolean expand = Keyboard.isKeyDown(Keyboard.getKeyIndex("F1"));
 
         boolean addedAugmentSection = false;
-        for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
-            if(!addedAugmentSection) {
+        for (Augment augment : AugmentsHandler.AUGMENT_LIST) {
+            if (!addedAugmentSection) {
                 addedAugmentSection = true;
                 tooltip.addSectionHeading("Augments", Alignment.MID, 6);
             }
@@ -199,8 +204,8 @@ public class ExtraSystemHM extends BaseHullMod {
         }
 
         boolean addedUpgradeSection = false;
-        for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            if(!addedUpgradeSection) {
+        for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+            if (!addedUpgradeSection) {
                 addedUpgradeSection = true;
                 tooltip.addSectionHeading("Upgrades", Alignment.MID, 6);
             }
@@ -209,10 +214,10 @@ public class ExtraSystemHM extends BaseHullMod {
             tooltip.setParaFontColor(tooltipColor);
         }
 
-        if(expand) {
-            tooltip.addPara("Press F1 to show less information.", 10, new Color(236, 196, 0), "F1");
+        if (expand) {
+            tooltip.addPara("Press F1 to show less information.", 10, infoColor, "F1");
         } else {
-            tooltip.addPara("Hold F1 to show more information.", 10, new Color(115, 147, 189), "F1");
+            tooltip.addPara("Hold F1 to show more information.", 10, infoColor, "F1");
         }
     }
 
