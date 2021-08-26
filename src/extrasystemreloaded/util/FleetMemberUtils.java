@@ -8,7 +8,9 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import org.apache.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class FleetMemberUtils {
     private static final Logger log = Logger.getLogger(FleetMemberUtils.class);
@@ -21,7 +23,7 @@ public class FleetMemberUtils {
             return findMemberFromShip(ship.getParentStation());
         }
 
-        if(ship.getFleetMember() != null ) {
+        if(ship.getFleetMember() != null) {
             return ship.getFleetMember();
         }
 
@@ -40,20 +42,29 @@ public class FleetMemberUtils {
             }
         }
 
-        return searchFleetForStats(Global.getSector().getPlayerFleet(), stats);
+        FleetMemberAPI fm = searchFleetForStats(Global.getSector().getPlayerFleet(), stats);
+        if(fm != null) {
+            return fm;
+        }
+
+        return null;
     }
 
     private static FleetMemberAPI searchFleetForStats(CampaignFleetAPI fleet, MutableShipStatsAPI stats) {
-        if(fleet == null)
+        if(fleet == null) {
             return null;
+        }
 
         for(FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
             if(member.isFighterWing()) continue;
+
             if(member.getStats() == stats) {
                 return member;
             } else if (stats.getEntity() != null && member.getStats().getEntity() == stats.getEntity()) {
                 return member;
-            } else if (stats.getFleetMember() != null && member.getStats().getFleetMember() == stats.getFleetMember()) {
+            } else if (stats.getFleetMember() != null && (stats.getFleetMember() == member || member.getStats().getFleetMember() == stats.getFleetMember())) {
+                return member;
+            } else if (stats.getVariant() != null && member.getVariant() == stats.getVariant()) {
                 return member;
             } else if (member.getVariant().getStatsForOpCosts() != null) {
                 if (member.getVariant().getStatsForOpCosts() == stats) {
@@ -61,6 +72,8 @@ public class FleetMemberUtils {
                 } else if (stats.getEntity() != null && member.getVariant().getStatsForOpCosts().getEntity() == stats.getEntity()) {
                     return member;
                 } else if (stats.getFleetMember() != null && member.getVariant().getStatsForOpCosts().getFleetMember() == stats.getFleetMember()) {
+                    return member;
+                } else if (stats.getVariant() != null && member.getVariant().getStatsForOpCosts().getVariant() == stats.getVariant()) {
                     return member;
                 }
             }

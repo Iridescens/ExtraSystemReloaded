@@ -58,7 +58,7 @@ public class Es_ModPlugin extends BaseModPlugin {
 
 	public static final String ES_PERSISTENTUPGRADEMAP = "ES_UPGRADEMAP";
 
-	public static Map<String, ExtraSystems> ShipUpgradeData;
+	private static Map<String, ExtraSystems> ShipUpgradeData;
 
 	private static boolean debugUpgradeCosts = false;
 
@@ -113,6 +113,7 @@ public class Es_ModPlugin extends BaseModPlugin {
 			loadUpgradeData();
 		}
 
+		log.info(String.format("removed shipid %s", shipId));
 		ShipUpgradeData.remove(shipId);
 	}
 

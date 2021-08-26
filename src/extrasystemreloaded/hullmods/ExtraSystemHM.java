@@ -38,7 +38,12 @@ public class ExtraSystemHM extends BaseHullMod {
 
         ExtraSystems levels = ExtraSystems.getForFleetMember(fm);
         ShipVariantAPI shipVariant = fm.getVariant();
-        if (levels.shouldApplyHullmod() && !shipVariant.hasHullMod("es_shiplevelHM")) {
+
+        if(shipVariant.hasHullMod("es_shiplevelHM")) {
+            shipVariant.removePermaMod("es_shiplevelHM");
+        }
+
+        if (levels.shouldApplyHullmod()) {
 
             if(shipVariant.isStockVariant() || shipVariant.getSource() != VariantSource.REFIT) {
                 shipVariant = shipVariant.clone();
@@ -78,7 +83,7 @@ public class ExtraSystemHM extends BaseHullMod {
 
     @Override
     public boolean affectsOPCosts() {
-        return true;
+        return false;
     }
 
     @Override
@@ -122,7 +127,9 @@ public class ExtraSystemHM extends BaseHullMod {
     @Override
     public void applyEffectsBeforeShipCreation(ShipAPI.HullSize hullSize, MutableShipStatsAPI stats, String id) {
         FleetMemberAPI fm = FleetMemberUtils.findMemberForStats(stats);
-        if(fm == null) return;
+        if(fm == null) {
+            return;
+        }
 
         ExtraSystems extraSystems = this.getExtraSystems(fm);
 
@@ -136,14 +143,14 @@ public class ExtraSystemHM extends BaseHullMod {
         for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
             if(!extraSystems.hasAugment(augment)) continue;
 
-            augment.applyUpgradeToStats(fm, stats, quality, id);
+            augment.applyAugmentToStats(fm, stats, quality, id);
         }
 
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = extraSystems.getUpgrade(upgrade);
             if(level <= 0) continue;
 
-            upgrade.applyUpgradeToStats(fm, stats, extraSystems.getHullSizeFactor(hullSize), extraSystems.getUpgrade(upgrade), quality);
+            upgrade.applyUpgradeToStats(fm, stats, extraSystems.getHullSizeFactor(hullSize), level, quality);
         }
     }
 
@@ -159,7 +166,7 @@ public class ExtraSystemHM extends BaseHullMod {
 
         for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
             if(!extraSystems.hasAugment(augment)) continue;
-            augment.applyAfterShipCreation(fm, ship, quality, id);
+            augment.applyAugmentToShip(fm, ship, quality, id);
         }
     }
 

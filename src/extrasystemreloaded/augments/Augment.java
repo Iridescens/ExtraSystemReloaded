@@ -30,11 +30,11 @@ public abstract class Augment {
 
     public abstract boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm);
 
-    public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
+    public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
 
     }
 
-    public void applyAfterShipCreation(FleetMemberAPI fm, ShipAPI ship, float quality, String id) {
+    public void applyAugmentToShip(FleetMemberAPI fm, ShipAPI ship, float quality, String id) {
 
     }
 

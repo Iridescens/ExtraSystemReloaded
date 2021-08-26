@@ -22,7 +22,7 @@ public abstract class Upgrade {
         return "ESR_" + getName();
     }
 
-    public int getMaxLevel() {
+    private int getMaxLevel() {
         return -1;
     }
 

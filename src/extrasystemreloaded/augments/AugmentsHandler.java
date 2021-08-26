@@ -14,7 +14,7 @@ public class AugmentsHandler {
     static {
         AugmentsHandler.addModule(new SpooledFeeders());
         AugmentsHandler.addModule(new PlasmaFluxCatalyst());
-        AugmentsHandler.addModule(new FusionMissileIgnition());
+        AugmentsHandler.addModule(new DriveFluxVent());
         AugmentsHandler.addModule(new HangarForge());
         AugmentsHandler.addModule(new EqualizerCore());
         AugmentsHandler.addModule(new PhasefieldEngine());

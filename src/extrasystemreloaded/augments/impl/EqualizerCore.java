@@ -73,7 +73,7 @@ public class EqualizerCore extends Augment {
     }
 
     @Override
-    public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
+    public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
         stats.getAutofireAimAccuracy().modifyPercent(this.getBuffId(), 1000f);
         stats.getMaxRecoilMult().modifyPercent(this.getBuffId(), -25f);
         stats.getRecoilDecayMult().modifyPercent(this.getBuffId(), -25f);

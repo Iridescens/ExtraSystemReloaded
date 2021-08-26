@@ -10,6 +10,7 @@ import java.util.Map;
 
 public abstract class OPCostListener implements WeaponOPCostModifier {
     protected abstract Map<WeaponAPI.WeaponType, Map<WeaponAPI.WeaponSize, Integer>> getModifierMap();
+    protected abstract String getName();
 
     private int getOPModifier(WeaponAPI.WeaponType type, WeaponAPI.WeaponSize size) {
         if (!getModifierMap().containsKey(type) || !getModifierMap().get(type).containsKey(size)) {

@@ -14,7 +14,6 @@ import extrasystemreloaded.upgrades.UpgradesHandler;
 import java.util.Random;
 import java.util.UUID;
 
-import static extrasystemreloaded.Es_ModPlugin.ShipUpgradeData;
 import static extrasystemreloaded.Es_ModPlugin.useRandomQuality;
 import static extrasystemreloaded.util.Utilities.RESOURCE_NAME;
 import static extrasystemreloaded.util.Utilities.getFleetCargoMap;
@@ -96,7 +95,7 @@ public class ExtraSystems {
         modules.putModule(augment);
     }
 
-    public void removeModule(Augment augment) {
+    public void removeAugment(Augment augment) {
         modules.removeModule(augment);
     }
 

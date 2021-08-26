@@ -75,16 +75,16 @@ public class Es_ShipUpgradeDialog extends ESDialog {
                 break;
             case FUNCTIONTYPE_APPLY_RESOURCES:
                 if (selectedShip != null && selectedUpgrade != null) {
-                    doAbilityUpgrade(context, textPanel, options, visual);
                     takeUpgradeResources(context, textPanel, options, visual);
+                    doAbilityUpgrade(context, textPanel, options, visual);
                     populateAbilityPurchasedOptions(context, textPanel, options, visual);
                     options.addOption("Back to upgrades", RULE_DIALOG_OPTION);
                 }
                 break;
             case FUNCTIONTYPE_APPLY_CREDITS:
                 if (selectedShip != null && selectedUpgrade != null) {
-                    doAbilityUpgrade(context, textPanel, options, visual);
                     takeUpgradeCredits(context, textPanel, options, visual);
+                    doAbilityUpgrade(context, textPanel, options, visual);
                     populateAbilityPurchasedOptions(context, textPanel, options, visual);
                     options.addOption("Back to upgrades", RULE_DIALOG_OPTION);
                 }
@@ -194,6 +194,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
             float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, level, quality);
             int creditCost = UpgradesHandler.getCreditCost(currMarket, resourceCosts, level, max);
+
             options.addOption(
                     String.format("Buy for %s credits (%s / %s)", creditCost, level, max),
                     OPTION_APPLY_CREDITS,
@@ -241,6 +242,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
             float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, level, quality);
             int creditCost = UpgradesHandler.getCreditCost(currMarket, resourceCosts, level, max);
+
             options.addOption(
                     String.format("Purchase again for %s credits (%s / %s)", creditCost, level, max),
                     OPTION_APPLY_CREDITS,
@@ -350,7 +352,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
         if (!Es_ModPlugin.isDebugUpgradeCosts()) {
             float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, currentLevel, buff.getQuality(selectedShip));
-            float creditCost = getCreditCost(currMarket, resourceCosts, currentLevel, abilitySelected.getMaxLevel());
+            float creditCost = getCreditCost(currMarket, resourceCosts, currentLevel, abilitySelected.getMaxLevel(selectedShip.getHullSpec().getHullSize()));
 
             playerFleet.getCargo().getCredits().subtract(creditCost);
         }

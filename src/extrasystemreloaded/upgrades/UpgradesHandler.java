@@ -93,16 +93,20 @@ public class UpgradesHandler {
     }
 
     public static float getCreditCost(MarketAPI market, float amount, int resource) {
-        return Math.max(market.getDemandPrice(RESOURCES_LIST.get(resource), amount, true), CARGO_BASE_VALUE[resource] * amount);
+        return CARGO_BASE_VALUE[resource] * amount;
     }
 
     public static int getCreditCost(MarketAPI market, float[] resourceCosts, int level, int max) {
         float finalCost = 0;
-
         for(int i = 0; i < 7; i++) {
             finalCost += getCreditCost(market, resourceCosts[i], i);
         }
 
-        return (int) (finalCost + finalCost * (0.5 * Math.pow(2 - 0.5f * market.getFaction().getRelToPlayer().getRel(), (float) (1 + 3.25 * level / max))));
+        float rel = market.getFaction().getRelToPlayer().getRel();
+        float exp = (float) (1 + 3.25 * level / max);
+        float base = 2f - 0.5f * rel;
+        float additive = (float) (finalCost * (0.5f * Math.pow(base, exp)));
+
+        return (int) (finalCost + additive);
     }
 }

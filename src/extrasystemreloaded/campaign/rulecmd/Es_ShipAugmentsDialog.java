@@ -108,6 +108,7 @@ public class Es_ShipAugmentsDialog extends ESDialog {
             textPanel.addParagraph(TextTip.chooseUpgrade);
         }
 
+        int addedAugments = 0;
         for (int i = upgradePageIndex * 5; i < Math.min(upgradePageIndex * 5 + 5, AugmentsHandler.AUGMENT_LIST.size()); i++) {
             Augment augment = AugmentsHandler.AUGMENT_LIST.get(i);
             options.addOption(augment.getName(), augment.getKey(), augment.getTooltip());
@@ -186,7 +187,7 @@ public class Es_ShipAugmentsDialog extends ESDialog {
 
         ShipAPI.HullSize hullSize = selectedShip.getHullSpec().getHullSize();
 
-        buff.removeModule(abilitySelected);
+        buff.removeAugment(abilitySelected);
         buff.save(selectedShip);
         ExtraSystemHM.addToFleetMember(selectedShip);
 

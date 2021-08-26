@@ -75,7 +75,7 @@ public class HangarForge extends Augment {
     }
 
     @Override
-    public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
+    public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
         stats.getDynamic().getStat(Stats.REPLACEMENT_RATE_DECREASE_MULT).modifyMult(getBuffId(), 1f - RATE_DECREASE_MODIFIER / 100f);
         float timeMult = 1f / ((100f + FIGHTER_REPLACEMENT_RATE_BONUS) / 100f);
         stats.getFighterRefitTimeMult().modifyMult(getBuffId(), timeMult);

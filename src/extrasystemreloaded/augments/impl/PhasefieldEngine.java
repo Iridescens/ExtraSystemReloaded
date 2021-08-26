@@ -73,7 +73,7 @@ public class PhasefieldEngine extends Augment {
     }
 
     @Override
-    public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
+    public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
     }
 
     @Override
@@ -109,6 +109,7 @@ public class PhasefieldEngine extends Augment {
                     ship.addAfterimage(new Color(255, 0, 255), 0, 0, 0, 0, 5f, 1f, 2f, 0.75f, true, false, false);
                     ghostInterval.setInterval(10f, 10f);
                 }
+                Global.getCombatEngine().maintainStatusForPlayerShip(PhasefieldEngine.this.getBuffId(), "graphics/icons/hullsys/temporal_shell.png", "PHASEFIELD ENGINE", "HUNGRY", false);
                 return;
             }
 
@@ -116,6 +117,9 @@ public class PhasefieldEngine extends Augment {
             if (consumeInterval.intervalElapsed()) {
                 consume = true;
                 consumeInterval.setInterval(60, 60); //reset
+            } else {
+                Global.getCombatEngine().maintainStatusForPlayerShip(PhasefieldEngine.this.getBuffId(), "graphics/icons/hullsys/temporal_shell.png", "PHASEFIELD ENGINE",
+                        String.format("FULL FOR %s SECONDS", Math.round(consumeInterval.getIntervalDuration() - consumeInterval.getElapsed())), false);
             }
         }
 
