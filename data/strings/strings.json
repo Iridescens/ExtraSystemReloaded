@@ -20,7 +20,7 @@
 
 		"SpooledFeeders":"Spooled Ammo Feeders",
 		"PlasmaCatalyst":"Plasma Flux Catalyst",
-		"FusionIgnition":"Drive Flux Vent",
+		"DriveFluxVent":"Drive Flux Vent",
 		"HangarForge": "Hangar Forge",
 		"EqualizerCore": "Equalizer Core",
 		"PhasefieldEngine": "Phasefield Engine"

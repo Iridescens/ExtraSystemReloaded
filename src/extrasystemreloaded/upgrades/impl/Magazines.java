@@ -20,6 +20,9 @@ public class Magazines extends Upgrade {
     private static final float RELOAD_PER_SECOND_MULT = 0.025f;
     private static final float MISSILE_MAGAZINE_MULT = 2f;
 
+    private static final float ROF_SCALAR = 5f;
+    private static final float ROF_QUALITY_MULT = 1.45f;
+
     @Override
     public String getKey() {
         return UPGRADE_KEY;
@@ -28,7 +31,7 @@ public class Magazines extends Upgrade {
 
     @Override
     public String getDescription() {
-        return "Increases missile ammo capacity and the rate at which all weapons reload limited ammunition.";
+        return "Increases missile ammo capacity and the rate at which all weapons fire and reload magazines.";
     }
 
     @Override
@@ -39,7 +42,6 @@ public class Magazines extends Upgrade {
         }
         for (WeaponAPI w : ship.getAllWeapons()) {
             //only bother with ammo regenerators
-
             float reloadRate = w.getAmmoPerSecond();
             if (w.usesAmmo() && reloadRate > 0) {
                 float nuCharge = reloadRate * (1f + (level * quality * RELOAD_PER_SECOND_MULT * hullSizeFactor));
@@ -51,6 +53,15 @@ public class Magazines extends Upgrade {
     @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float hullSizeFactor, int level, float quality) {
         StatUtils.setStatPercentBonus(stats.getMissileAmmoBonus(), this.getBuffId(), level, quality, MISSILE_MAGAZINE_MULT, hullSizeFactor);
+
+        StatUtils.setStatPercentBonus(stats.getBallisticRoFMult(), this.getBuffId(),
+                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, ROF_SCALAR, ROF_QUALITY_MULT, hullSizeFactor));
+
+        StatUtils.setStatPercentBonus(stats.getEnergyRoFMult(), this.getBuffId(),
+                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, ROF_SCALAR, ROF_QUALITY_MULT, hullSizeFactor));
+
+        StatUtils.setStatPercentBonus(stats.getMissileRoFMult(), this.getBuffId(),
+                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, ROF_SCALAR, ROF_QUALITY_MULT, hullSizeFactor));
     }
 
     @Override
@@ -64,6 +75,9 @@ public class Magazines extends Upgrade {
 
                 StatUtils.addPercentBonusToTooltip(tooltip, "  Bonus missile ammunition: +%s",
                         fm.getStats().getMissileAmmoBonus().getPercentBonus(this.getBuffId()).getValue());
+
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Weapons rate of fire: +%s",
+                        fm.getStats().getBallisticRoFMult().getPercentStatMod(this.getBuffId()).getValue());
 
                 StatUtils.addPercentBonusToTooltip(tooltip, "  Magazine reload speed: +%s per second",
                         level * quality * RELOAD_PER_SECOND_MULT);

@@ -118,7 +118,6 @@ public class Es_ModPlugin extends BaseModPlugin {
 			loadUpgradeData();
 		}
 
-		log.info(String.format("removed shipid %s", shipId));
 		ShipUpgradeData.remove(shipId);
 	}
 
