@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.campaign.VisualPanelAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.util.Misc;
 import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
@@ -59,9 +60,10 @@ public class Es_ShipQualityDialog extends ESDialog {
                     textPanel.addParagraph(shipQualityText);
                     textPanel.highlightLastInLastPara("" + bonusQuality, Color.green);
 
-                    shipQualityText = "On-site team estimates ship's overhaul to cost " + estimatedOverhaulCost + " credits";
+                    String needCredits = Misc.getFormat().format(estimatedOverhaulCost);
+                    shipQualityText = "On-site team estimates ship's overhaul to cost " + needCredits + " credits";
                     textPanel.addParagraph(shipQualityText);
-                    textPanel.highlightLastInLastPara("" + estimatedOverhaulCost, Color.green);
+                    textPanel.highlightLastInLastPara(needCredits, Color.green);
 
                     options.addOption("Agree to conditions", "ESShipQualityApply", null);
                     options.setTooltip("ESShipQualityApply", "Proceed with overhaul");
@@ -94,9 +96,14 @@ public class Es_ShipQualityDialog extends ESDialog {
                     textPanel.highlightLastInLastPara("" + newQuality, getQualityColor(newQuality));
 
                     if(buff.canUpgradeQuality(selectedShip)) {
+                        estimatedOverhaulCost = Math.round(shipBaseValue * (float) Math.pow(newQuality, 2) / 2 * 100f) / 100f;
+
                         String shipQualityText = "On-site team estimates that another overhaul would cost %s credits for a quality increase of %s.";
+
+
+                        String needCredits = Misc.getFormat().format(estimatedOverhaulCost);
                         textPanel.addParagraph(String.format(shipQualityText, estimatedOverhaulCost, bonusQuality));
-                        textPanel.highlightLastInLastPara("" + estimatedOverhaulCost, Color.green);
+                        textPanel.highlightLastInLastPara(needCredits, Color.yellow);
 
                         options.addOption(OptionName.Repurchase, "ESShipQualityApply");
                         if (isAbleToPayForQualityUpgrade(context.getPlayerFleet(), estimatedOverhaulCost)) {

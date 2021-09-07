@@ -7,9 +7,11 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import extrasystemreloaded.augments.AugmentsHandler;
 import extrasystemreloaded.campaign.battle.EngagementListener;
 import extrasystemreloaded.campaign.salvage.SalvageListener;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
+import extrasystemreloaded.upgrades.UpgradesHandler;
 import extrasystemreloaded.util.ExtraSystems;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -64,6 +66,9 @@ public class Es_ModPlugin extends BaseModPlugin {
 
 	@Override
     public void onGameLoad(boolean newGame){
+		UpgradesHandler.populateUpgrades();
+		AugmentsHandler.populateAugments();
+
 		Global.getSector().getListenerManager().addListener(new SalvageListener(), true);
 		Global.getSector().addTransientListener(new EngagementListener(false));
 

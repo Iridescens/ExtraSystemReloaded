@@ -22,11 +22,19 @@ public class UpgradesHandler {
 
     public static final Map<String, Upgrade> UPGRADES = new HashMap<>();
     public static final List<Upgrade> UPGRADES_LIST = new ArrayList<>();
-    private static final List<String> RESOURCES_LIST = new ArrayList<>();
+    private static final List<String> RESOURCES_LIST = new ArrayList() {{
+        add("supplies");
+        add("volatiles");
+        add("organics");
+        add("hand_weapons");
+        add("metals");
+        add("rare_metals");
+        add("heavy_machinery");
+    }};
 
     private static final float[] CARGO_BASE_VALUE ={100,250,30,500,30,200,150};//supplies,volatiles,organics,hand_weapons,metals,rare_metals,heavy_machinery
 
-    static {
+    public static void populateUpgrades() {
         UpgradesHandler.addUpgrade(new Weapons());
         UpgradesHandler.addUpgrade(new Logistics());
         UpgradesHandler.addUpgrade(new Mobility());
@@ -35,14 +43,6 @@ public class UpgradesHandler {
         UpgradesHandler.addUpgrade(new Fighters());
         UpgradesHandler.addUpgrade(new Subsystems());
         UpgradesHandler.addUpgrade(new Magazines());
-
-        RESOURCES_LIST.add("supplies");
-        RESOURCES_LIST.add("volatiles");
-        RESOURCES_LIST.add("organics");
-        RESOURCES_LIST.add("hand_weapons");
-        RESOURCES_LIST.add("metals");
-        RESOURCES_LIST.add("rare_metals");
-        RESOURCES_LIST.add("heavy_machinery");
     }
 
     public static void addUpgrade(Upgrade upgrade) {

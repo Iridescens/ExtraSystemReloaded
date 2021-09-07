@@ -1,7 +1,8 @@
 commodity,group,freq
-item_esr_ammospool,esr_augment,10
-item_esr_plasmacatalyst,esr_augment,10
-item_esr_fusionmissileignitor,esr_augment,8
+item_esr_ammospool,esr_augment,8
+item_esr_plasmacatalyst,esr_augment,4
+item_esr_drivevent,esr_augment,8
 item_esr_hangarforge,esr_augment,4
 item_esr_equalizercore,esr_augment,5
-nothing,esr_augment,60%
+item_esr_phaseengine,esr_augment,6
+nothing,esr_augment,70%

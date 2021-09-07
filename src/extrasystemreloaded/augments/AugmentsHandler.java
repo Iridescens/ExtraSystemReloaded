@@ -1,5 +1,6 @@
 package extrasystemreloaded.augments;
 
+import com.fs.starfarer.api.Global;
 import extrasystemreloaded.augments.impl.*;
 
 import java.util.ArrayList;
@@ -11,16 +12,22 @@ public class AugmentsHandler {
     public static final Map<String, Augment> AUGMENTS = new HashMap<>();
     public static final List<Augment> AUGMENT_LIST = new ArrayList<>();
 
-    static {
-        AugmentsHandler.addModule(new SpooledFeeders());
-        AugmentsHandler.addModule(new PlasmaFluxCatalyst());
-        AugmentsHandler.addModule(new DriveFluxVent());
-        AugmentsHandler.addModule(new HangarForge());
-        AugmentsHandler.addModule(new EqualizerCore());
-        AugmentsHandler.addModule(new PhasefieldEngine());
+    public static void populateAugments() {
+
+        if(Global.getSettings().getModManager().isModEnabled("dronelib")) {
+            AugmentsHandler.addAugment(new SpooledFeedersDroneLib());
+        } else {
+            AugmentsHandler.addAugment(new SpooledFeeders());
+        }
+
+        AugmentsHandler.addAugment(new PlasmaFluxCatalyst());
+        AugmentsHandler.addAugment(new DriveFluxVent());
+        AugmentsHandler.addAugment(new HangarForge());
+        AugmentsHandler.addAugment(new EqualizerCore());
+        AugmentsHandler.addAugment(new PhasefieldEngine());
     }
 
-    public static void addModule(Augment augment) {
+    public static void addAugment(Augment augment) {
         AUGMENTS.put(augment.getName(), augment);
         AUGMENT_LIST.add(augment);
     }

@@ -73,10 +73,6 @@ public class PhasefieldEngine extends Augment {
     }
 
     @Override
-    public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
-    }
-
-    @Override
     public void advanceInCombat(ShipAPI ship, float amount, float quality) {
         if (!ship.hasListenerOfClass(ESR_PhasefieldEngineListener.class)) {
             ship.addListener(new ESR_PhasefieldEngineListener(ship));

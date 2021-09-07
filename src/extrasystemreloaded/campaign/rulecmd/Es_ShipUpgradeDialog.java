@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
+import com.fs.starfarer.api.util.Misc;
 import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
@@ -168,7 +169,8 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         String resourceText = buff.canUpgradeByResourceCosts(selectedShip, currMarket, upgrade, buff.getQuality(selectedShip));
         boolean byResources = resourceText == null;
         if(!byCredits && !byResources) {
-            return String.format("You cannot afford this upgrade. You need %s credits or the following resources: %s", remainingCredits, resourceText);
+            String credits = Misc.getFormat().format(remainingCredits);
+            return String.format("You cannot afford this upgrade. You need %s more credits or the following resources: %s", credits, resourceText);
         }
 
         return null;
@@ -194,9 +196,9 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
             float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, level, quality);
             int creditCost = UpgradesHandler.getCreditCost(currMarket, resourceCosts, level, max);
-
+            String credits = Misc.getFormat().format(creditCost);
             options.addOption(
-                    String.format("Buy for %s credits (%s / %s)", creditCost, level, max),
+                    String.format("Buy for %s credits (%s / %s)", credits, level, max),
                     OPTION_APPLY_CREDITS,
                     null
             );
@@ -218,7 +220,8 @@ public class Es_ShipUpgradeDialog extends ESDialog {
                 if (!isCanLevelUp) {
                     options.setEnabled(OPTION_APPLY_CREDITS, false);
 
-                    String tooltip = "You need " + (int) (creditCost - context.getPlayerFleet().getCargo().getCredits().get()) + " more credits.";
+                    String needCredits = Misc.getFormat().format(creditCost - context.getPlayerFleet().getCargo().getCredits().get());
+                    String tooltip = String.format("You need %s more credits.", needCredits);
                     options.setTooltip(OPTION_APPLY_CREDITS, tooltip);
                 }
             }
@@ -242,9 +245,10 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
             float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, level, quality);
             int creditCost = UpgradesHandler.getCreditCost(currMarket, resourceCosts, level, max);
+            String credits = Misc.getFormat().format(creditCost);
 
             options.addOption(
-                    String.format("Purchase again for %s credits (%s / %s)", creditCost, level, max),
+                    String.format("Purchase again for %s credits (%s / %s)", credits, level, max),
                     OPTION_APPLY_CREDITS,
                     null
             );
@@ -266,7 +270,8 @@ public class Es_ShipUpgradeDialog extends ESDialog {
                 if (!isCanLevelUp) {
                     options.setEnabled(OPTION_APPLY_CREDITS, false);
 
-                    String tooltip = "You need " + (int) (creditCost - context.getPlayerFleet().getCargo().getCredits().get()) + " more credits.";
+                    String needCredits = Misc.getFormat().format(creditCost - context.getPlayerFleet().getCargo().getCredits().get());
+                    String tooltip = String.format("You need %s more credits.", needCredits);
                     options.setTooltip(OPTION_APPLY_CREDITS, tooltip);
                 }
             }
@@ -375,7 +380,8 @@ public class Es_ShipUpgradeDialog extends ESDialog {
             }
 
             int creditCost = UpgradesHandler.getCreditCost(currMarket, resourceCosts, level, max);
-            textPanel.addParagraph(TextTip.costHeader + creditCost + " credits OR resources listed", Color.green);
+            String needCredits = Misc.getFormat().format(creditCost);
+            textPanel.addParagraph(TextTip.costHeader + needCredits + " credits OR resources listed", Color.green);
             textPanel.addParagraph("-----------------------", Color.gray);
 
             for (int i = 0; i < resourceCosts.length; ++i) {

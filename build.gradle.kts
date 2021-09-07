@@ -48,7 +48,7 @@ dependencies {
 
     compileOnly(fileTree("$starsectorModDirectory/LazyLib/jars") { include("*.jar") })
     compileOnly(fileTree("$starsectorModDirectory/Console Commands/jars") { include("*.jar") })
-    //compileOnly(fileTree("$starsectorModDirectory/DroneLib/jars") { include("*.jar") })
+    compileOnly(fileTree("$starsectorModDirectory/DroneLib/jars") { include("*.jar") })
 
     // Starsector jars and dependencies
     implementation(fileTree(starsectorCoreDirectory) {
@@ -135,7 +135,7 @@ tasks {
     // If enabled, will copy your mod to the /mods directory when run (and whenever gradle syncs).
     // Disabled by default, as it is not needed if your mod directory is symlinked into your /mods folder.
     register<Copy>("install-mod") {
-        val enabled = true;
+        val enabled = false;
 
         if (!enabled) return@register
 
