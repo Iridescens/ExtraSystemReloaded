@@ -61,7 +61,7 @@ public class Technology extends Upgrade {
                         fm.getHullSpec().getShieldType() == ShieldAPI.ShieldType.OMNI)) {
 
             StatUtils.setStatPercentBonus(stats.getShieldDamageTakenMult(), this.getBuffId(),
-                    Math.max(0.9f,
+                    Math.min(0.9f,
                     StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, SHIELD_FLUX_DAM_SCALAR, SHIELD_FLUX_DAM_QUALITY_MULT, hullSizeFactor)
                     )
             );
@@ -80,7 +80,7 @@ public class Technology extends Upgrade {
             );
 
             StatUtils.setStatPercentBonus(stats.getPhaseCloakUpkeepCostBonus(), this.getBuffId(),
-                    Math.max(0.9f,
+                    Math.min(0.9f,
                     StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, PHASE_FLUX_SEC_SCALAR, PHASE_FLUX_QUALITY_MULT, hullSizeFactor)
                     )
             );
