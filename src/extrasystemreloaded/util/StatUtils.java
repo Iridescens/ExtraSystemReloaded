@@ -71,6 +71,10 @@ public class StatUtils {
         tooltip.addPara(format, 0, Misc.getHighlightColor(), formatFloat(bonusPercent) + "%");
     }
 
+    public static void addPercentBonusToTooltipUnrounded(TooltipMakerAPI tooltip, String format, float bonusPercent) {
+        tooltip.addPara(format, 0, Misc.getHighlightColor(), formatFloatUnrounded(bonusPercent) + "%");
+    }
+
     public static void addPercentBonusToTooltipUnrounded(TooltipMakerAPI tooltip, String format, float bonusPercent, float originalValue) {
         tooltip.addPara(format, 0, Misc.getHighlightColor(), formatFloatUnrounded(bonusPercent) + "%", formatFloatUnrounded(originalValue * 0.01f * bonusPercent));
     }

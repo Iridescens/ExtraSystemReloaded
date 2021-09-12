@@ -13,10 +13,10 @@ import java.awt.*;
 public class Fighters extends Upgrade {
     public static final String UPGRADE_KEY = "Fighters";
 
-    private static final float REFIT_TIME_MULT = -0.5f;
+    private static final float REFIT_TIME_MULT = -1.75f;
     private static final float RANGE_MULT = 2f;
-    private static final float REPLACEMENT_DECREASE_MULT = -1.5f;
-    private static final float REPLACEMENT_REGENERATE_MULT = 1.5f;
+    private static final float REPLACEMENT_DECREASE_MULT = -6f;
+    private static final float REPLACEMENT_REGENERATE_MULT = 6f;
 
     @Override
     public String getKey() {

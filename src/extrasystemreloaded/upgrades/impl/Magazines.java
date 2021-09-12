@@ -17,7 +17,7 @@ public class Magazines extends Upgrade {
     public static final String UPGRADE_KEY = "Magazines";
 
 
-    private static final float RELOAD_PER_SECOND_MULT = 0.025f;
+    private static final float RELOAD_PER_SECOND_MULT = 0.035f;
     private static final float MISSILE_MAGAZINE_MULT = 2f;
 
     private static final float ROF_SCALAR = 5f;
@@ -79,7 +79,7 @@ public class Magazines extends Upgrade {
                 StatUtils.addPercentBonusToTooltip(tooltip, "  Weapons rate of fire: +%s",
                         fm.getStats().getBallisticRoFMult().getPercentStatMod(this.getBuffId()).getValue());
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Magazine reload speed: +%s per second",
+                StatUtils.addPercentBonusToTooltipUnrounded(tooltip, "  Magazine reload speed: +%s per second",
                         level * quality * RELOAD_PER_SECOND_MULT);
             } else {
                 tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));

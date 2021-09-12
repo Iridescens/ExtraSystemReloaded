@@ -99,11 +99,10 @@ public class Es_ShipQualityDialog extends ESDialog {
                         estimatedOverhaulCost = Math.round(shipBaseValue * (float) Math.pow(newQuality, 2) / 2 * 100f) / 100f;
 
                         String shipQualityText = "On-site team estimates that another overhaul would cost %s credits for a quality increase of %s.";
-
-
                         String needCredits = Misc.getFormat().format(estimatedOverhaulCost);
                         textPanel.addParagraph(String.format(shipQualityText, estimatedOverhaulCost, bonusQuality));
                         textPanel.highlightLastInLastPara(needCredits, Color.yellow);
+                        textPanel.highlightLastInLastPara(String.valueOf(bonusQuality), Color.green);
 
                         options.addOption(OptionName.Repurchase, "ESShipQualityApply");
                         if (isAbleToPayForQualityUpgrade(context.getPlayerFleet(), estimatedOverhaulCost)) {

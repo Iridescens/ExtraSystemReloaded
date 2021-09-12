@@ -21,8 +21,8 @@ public class Technology extends Upgrade {
     private static final float SHIELD_FLUX_SEC_SCALAR = -5f;
     private static final float SHIELD_FLUX_QUALITY_MULT = 2.25f;
 
-    private static final float SHIELD_FLUX_DAM_SCALAR = -10f;
-    private static final float SHIELD_FLUX_DAM_QUALITY_MULT = 0.3f;
+    private static final float SHIELD_FLUX_DAM_SCALAR = -1.5f;
+    private static final float SHIELD_FLUX_DAM_QUALITY_MULT = 0.45f;
 
     private static final float SHIELD_UNFOLD_RATE_MULT = 2f;
 
@@ -113,9 +113,9 @@ public class Technology extends Upgrade {
                             fm.getStats().getShieldDamageTakenMult().getPercentStatMod(this.getBuffId()).getValue(),
                             fm.getStats().getShieldDamageTakenMult().getBaseValue());
 
-                    StatUtils.addPercentBonusToTooltipUnrounded(tooltip, "  Shield upkeep: %s (%s)",
+                    StatUtils.addPercentBonusToTooltip(tooltip, "  Shield upkeep: %s (%s)",
                             fm.getStats().getShieldUpkeepMult().getPercentStatMod(this.getBuffId()).getValue(),
-                            fm.getStats().getShieldUpkeepMult().getBaseValue());
+                            fm.getStats().getShieldUpkeepMult().getBaseValue() * fm.getStats().getFluxDissipation().getBaseValue());
 
                     StatUtils.addPercentBonusToTooltip(tooltip, "  Shield unfold rate: +%s",
                             fm.getStats().getShieldUnfoldRateMult().getPercentStatMod(this.getBuffId()).getValue());

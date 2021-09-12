@@ -20,7 +20,7 @@ public class Weapons extends Upgrade {
     private static final float DAMAGE_SCALAR = 5f;
     private static final float DAMAGE_QUALITY_MULT = 1.5f;
 
-    private static final float FLUX_COST_SCALAR = 1.15f;
+    private static final float FLUX_COST_SCALAR = -1.15f;
     private static final float FLUX_COST_QUALITY_MULT = 2f;
 
 
@@ -76,7 +76,7 @@ public class Weapons extends Upgrade {
                 StatUtils.addPercentBonusToTooltip(tooltip, "  Weapons damage: +%s",
                         fm.getStats().getBallisticWeaponDamageMult().getPercentStatMod(this.getBuffId()).getValue());
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Weapons flux cost: +%s",
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Weapons flux cost: %s",
                         fm.getStats().getBallisticWeaponFluxCostMod().getPercentBonus(this.getBuffId()).getValue());
 
                 StatUtils.addPercentBonusToTooltip(tooltip, "  Weapon mounts durability: +%s",
