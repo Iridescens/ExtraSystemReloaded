@@ -2,7 +2,6 @@ package extrasystemreloaded.augments;
 
 import com.fs.starfarer.api.Global;
 import extrasystemreloaded.augments.impl.*;
-import extrasystemreloaded.hullmods.ExtraSystemHM;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -12,10 +11,10 @@ import java.util.Map;
 
 public class AugmentsHandler {
     public static final Logger log = Logger.getLogger(AugmentsHandler.class);
+    public static final Map<String, Augment> AUGMENTS = new HashMap<>();
     public static final List<Augment> AUGMENT_LIST = new ArrayList<>();
 
     public static void populateAugments() {
-
         if(Global.getSettings().getModManager().isModEnabled("dronelib")) {
             AugmentsHandler.addAugment(new SpooledFeedersDroneLib());
         } else {
@@ -30,9 +29,11 @@ public class AugmentsHandler {
     }
 
     public static void addAugment(Augment augment) {
-        if(AUGMENT_LIST.contains(augment)) return;
+        if(AUGMENTS.containsKey(augment.getKey())) return;
 
+        AUGMENTS.put(augment.getKey(), augment);
         AUGMENT_LIST.add(augment);
+
         log.info(String.format("initialized augment [%s]", augment.getName()));
     }
 }

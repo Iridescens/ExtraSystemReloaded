@@ -17,7 +17,7 @@ import java.awt.*;
 import java.util.Map;
 
 public class DriveFluxVent extends Augment {
-    private static final String AUGMENT_KEY = "DriveFluxVent";
+    public static final String AUGMENT_KEY = "DriveFluxVent";
     private static final String ITEM = "esr_drivevent";
     private static final Color[] tooltipColors = {Color.magenta, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
 

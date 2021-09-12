@@ -14,16 +14,16 @@ import extrasystemreloaded.augments.Augment;
 import java.awt.*;
 
 public class HangarForge extends Augment {
-    public static final String MODULE_KEY = "HangarForge";
+    public static final String AUGMENT_KEY = "HangarForge";
     private static final String ITEM = "esr_hangarforge";
     private static final Color[] tooltipColors = {Color.GREEN, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
 
-    private static final float RATE_DECREASE_MODIFIER = 50f;
-    private static final float FIGHTER_REPLACEMENT_RATE_BONUS = 20f;
+    private static final float RATE_DECREASE_MODIFIER = 35f;
+    private static final float FIGHTER_REPLACEMENT_RATE_BONUS = 15f;
 
     @Override
     public String getKey() {
-        return MODULE_KEY;
+        return AUGMENT_KEY;
     }
 
     @Override

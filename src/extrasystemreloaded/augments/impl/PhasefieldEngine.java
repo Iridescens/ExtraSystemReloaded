@@ -16,12 +16,13 @@ import org.lwjgl.util.vector.Vector2f;
 import java.awt.*;
 
 public class PhasefieldEngine extends Augment {
+    public static final String AUGMENT_KEY = "PhasefieldEngine";
     private static final String ITEM = "esr_phaseengine";
     private static final Color[] tooltipColors = {Color.PINK, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
 
     @Override
     public String getKey() {
-        return "PhasefieldEngine";
+        return AUGMENT_KEY;
     }
 
     @Override
@@ -33,10 +34,9 @@ public class PhasefieldEngine extends Augment {
     public String getDescription() {
         return "A Tri-Tachyon joint venture with Ko Combine to reduce catastrophic asteroid impacts, a phasefield " +
                 "engine can be used to generate a protective field around a ship. The phase field completely " +
-                "dissipates when the hull is destroyed, but the phase field can transport an incoming projectile with " +
-                "enough energy into p-space. This protective ability is worth the briefly horrified faces that crew " +
-                "members occasionally develop, like they've seen and subsequently forgotten what is behind the giant " +
-                "signature that a phase sensor reads from it.";
+                "dissipates when the hull is destroyed, but the phase field can transport incoming projectiles " +
+                "into p-space. This protective ability fades quickly after exiting phase space, and " +
+                "rapid jumps to p-space take an increasingly large toll on the flux systems of a given ship.";
     }
 
     @Override
@@ -46,10 +46,18 @@ public class PhasefieldEngine extends Augment {
 
     @Override
     public boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm) {
+        if(fm.getHullSpec().getShieldType() != ShieldAPI.ShieldType.PHASE) {
+            return false;
+        }
+
         return Utilities.playerHasSpecialItem(ITEM);
     }
 
     public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
+        if(fm.getHullSpec().getShieldType() != ShieldAPI.ShieldType.PHASE) {
+            return "Only phase ships can install this.";
+        }
+
         return "You need an Phasefield Engine to install this.";
     }
 

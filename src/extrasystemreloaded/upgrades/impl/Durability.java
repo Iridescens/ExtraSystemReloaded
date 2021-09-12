@@ -14,7 +14,7 @@ public class Durability extends Upgrade {
 
     private static final float HULL_MULT = 2f;
     private static final float ENGINE_HEALTH_MULT = 2f;
-    private static final float EMP_TAKEN_MULT = -3f;
+    private static final float EMP_TAKEN_MULT = -1.5f;
 
     private static final float ARMOR_SCALAR = 5.75f;
     private static final float ARMOR_QUALITY_MULT = 0.55f;

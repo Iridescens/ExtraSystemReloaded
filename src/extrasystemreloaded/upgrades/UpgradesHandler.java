@@ -32,7 +32,7 @@ public class UpgradesHandler {
         add("heavy_machinery");
     }};
 
-    private static final float[] CARGO_BASE_VALUE ={100,250,30,500,30,200,150};//supplies,volatiles,organics,hand_weapons,metals,rare_metals,heavy_machinery
+    private static final float[] CARGO_BASE_VALUE = {100,250,30,500,30,200,150};//supplies,volatiles,organics,hand_weapons,metals,rare_metals,heavy_machinery
 
     public static void populateUpgrades() {
         UpgradesHandler.addUpgrade(new Weapons());
@@ -46,7 +46,7 @@ public class UpgradesHandler {
     }
 
     public static void addUpgrade(Upgrade upgrade) {
-        if(UPGRADES_LIST.contains(upgrade)) return;
+        if(UPGRADES.containsKey(upgrade.getKey())) return;
 
         UPGRADES.put(upgrade.getKey(),upgrade);
         UPGRADES_LIST.add(upgrade);

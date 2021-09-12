@@ -16,12 +16,13 @@ import extrasystemreloaded.augments.Augment;
 import java.awt.*;
 
 public class EqualizerCore extends Augment {
+    public static final String AUGMENT_KEY = "EqualizerCore";
     private static final String ITEM = "esr_equalizercore";
     private static final Color[] tooltipColors = {Color.red, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
 
     @Override
     public String getKey() {
-        return "EqualizerCore";
+        return AUGMENT_KEY;
     }
 
     @Override

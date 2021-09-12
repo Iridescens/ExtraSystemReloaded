@@ -84,27 +84,33 @@ public class PlasmaFluxCatalyst extends Augment {
     }
 
     @Override
+    public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
+        int numCapsStats = stats.getVariant().getNumFluxCapacitors();
+        int numVentsStats = stats.getVariant().getNumFluxVents();
+
+        int maxCaps = (int) fm.getFleetCommander().getStats().getMaxCapacitorsBonus().computeEffective(MAX_FLUX_EQUIPMENT.get(fm.getHullSpec().getHullSize()));
+        int maxVents = (int) fm.getFleetCommander().getStats().getMaxVentsBonus().computeEffective(MAX_FLUX_EQUIPMENT.get(fm.getHullSpec().getHullSize()));
+
+        int crReduction = 0;
+        if(numCapsStats > maxCaps / 2) {
+            crReduction += numCapsStats - (maxCaps / 2);
+        }
+
+        if(numVentsStats > maxVents / 2) {
+            crReduction += numVentsStats - (maxVents / 2);
+        }
+
+        if(crReduction > 0) {
+            stats.getMaxCombatReadiness().modifyFlat(this.getName(), -crReduction / 100f, this.getName());
+        }
+    }
+
+    @Override
     public void applyAugmentToShip(FleetMemberAPI fm, ShipAPI ship, float quality, String id) {
         int numCaps = ship.getVariant().getNumFluxCapacitors();
         int numVents = ship.getVariant().getNumFluxVents();
 
         ship.getMutableStats().getFluxCapacity().modifyFlat(this.getBuffId(), numCaps * 200);
         ship.getMutableStats().getFluxDissipation().modifyFlat(this.getBuffId(), numVents * 10);
-
-        int maxCaps = (int) fm.getFleetCommander().getStats().getMaxCapacitorsBonus().computeEffective(MAX_FLUX_EQUIPMENT.get(fm.getHullSpec().getHullSize()));
-        int maxVents = (int) fm.getFleetCommander().getStats().getMaxVentsBonus().computeEffective(MAX_FLUX_EQUIPMENT.get(fm.getHullSpec().getHullSize()));
-
-        int crReduction = 0;
-        if(numCaps > maxCaps / 2) {
-            crReduction += numCaps - (maxCaps / 2);
-        }
-
-        if(numVents > maxVents / 2) {
-            crReduction += numVents - (maxVents / 2);
-        }
-
-        if(crReduction > 0) {
-            ship.getMutableStats().getMaxCombatReadiness().modifyFlat(this.getName(), -crReduction / 100f, this.getName());
-        }
     }
 }
