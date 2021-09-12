@@ -132,6 +132,32 @@ public class Es_ShipQualityDialog extends ESDialog {
     }
 
     private float bonusQualityAtMarket(MarketAPI currMarket) {
+        float qualityMult = 2;
+        if(currMarket.hasIndustry("heavyindustry")) {
+            qualityMult+=1;
+        }
+        if(currMarket.hasIndustry("orbitalworks")) {
+            qualityMult+=2;
+        }
+        if(currMarket.hasIndustry("IndEvo_Scrapyard")) {
+            qualityMult+=0.5;
+        }
+        if(currMarket.hasIndustry("IndEvo_EngHub")) {
+            qualityMult+=0.5;
+        }
+        if(currMarket.hasIndustry("ms_modularFac")) {
+            qualityMult+=0.5;
+        }
+        if(currMarket.hasIndustry("ms_massIndustry")) {
+            qualityMult+=0.5;
+        }
+        if(currMarket.hasIndustry("ms_militaryProduction")) {
+            qualityMult+=1;
+        }
+        if(currMarket.hasIndustry("ms_orbitalShipyard")) {
+            qualityMult+=2;
+        }
+
         return baseQualityStep * (2 + (currMarket.hasIndustry("heavyindustry") ? 1 : 0) + (currMarket.hasIndustry("orbitalworks") ? 2 : 0));
     }
 }

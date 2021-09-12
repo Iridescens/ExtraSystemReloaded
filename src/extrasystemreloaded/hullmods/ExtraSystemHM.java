@@ -26,6 +26,7 @@ import static extrasystemreloaded.util.StatUtils.formatFloat;
 
 public class ExtraSystemHM extends BaseHullMod {
     public static final Logger log = Logger.getLogger(ExtraSystemHM.class);
+
     private static Color color = new Color(94, 206, 226);
     private static Color tooltipColor = new Color(220, 220, 220, 255);
     public static Color infoColor = new Color(236, 196, 0);
@@ -175,7 +176,7 @@ public class ExtraSystemHM extends BaseHullMod {
         FleetMemberAPI fm = FleetMemberUtils.findMemberFromShip(ship);
         if(fm == null) return "SHIP NOT FOUND";
         if(fm.getShipName() == null) {
-            return "SHIP NOT FOUND";
+            return "SHIP MODULE";
         }
         return fm.getShipName();
     }
@@ -192,6 +193,7 @@ public class ExtraSystemHM extends BaseHullMod {
         ExtraSystems extraSystems = this.getExtraSystems(fm);
         if (extraSystems == null) return;
 
+
         float quality = extraSystems.getQuality(fm);
         String qname = Utilities.getQualityName(quality);
 
@@ -201,6 +203,8 @@ public class ExtraSystemHM extends BaseHullMod {
 
         boolean addedAugmentSection = false;
         for (Augment augment : AugmentsHandler.AUGMENT_LIST) {
+            if (!extraSystems.hasAugment(augment.getKey())) continue;
+
             if (!addedAugmentSection) {
                 addedAugmentSection = true;
                 tooltip.addSectionHeading("Augments", Alignment.MID, 6);

@@ -18,7 +18,7 @@ import java.util.Map;
 import static extrasystemreloaded.Es_ModPlugin.HULLSIZE_TO_MAXLEVEL;
 
 public class UpgradesHandler {
-    private static final org.apache.log4j.Logger log = Global.getLogger(ESUpgrades.class);
+    private static final org.apache.log4j.Logger log = Global.getLogger(UpgradesHandler.class);
 
     public static final Map<String, Upgrade> UPGRADES = new HashMap<>();
     public static final List<Upgrade> UPGRADES_LIST = new ArrayList<>();
@@ -46,8 +46,11 @@ public class UpgradesHandler {
     }
 
     public static void addUpgrade(Upgrade upgrade) {
+        if(UPGRADES_LIST.contains(upgrade)) return;
+
         UPGRADES.put(upgrade.getKey(),upgrade);
         UPGRADES_LIST.add(upgrade);
+        log.info(String.format("initialized upgrade [%s]", upgrade.getName()));
     }
 
     public static ESUpgrades generateRandomStats(FleetMemberAPI fleetMember, int fp) {
@@ -67,9 +70,12 @@ public class UpgradesHandler {
         float[] resourceCosts = new float[7];
 
         float hullBaseValue = shipSelected.getHullSpec().getBaseValue();
+        float adjustedHullValue =
+                hullBaseValue * Es_ModPlugin.getHullBaseFactor()
+                + ((1 - Es_ModPlugin.getHullBaseFactor()) * hullBaseValue * (Es_ModPlugin.getHullValueMaximum() / (hullBaseValue + Es_ModPlugin.getHullValueMaximum())));
 
-        float upgradeCostRatioByLevel = (Es_ModPlugin.getUpgradeCostMaxFactor() - Es_ModPlugin.getUpgradeCostMinFactor()) * level / max + Es_ModPlugin.getUpgradeCostMinFactor();
-        float upgradeCostByHull = hullBaseValue * upgradeCostRatioByLevel;
+        float upgradeCostRatioByLevel = Es_ModPlugin.getUpgradeCostMinFactor() + Es_ModPlugin.getUpgradeCostMaxFactor() * ((float) level) / ((float) max);
+        float upgradeCostByHull = adjustedHullValue * upgradeCostRatioByLevel / Es_ModPlugin.getDividingRatio();
 
         try {
             for (int j = 0; j < Es_ModPlugin.getUpgradeCostMultipliers().length(); j++) {
@@ -77,7 +83,7 @@ public class UpgradesHandler {
                 if (abilitySelected.getKey().equals(entry.getString("key"))) {
                     for(int i = 0; i < 7; i++) {
                         float ratio = (float) entry.getDouble(RESOURCES_LIST.get(i));
-                        resourceCosts[i] = getUpgradeCost(ratio, CARGO_BASE_VALUE[i], qualityFactor, upgradeCostByHull);
+                        resourceCosts[i] = Math.round(ratio * upgradeCostByHull / CARGO_BASE_VALUE[i]);
                     }
                     break;
                 }
@@ -88,8 +94,8 @@ public class UpgradesHandler {
         return resourceCosts;
     }
 
-    public static float getUpgradeCost(float multiplier, float baseValue, float shipQuality, float upgradeValueByHull) {
-        return Math.round(multiplier * upgradeValueByHull / baseValue * shipQuality / Es_ModPlugin.getDividingRatio());
+    public static float getUpgradeCost(float multiplier, float baseValue, float upgradeValueByHull) {
+        return 1f;
     }
 
     public static float getCreditCost(MarketAPI market, float amount, int resource) {

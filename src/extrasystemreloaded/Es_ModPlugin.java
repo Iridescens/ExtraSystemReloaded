@@ -29,34 +29,21 @@ public class Es_ModPlugin extends BaseModPlugin {
 
 	private static final String ES_UPGRADECOST_MULTS_FILE = "data/config/skill_resource_ratio.csv";
 	private static JSONArray UPGRADE_COST_MULTIPLIERS = null;
-    private static float UPGRADE_COST_MINFACTOR = Global.getSettings().getFloat("upgradeCostMinFactor");
-    private static float UPGRADE_COST_MAXFACTOR = Global.getSettings().getFloat("upgradeCostMaxFactor");
-    private static float DIVIDING_RATIO = Global.getSettings().getFloat("dividingRatio");
-    private static boolean USE_RANDOM_QUALITY = Global.getSettings().getBoolean("useRandomQuality");
-    private static float BASE_QUALITY = Global.getSettings().getFloat("baseQuality");
-	private static float MAX_QUALITY = Global.getSettings().getFloat("maxQuality");
-	private static boolean UPGRADE_ALWAYS_SUCCEED = Global.getSettings().getBoolean("upgradeAlwaysSucceed");
-	private static float UPGRADE_FAILURE_MINCHANCE = Global.getSettings().getFloat("baseFailureMinFactor");
 
-	private static boolean KEEP_UPGRADES_ON_DEATH = Global.getSettings().getBoolean("shipsKeepUpgradesOnDeath");
+    private static float UPGRADE_COST_MINFACTOR;
+    private static float UPGRADE_COST_MAXFACTOR;
+    private static float HULL_BASE_FACTOR;
+	private static float HULL_MAX_VALUE;
+	private static float DIVIDING_RATIO;
+    private static boolean USE_RANDOM_QUALITY;
+    private static float BASE_QUALITY;
+	private static float MAX_QUALITY;
+	private static boolean UPGRADE_ALWAYS_SUCCEED;
+	private static float UPGRADE_FAILURE_MINCHANCE;
+	private static boolean KEEP_UPGRADES_ON_DEATH;
 
 	public static final Map<ShipAPI.HullSize, Integer> HULLSIZE_TO_MAXLEVEL = new HashMap<>();
 	public static final Map<ShipAPI.HullSize, Float> HULLSIZE_FACTOR = new HashMap<>();
-	static {
-		int frigateMaxUpgrades = Global.getSettings().getInt("frigateMaxUpgrades");
-		int destroyerMaxUpgrades = Global.getSettings().getInt("destroyerMaxUpgrades");
-		int cruiserMaxUpgrades = Global.getSettings().getInt("cruiserMaxUpgrades");
-		int capitalMaxUpgrades = Global.getSettings().getInt("capitalMaxUpgrades");
-
-		HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.FIGHTER, frigateMaxUpgrades);
-		HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.DEFAULT, frigateMaxUpgrades);
-		HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.FRIGATE, frigateMaxUpgrades);
-		HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.DESTROYER, destroyerMaxUpgrades);
-		HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.CRUISER, cruiserMaxUpgrades);
-		HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.CAPITAL_SHIP, capitalMaxUpgrades);
-
-		calculateHullSizeFactors();
-	}
 
 	public static final String ES_PERSISTENTUPGRADEMAP = "ES_UPGRADEMAP";
 
@@ -66,13 +53,14 @@ public class Es_ModPlugin extends BaseModPlugin {
 
 	@Override
     public void onGameLoad(boolean newGame){
+		loadConfig();
+
 		UpgradesHandler.populateUpgrades();
 		AugmentsHandler.populateAugments();
 
 		Global.getSector().getListenerManager().addListener(new SalvageListener(), true);
 		Global.getSector().addTransientListener(new EngagementListener(false));
 
-		loadConfig();
 		loadUpgradeData();
 
 		for(FleetMemberAPI fm : Global.getSector().getPlayerFleet().getFleetData().getMembersListCopy()) {
@@ -126,9 +114,11 @@ public class Es_ModPlugin extends BaseModPlugin {
 	    	JSONObject settings = Global.getSettings().loadJSON("data/config/settings.json", "extra_system_reloaded");
             UPGRADE_COST_MULTIPLIERS = Global.getSettings().loadCSV(ES_UPGRADECOST_MULTS_FILE);
 
-			DIVIDING_RATIO = (float) settings.getDouble("dividingRatio");
-            UPGRADE_COST_MINFACTOR = (float) settings.getDouble("upgradeCostMinFactor");
-            UPGRADE_COST_MAXFACTOR = (float) settings.getDouble("upgradeCostMaxFactor");
+			HULL_BASE_FACTOR = (float) settings.getDouble("hullCostBaseFactor");
+			HULL_MAX_VALUE = (float) settings.getDouble("hullCostDiminishingMaximum");
+			UPGRADE_COST_MINFACTOR = (float) settings.getDouble("upgradeCostMinFactor");
+			UPGRADE_COST_MAXFACTOR = (float) settings.getDouble("upgradeCostMaxFactor");
+			DIVIDING_RATIO = (float) settings.getDouble("upgradeCostDividingRatio");
 
 			UPGRADE_ALWAYS_SUCCEED = settings.getBoolean("upgradeAlwaysSucceed");
 			UPGRADE_FAILURE_MINCHANCE = (float) settings.getDouble("baseFailureMinFactor");
@@ -221,9 +211,17 @@ public class Es_ModPlugin extends BaseModPlugin {
         return BASE_QUALITY;
     }
 
-    public static float getDividingRatio() {
-        return DIVIDING_RATIO;
+    public static float getHullBaseFactor() {
+        return HULL_BASE_FACTOR;
     }
+
+	public static float getHullValueMaximum() {
+		return HULL_MAX_VALUE;
+	}
+
+	public static float getDividingRatio() {
+		return DIVIDING_RATIO;
+	}
 
     public static float getUpgradeCostMaxFactor() {
         return UPGRADE_COST_MAXFACTOR;

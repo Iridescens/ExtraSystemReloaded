@@ -2,13 +2,26 @@
 	"upgradeAlwaysSucceed":true,	# no more gambling
 		"baseFailureMinFactor":0.4,
 	"useRandomQuality":true,	# may not affect existing ships
-		"baseQuality":1.0,	# when useShipIdForQualityCalculation is false
-	"upgradeCostMaxFactor":0.25,	
-	"upgradeCostMinFactor":0.05,	# bring this closer to 0, or even set to 0, if you think capitals are ridiculously expensive
-	"dividingRatio":20.0,	# higher is cheaper
+		"baseQuality":1.0,	# when useShipIdForQualityCalculation is false,
 	"maxQuality":3.0, #max quality for any ship
 
 	"shipsKeepUpgradesOnDeath":false,
+
+	# below settings used to determine upgrade costs. see skill_resource_ratio.csv for item ratios used for each upgrade.
+
+	"hullCostBaseFactor": 0.25,	# how much of the base value of a ship is used to determine upgrade costs, without any diminishing returns. do not set above 1
+	#setting the above setting higher results in a much, much steeper upgrade cost curve for ships that are worth more.
+
+	"hullCostDiminishingMaximum": 50000.0, # at what point does the diminishing returns for the base value of a ship end
+	#setting the above setting higher results in a greater upgrade cost curve for ships that are worth more.
+
+	"upgradeCostMinFactor":0.05,	# base value of an upgrade. used to determine the base cost of an upgrade not considering levels. setting this to 0 results in a free first upgrade.
+	# setting the above setting higher results in a greater base value to all upgrades.
+
+	"upgradeCostMaxFactor":0.35, # value of an upgrade beyond its base value. used to determine the cost of an upgrade using the ratio of its level to its maximum.
+	# setting the above setting higher results in a much greater cost to higher-level upgrades.
+
+	"upgradeCostDividingRatio": 20.0, # dividing ratio to final upgrade cost
 
 	#below settings determine max upgrades for upgrades that do not have a max defined.
 	"frigateMaxUpgrades": 10,
