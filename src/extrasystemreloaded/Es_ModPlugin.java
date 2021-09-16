@@ -13,6 +13,7 @@ import extrasystemreloaded.campaign.salvage.SalvageListener;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.upgrades.UpgradesHandler;
 import extrasystemreloaded.util.ExtraSystems;
+import extrasystemreloaded.util.StatUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,6 +56,7 @@ public class Es_ModPlugin extends BaseModPlugin {
     public void onGameLoad(boolean newGame){
 		loadConfig();
 
+		StatUtils.loadStatCurves();
 		UpgradesHandler.populateUpgrades();
 		AugmentsHandler.populateAugments();
 

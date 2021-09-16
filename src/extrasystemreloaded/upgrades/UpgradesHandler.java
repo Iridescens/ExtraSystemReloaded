@@ -55,7 +55,6 @@ public class UpgradesHandler {
             JSONObject upgradeSettings = settings.getJSONObject(UPGRADE_SETTINGS_KEY);
 
             for (Upgrade upgrade : UPGRADES_LIST) {
-                log.info(upgradeSettings.getJSONObject(upgrade.getKey()).toString());
                 upgrade.loadConfig(upgradeSettings.getJSONObject(upgrade.getKey()));
             }
         } catch (JSONException | IOException ex) {
