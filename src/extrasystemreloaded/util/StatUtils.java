@@ -1,20 +1,51 @@
 package extrasystemreloaded.util;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import extrasystemreloaded.Es_ModPlugin;
-import extrasystemreloaded.hullmods.ExtraSystemHM;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StatUtils {
+    private static final String STAT_CURVES_SETTINGS = "scalingCurves";
+    private static final String STAT_CURVE_SCALAR = "scalar";
+    private static final String STAT_CURVE_PERCENT = "percentOfLevels";
+
     private static final DecimalFormat FLOATING_FORMAT = new DecimalFormat("#");
     private static final DecimalFormat FLOATING_FORMAT_UNROUNDED = new DecimalFormat("#.##");
+    private static final List<StatCurve> STAT_CURVES = new ArrayList<>();
 
     private StatUtils() {
 
+    }
+
+    public static void loadStatCurves() {
+        STAT_CURVES.clear();
+        try {
+            JSONObject settings = Global.getSettings().loadJSON("data/config/settings.json", "extra_system_reloaded");
+            JSONArray curveSettings = settings.getJSONArray(STAT_CURVES_SETTINGS);
+
+            for(int i = 0; i < curveSettings.length(); i++) {
+                JSONObject curve = curveSettings.getJSONObject(i);
+
+                if(curve.isNull(STAT_CURVE_SCALAR) || curve.isNull(STAT_CURVE_PERCENT)) {
+                    throw new RuntimeException("A curve is incorrect in ExtraSystemReloaded settings.json!");
+                }
+
+                STAT_CURVES.add(new StatCurve((float) curve.getDouble(STAT_CURVE_SCALAR), (float) curve.getDouble(STAT_CURVE_PERCENT)));
+            }
+
+        } catch (IOException | JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void setStatPercentBonus(StatBonus stat, String buffId, float mult) {
@@ -36,27 +67,13 @@ public class StatUtils {
     public static float getDiminishingReturnsTotal(int level, int maxLevel, float quality, float levelFactor, float qualityMult, float hullSizeFactor) {
         FloatHolder finalVal = new FloatHolder(0f);
         FloatHolder levelAsFloat = new FloatHolder(level);
-        float qualityFactor = (float) Math.pow(1f + quality * 0.33f, 1 + qualityMult / 5f);
+        float qualityFactor = (float) Math.pow(1f + quality * 0.33f, 1f + qualityMult / 5f);
 
-        doFloatCurve(finalVal, 0.65f, levelAsFloat, maxLevel, 0.35f, levelFactor, qualityFactor, hullSizeFactor);
-        doFloatCurve(finalVal, 0.3f, levelAsFloat, maxLevel, 0.25f, levelFactor, qualityFactor, hullSizeFactor);
-        doFloatCurve(finalVal, 0.1f, levelAsFloat, maxLevel, 0.1f, levelFactor, qualityFactor, hullSizeFactor);
-        doFloatCurve(finalVal, 0.05f, levelAsFloat, maxLevel, -1, levelFactor, qualityFactor, hullSizeFactor);
+        for(StatCurve curve : STAT_CURVES) {
+            curve.doFloatCurve(finalVal, levelAsFloat, maxLevel, levelFactor, qualityFactor, hullSizeFactor);
+        }
 
         return finalVal.getValue();
-    }
-
-    private static void doFloatCurve(FloatHolder stat, float statScalar, FloatHolder level, float maxLevel, float percentOfLevels, float levelFactor, float qualityFactor, float hullSizeFactor) {
-        if(level.getValue() <= 0f) {
-            return;
-        }
-
-        if(percentOfLevels == -1) {
-            stat.add(levelFactor * qualityFactor * level.getValue() * hullSizeFactor * statScalar);
-        } else {
-            stat.add(levelFactor * qualityFactor * Math.min(level.getValue(), percentOfLevels * maxLevel) * hullSizeFactor * statScalar);
-            level.add(-percentOfLevels * maxLevel);
-        }
     }
 
     public static void addDoublePercentBonusToTooltip(TooltipMakerAPI tooltip, String format, float bonusPercent, float originalValue1, float originalValue2) {
@@ -99,6 +116,29 @@ public class StatUtils {
 
         public void add(float add) {
             myFloat += add;
+        }
+    }
+
+    private static class StatCurve {
+        private final float statScalar;
+        private final float percentOfLevels;
+
+        protected StatCurve(float statScalar, float percentOfLevels) {
+            this.statScalar = statScalar;
+            this.percentOfLevels = percentOfLevels;
+        }
+
+        public void doFloatCurve(FloatHolder stat, FloatHolder level, float maxLevel, float levelFactor, float qualityFactor, float hullSizeFactor) {
+            if(level.getValue() <= 0f) {
+                return;
+            }
+
+            if(percentOfLevels == -1) {
+                stat.add(levelFactor * qualityFactor * level.getValue() * hullSizeFactor * statScalar);
+            } else {
+                stat.add(levelFactor * qualityFactor * Math.min(level.getValue(), percentOfLevels * maxLevel) * hullSizeFactor * statScalar);
+                level.add(-percentOfLevels * maxLevel);
+            }
         }
     }
 }

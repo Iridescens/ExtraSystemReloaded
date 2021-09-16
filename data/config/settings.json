@@ -30,6 +30,134 @@
 	"capitalMaxUpgrades": 25,
 	#the amount each upgrade contributes will scale to these values (so frigate at max level gets same buff as capital at max)
 
+
+
+	#upgrade scaling
+
+	#note that adding additional values will not work unless you modify the source code and rebuild the jar.
+	#setting certain values too high may have unintended consequences. i have attempted to cap the problem values
+	#but it is not perfect.
+
+	#setting certain values to negative may have unintended consequences. especially the quality mult.
+	#if you want negative scaling, focus on the Scalar values.
+
+	#if a variable ends with UpgradeScalar, that is the multiplier for upgrade levels.
+	#if a variable ends with QualityMult, that is the exponent modifier for quality.
+	#both of the above for the same stat signify that a variable is subject to diminishing returns.
+
+	#if a variable ends with Scalar, it is a flat multiplier multiplied with level.
+
+	"upgradeSettings": {
+		"Weapons": {
+			"damageUpgradeScalar": 5,
+			"damageQualityMult": 1.5,
+			"rangeUpgradeScalar": 1.15,
+			"rangeQualityMult": 2,
+			"fluxCostUpgradeScalar": 5,
+			"fluxCostQualityMult": 1.5,
+			"weaponHealthScalar": 2
+		},
+		"Durability": {
+			"hullUpgradeScalar": 2,
+			"engineHealthScalar": 2,
+			"empTakenScalar": -1.5,
+			"armorUpgradeScalar": 5.75,
+			"armorQualityMult": 0.55
+		},
+		"Logistics": {
+			"cargoScalar": 2,
+			"crewScalar": 2,
+			"fuelScalar": 2,
+			"crDeployedUpgradeScalar": -10.2,
+			"crDeployedQualityMult": 0.9,
+			"crRecoveryUpgradeScalar": 7.5,
+			"crRecoveryQualityMult": 1.5,
+			"repairRateUpgradeScalar": 7.5,
+			"repairRateQualityMult": 1.5,
+			"suppliesToDeployUpgradeScalar": -8.5,
+			"suppliesToDeployQualityMult": 2,
+			"suppliesPerMonthUpgradeScalar": -4.65,
+			"suppliesPerMonthQualityMult": 2,
+			"minCrewUpgradeScalar": -8.6,
+			"minCrewQualityMult": 0.5,
+			"fuelUseUpgradeScalar": -5.1,
+			"fuelUseQualityMult": 3
+		},
+		"Technology": {
+			"sensorScalar": 1,
+			"fluxUpgradeScalar": 3,
+			"fluxQualityMult": 3.15,
+			"shieldFluxPerSecUpgradeScalar": -5,
+			"shieldFluxPerSecQualityMult": 2.25,
+			"shieldFluxPerDamUpgradeScalar": -1.75,
+			"shieldFluxPerDamQualityMult": 0.6,
+			"shieldUnfoldRateScalar": 2,
+			"phaseFluxPerSecUpgradeScalar": -2.1,
+			"phaseFluxPerSecQualityMult": 3,
+			"phaseActivateFluxUpgradeScalar": -7.75,
+			"phaseActivateFluxQualityMult": 1.5,
+			"phaseCooldownScalar": -0.75
+		},
+		"Mobility": {
+			"maxSpeedScalar": 2,
+			"accelerationScalar": 3,
+			"turnRateScalar": 3,
+			"burnLevelScalar": 1
+		},
+		"Subsystems": {
+			"peakCrScalar": 2,
+			"crLossScalar": -0.25,
+
+			# the below are flat multipliers to PPT and CR Loss based on hullsize.
+			# the intention is that frigates gain much more than others out of this, since they typically
+			# have the lowest PPT.
+
+			"frigateMult": 8,
+			"destroyerMult": 3,
+			"cruiserMult": 1.5,
+			"capitalMult": 1
+		},
+		"Fighters": {
+			"refitTimeScalar": -2.25,
+			"rangeScalar": 2,
+			"replacementDecreaseScalar": -2.5,
+			"replacementIncreaseScalar": 2.5
+		},
+		"Magazines": {
+			"reloadSpeedScalar": 0.05,
+			"missileMagazineScalar": 2,
+			"rateOfFireUpgradeScalar": 5,
+			"rateOfFireQualityMult": 1.45
+		}
+	},
+
+	#below are the scaling curves used for the mod (also known as diminishing returns)
+	#these can be used to apply a flat buff to all upgrade values just by raising the scalar values.
+	#scalar defines the multiplier applied to the final value of the algorithm.
+	#percentOfLevels is the percentage of levels that the scalar applies for. setting it to 1 will make all upgrades
+	# that have not already been applied apply at that level. setting it to -1 does the same, except that if you somehow
+	# break the max level limit it will completely ignore that. i recommend always having a -1 in there.
+	"scalingCurves": [
+		{
+			"scalar": 0.65,         #65% power
+			"percentOfLevels": 0.35 #applies for 35% of the first levels
+		},
+		{
+			"scalar": 0.3,          #30% power
+			"percentOfLevels": 0.25 #applies for 25% of the next levels
+		},
+		{
+			"scalar": 0.1,          #10% power
+			"percentOfLevels": 0.1  #applies for 10% of the next levels.
+		},
+		{
+			"scalar": 0.05,         #5% power
+			"percentOfLevels": -1   #applies for any remaining levels (by default, the last 35%)
+		}
+	],
+
+
+	# do not touch.
 	"ruleCommandPackages":[
 		"extrasystemreloaded.campaign.rulecmd"
 	]

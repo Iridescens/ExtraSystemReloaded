@@ -7,20 +7,30 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.upgrades.Upgrade;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.awt.*;
 
 public class Fighters extends Upgrade {
     public static final String UPGRADE_KEY = "Fighters";
 
-    private static final float REFIT_TIME_MULT = -1.75f;
-    private static final float RANGE_MULT = 2f;
-    private static final float REPLACEMENT_DECREASE_MULT = -6f;
-    private static final float REPLACEMENT_REGENERATE_MULT = 6f;
+    private static float REFIT_TIME_MULT;
+    private static float RANGE_MULT;
+    private static float REPLACEMENT_DECREASE_MULT;
+    private static float REPLACEMENT_REGENERATE_MULT;
 
     @Override
     public String getKey() {
         return UPGRADE_KEY;
+    }
+
+    @Override
+    public void loadConfig(JSONObject upgradeScaling) throws JSONException {
+        REFIT_TIME_MULT = (float) upgradeScaling.getDouble("refitTimeScalar");
+        RANGE_MULT = (float) upgradeScaling.getDouble("rangeScalar");
+        REPLACEMENT_DECREASE_MULT = (float) upgradeScaling.getDouble("replacementDecreaseScalar");
+        REPLACEMENT_REGENERATE_MULT = (float) upgradeScaling.getDouble("replacementIncreaseScalar");
     }
 
     @Override

@@ -6,35 +6,58 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.upgrades.Upgrade;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.awt.*;
 
 public class Logistics extends Upgrade {
     public static final String UPGRADE_KEY = "Logistics";
 
-    private static final float MAX_CARGO_MULT = 2f;
-    private static final float MAX_CREW_MULT = 2f;
-    private static final float MAX_FUEL_MULT = 2f;
+    private static float MAX_CARGO_MULT;
+    private static float MAX_CREW_MULT;
+    private static float MAX_FUEL_MULT;
 
 
-    private static final float CR_TO_DEPLOY_SCALAR = -10.2f;
-    private static final float CR_TO_DEPLOY_QUALITY_MULT = 0.9f;
-    private static final float MIN_CREW_SCALAR = -8.6f;
-    private static final float MIN_CREW_QUALITY_MULT = 0.5f;
-    private static final float FUEL_USE_SCALAR = -5.1f;
-    private static final float FUEL_USE_QUALITY_MULT = 3f;
-    private static final float SUPPLIES_MONTH_SCALAR = -4.65f;
-    private static final float SUPPLIES_MONTH_QUALITY_MULT = 2f;
-    private static final float SUPPLIES_RECOVERY_SCALAR = -8.5f;
-    private static final float SUPPLIES_RECOVERY_QUALITY_MULT = 2f;
-    private static final float CR_RECOVERY_RATE_SCALAR = 7.5f;
-    private static final float CR_RECOVERY_RATE_QUALITY_MULT = 1.5f;
-    private static final float REPAIR_RATE_SCALAR = 7.5f;
-    private static final float REPAIR_RATE_QUALITY_MULT = 1.5f;
+    private static float CR_TO_DEPLOY_SCALAR;
+    private static float CR_TO_DEPLOY_QUALITY_MULT;
+    private static float MIN_CREW_SCALAR;
+    private static float MIN_CREW_QUALITY_MULT;
+    private static float FUEL_USE_SCALAR;
+    private static float FUEL_USE_QUALITY_MULT;
+    private static float SUPPLIES_MONTH_SCALAR;
+    private static float SUPPLIES_MONTH_QUALITY_MULT;
+    private static float SUPPLIES_RECOVERY_SCALAR;
+    private static float SUPPLIES_RECOVERY_QUALITY_MULT;
+    private static float CR_RECOVERY_RATE_SCALAR;
+    private static float CR_RECOVERY_RATE_QUALITY_MULT;
+    private static float REPAIR_RATE_SCALAR;
+    private static float REPAIR_RATE_QUALITY_MULT;
 
     @Override
     public String getKey() {
         return UPGRADE_KEY;
+    }
+
+    @Override
+    public void loadConfig(JSONObject upgradeScaling) throws JSONException {
+        MAX_CARGO_MULT = (float) upgradeScaling.getDouble("cargoScalar");
+        MAX_CREW_MULT = (float) upgradeScaling.getDouble("crewScalar");
+        MAX_FUEL_MULT = (float) upgradeScaling.getDouble("fuelScalar");
+        CR_TO_DEPLOY_SCALAR = (float) upgradeScaling.getDouble("crDeployedUpgradeScalar");
+        CR_TO_DEPLOY_QUALITY_MULT = (float) upgradeScaling.getDouble("crDeployedQualityMult");
+        MIN_CREW_SCALAR = (float) upgradeScaling.getDouble("minCrewUpgradeScalar");
+        MIN_CREW_QUALITY_MULT = (float) upgradeScaling.getDouble("minCrewQualityMult");
+        FUEL_USE_SCALAR = (float) upgradeScaling.getDouble("fuelUseUpgradeScalar");
+        FUEL_USE_QUALITY_MULT = (float) upgradeScaling.getDouble("fuelUseQualityMult");
+        SUPPLIES_MONTH_SCALAR = (float) upgradeScaling.getDouble("suppliesPerMonthUpgradeScalar");
+        SUPPLIES_MONTH_QUALITY_MULT = (float) upgradeScaling.getDouble("suppliesPerMonthQualityMult");
+        SUPPLIES_RECOVERY_SCALAR = (float) upgradeScaling.getDouble("suppliesToDeployUpgradeScalar");
+        SUPPLIES_RECOVERY_QUALITY_MULT = (float) upgradeScaling.getDouble("suppliesToDeployQualityMult");
+        CR_RECOVERY_RATE_SCALAR = (float) upgradeScaling.getDouble("crRecoveryUpgradeScalar");
+        CR_RECOVERY_RATE_QUALITY_MULT = (float) upgradeScaling.getDouble("crRecoveryQualityMult");
+        REPAIR_RATE_SCALAR = (float) upgradeScaling.getDouble("repairRateUpgradeScalar");
+        REPAIR_RATE_QUALITY_MULT = (float) upgradeScaling.getDouble("repairRateQualityMult");
     }
 
     @Override

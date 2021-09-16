@@ -10,24 +10,32 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.upgrades.Upgrade;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.awt.*;
 
 public class Magazines extends Upgrade {
     public static final String UPGRADE_KEY = "Magazines";
 
+    private static float RELOAD_PER_SECOND_MULT;
+    private static float MISSILE_MAGAZINE_MULT;
 
-    private static final float RELOAD_PER_SECOND_MULT = 0.035f;
-    private static final float MISSILE_MAGAZINE_MULT = 2f;
-
-    private static final float ROF_SCALAR = 5f;
-    private static final float ROF_QUALITY_MULT = 1.45f;
+    private static float ROF_SCALAR;
+    private static float ROF_QUALITY_MULT;
 
     @Override
     public String getKey() {
         return UPGRADE_KEY;
     }
 
+    @Override
+    public void loadConfig(JSONObject upgradeScaling) throws JSONException {
+        RELOAD_PER_SECOND_MULT = (float) upgradeScaling.getDouble("reloadSpeedScalar");
+        MISSILE_MAGAZINE_MULT = (float) upgradeScaling.getDouble("missileMagazineScalar");
+        ROF_SCALAR = (float) upgradeScaling.getDouble("rateOfFireUpgradeScalar");
+        ROF_QUALITY_MULT = (float) upgradeScaling.getDouble("rateOfFireQualityMult");
+    }
 
     @Override
     public String getDescription() {

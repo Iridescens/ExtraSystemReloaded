@@ -6,20 +6,30 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.upgrades.Upgrade;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.awt.*;
 
 public class Mobility extends Upgrade {
     public static final String UPGRADE_KEY = "Mobility";
 
-    private static final float SPEED_MULT = 2f;
-    private static final float ACCELERATION_MULT = 3f;
-    private static final float TURN_RATE_MULT = 3f;
-    private static final float BURN_LEVEL_MULT = 2f;
+    private static float SPEED_MULT;
+    private static float ACCELERATION_MULT;
+    private static float TURN_RATE_MULT;
+    private static float BURN_LEVEL_MULT;
 
     @Override
     public String getKey() {
         return UPGRADE_KEY;
+    }
+
+    @Override
+    public void loadConfig(JSONObject upgradeScaling) throws JSONException {
+        SPEED_MULT = (float) upgradeScaling.getDouble("maxSpeedScalar");
+        ACCELERATION_MULT = (float) upgradeScaling.getDouble("accelerationScalar");
+        TURN_RATE_MULT = (float) upgradeScaling.getDouble("turnRateScalar");
+        BURN_LEVEL_MULT = (float) upgradeScaling.getDouble("burnLevelScalar");
     }
 
     @Override

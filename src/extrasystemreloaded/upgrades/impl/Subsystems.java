@@ -7,15 +7,22 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.upgrades.Upgrade;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.awt.*;
 
 public class Subsystems extends Upgrade {
     public static final String UPGRADE_KEY = "Subsystems";
 
-    private static final float PEAK_CR_MULT = 2f;
-    private static final float CR_LOSS_MULT = -0.25f; //this value is a post-scaling of the other two factors.
+    private static float PEAK_CR_MULT;
+    private static float CR_LOSS_MULT; //this value is a post-scaling of the other two factors.
     //if they are reduced, this will be reduced as well.
+
+    private static float FRIGATE_MULT;
+    private static float DESTROYER_MULT;
+    private static float CRUISER_MULT;
+    private static float CAPITAL_MULT;
 
     @Override
     public String getKey() {
@@ -23,8 +30,18 @@ public class Subsystems extends Upgrade {
     }
 
     @Override
+    public void loadConfig(JSONObject upgradeScaling) throws JSONException {
+        PEAK_CR_MULT = (float) upgradeScaling.getDouble("peakCrScalar");
+        CR_LOSS_MULT = (float) upgradeScaling.getDouble("crLossScalar");
+        FRIGATE_MULT = (float) upgradeScaling.getDouble("frigateMult");
+        DESTROYER_MULT = (float) upgradeScaling.getDouble("destroyerMult");
+        CRUISER_MULT = (float) upgradeScaling.getDouble("cruiserMult");
+        CAPITAL_MULT = (float) upgradeScaling.getDouble("capitalMult");
+    }
+
+    @Override
     public String getDescription() {
-        return "Improve peak performance time.";
+        return "Improve peak performance time and the rate at which CR decays.";
     }
 
     @Override
@@ -36,9 +53,9 @@ public class Subsystems extends Upgrade {
         } else if (fm.getHullSpec().getHullSize() == ShipAPI.HullSize.CRUISER) {
             v *= 1.5;
         } else if (fm.getHullSpec().getHullSize() == ShipAPI.HullSize.DESTROYER) {
-            v *= 2.5;
+            v *= 3;
         } else {
-            v *= 7;
+            v *= 8;
         }
 
         stats.getPeakCRDuration().modifyPercent(this.getBuffId(), (float) v);

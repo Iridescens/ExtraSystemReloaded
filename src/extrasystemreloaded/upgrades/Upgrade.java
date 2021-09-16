@@ -6,11 +6,15 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.util.ExtraSystems;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import static extrasystemreloaded.Es_ModPlugin.HULLSIZE_TO_MAXLEVEL;
 
 public abstract class Upgrade {
     public abstract String getKey();
+
+    public abstract void loadConfig(JSONObject upgradeScaling) throws JSONException;
 
     public String getName() {
         return Global.getSettings().getString("AbilityName", getKey());

@@ -1,6 +1,7 @@
 package extrasystemreloaded.commands;
 
 import extrasystemreloaded.Es_ModPlugin;
+import extrasystemreloaded.upgrades.UpgradesHandler;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
@@ -10,6 +11,7 @@ public class esr_reloadconfig implements BaseCommand {
     public CommandResult runCommand(String args, CommandContext context) {
         if (context.isInCampaign()) {
             Es_ModPlugin.loadConfig();
+            UpgradesHandler.loadConfigs();
             return CommandResult.SUCCESS;
         } else {
             Console.showMessage(CommonStrings.ERROR_CAMPAIGN_ONLY);

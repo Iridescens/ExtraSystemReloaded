@@ -6,21 +6,32 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.upgrades.Upgrade;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.awt.*;
 
 public class Durability extends Upgrade {
     public static final String UPGRADE_KEY = "Durability";
 
-    private static final float HULL_MULT = 2f;
-    private static final float ENGINE_HEALTH_MULT = 2f;
-    private static final float EMP_TAKEN_MULT = -1.5f;
+    private static float HULL_MULT;
+    private static float ENGINE_HEALTH_MULT;
+    private static float EMP_TAKEN_MULT;
 
-    private static final float ARMOR_SCALAR = 5.75f;
-    private static final float ARMOR_QUALITY_MULT = 0.55f;
+    private static float ARMOR_SCALAR;
+    private static float ARMOR_QUALITY_MULT;
     @Override
     public String getKey() {
         return UPGRADE_KEY;
+    }
+
+    @Override
+    public void loadConfig(JSONObject upgradeScaling) throws JSONException {
+        HULL_MULT = (float) upgradeScaling.getDouble("hullUpgradeScalar");
+        ENGINE_HEALTH_MULT = (float) upgradeScaling.getDouble("engineHealthScalar");
+        EMP_TAKEN_MULT = (float) upgradeScaling.getDouble("empTakenScalar");
+        ARMOR_SCALAR = (float) upgradeScaling.getDouble("armorUpgradeScalar");
+        ARMOR_QUALITY_MULT = (float) upgradeScaling.getDouble("armorQualityMult");
     }
 
     @Override

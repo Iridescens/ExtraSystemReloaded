@@ -85,6 +85,10 @@ public class PlasmaFluxCatalyst extends Augment {
 
     @Override
     public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
+        if (fm.getFleetCommander() == null) {
+            return;
+        }
+
         int numCapsStats = stats.getVariant().getNumFluxCapacitors();
         int numVentsStats = stats.getVariant().getNumFluxVents();
 

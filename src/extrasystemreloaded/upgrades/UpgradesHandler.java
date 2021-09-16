@@ -10,6 +10,7 @@ import org.apache.log4j.Level;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import static extrasystemreloaded.Es_ModPlugin.HULLSIZE_TO_MAXLEVEL;
 public class UpgradesHandler {
     private static final org.apache.log4j.Logger log = Global.getLogger(UpgradesHandler.class);
 
+    private static final String UPGRADE_SETTINGS_KEY = "upgradeSettings";
     public static final Map<String, Upgrade> UPGRADES = new HashMap<>();
     public static final List<Upgrade> UPGRADES_LIST = new ArrayList<>();
     private static final List<String> RESOURCES_LIST = new ArrayList() {{
@@ -43,6 +45,22 @@ public class UpgradesHandler {
         UpgradesHandler.addUpgrade(new Fighters());
         UpgradesHandler.addUpgrade(new Subsystems());
         UpgradesHandler.addUpgrade(new Magazines());
+
+        loadConfigs();
+    }
+
+    public static void loadConfigs() {
+        try {
+            JSONObject settings = Global.getSettings().loadJSON("data/config/settings.json", "extra_system_reloaded");
+            JSONObject upgradeSettings = settings.getJSONObject(UPGRADE_SETTINGS_KEY);
+
+            for (Upgrade upgrade : UPGRADES_LIST) {
+                log.info(upgradeSettings.getJSONObject(upgrade.getKey()).toString());
+                upgrade.loadConfig(upgradeSettings.getJSONObject(upgrade.getKey()));
+            }
+        } catch (JSONException | IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     public static void addUpgrade(Upgrade upgrade) {

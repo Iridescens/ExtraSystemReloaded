@@ -1,32 +1,46 @@
 package extrasystemreloaded.upgrades.impl;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.upgrades.Upgrade;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.awt.*;
 
 public class Weapons extends Upgrade {
     public static final String UPGRADE_KEY = "Weapons";
 
-    private static final float WEAPON_HEALTH_MULT = 2f;
+    private static float WEAPON_HEALTH_MULT;
 
-    private static final float RANGE_SCALAR = 1.15f;
-    private static final float RANGE_QUALITY_MULT = 2f;
+    private static float RANGE_SCALAR;
+    private static float RANGE_QUALITY_MULT;
 
-    private static final float DAMAGE_SCALAR = 5f;
-    private static final float DAMAGE_QUALITY_MULT = 1.5f;
+    private static float DAMAGE_SCALAR;
+    private static float DAMAGE_QUALITY_MULT;
 
-    private static final float FLUX_COST_SCALAR = -1.15f;
-    private static final float FLUX_COST_QUALITY_MULT = 2f;
+    private static float FLUX_COST_SCALAR;
+    private static float FLUX_COST_QUALITY_MULT;
 
 
     @Override
     public String getKey() {
         return UPGRADE_KEY;
+    }
+
+    @Override
+    public void loadConfig(JSONObject upgradeScaling) throws JSONException {
+        WEAPON_HEALTH_MULT = (float) upgradeScaling.getDouble("weaponHealthScalar");
+        RANGE_SCALAR = (float) upgradeScaling.getDouble("rangeUpgradeScalar");
+        RANGE_QUALITY_MULT = (float) upgradeScaling.getDouble("rangeQualityMult");
+        DAMAGE_SCALAR = (float) upgradeScaling.getDouble("damageUpgradeScalar");
+        DAMAGE_QUALITY_MULT = (float) upgradeScaling.getDouble("damageQualityMult");
+        FLUX_COST_SCALAR = (float) upgradeScaling.getDouble("rangeUpgradeScalar");
+        FLUX_COST_QUALITY_MULT = (float) upgradeScaling.getDouble("rangeQualityMult");
     }
 
     @Override
