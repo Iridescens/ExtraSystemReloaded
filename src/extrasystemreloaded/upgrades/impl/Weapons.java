@@ -39,8 +39,8 @@ public class Weapons extends Upgrade {
         RANGE_QUALITY_MULT = (float) upgradeScaling.getDouble("rangeQualityMult");
         DAMAGE_SCALAR = (float) upgradeScaling.getDouble("damageUpgradeScalar");
         DAMAGE_QUALITY_MULT = (float) upgradeScaling.getDouble("damageQualityMult");
-        FLUX_COST_SCALAR = (float) upgradeScaling.getDouble("rangeUpgradeScalar");
-        FLUX_COST_QUALITY_MULT = (float) upgradeScaling.getDouble("rangeQualityMult");
+        FLUX_COST_SCALAR = (float) upgradeScaling.getDouble("fluxCostUpgradeScalar");
+        FLUX_COST_QUALITY_MULT = (float) upgradeScaling.getDouble("fluxCostQualityMult");
     }
 
     @Override
