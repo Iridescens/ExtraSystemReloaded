@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import extrasystemreloaded.ESModSettings;
 import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.augments.Augment;
 import extrasystemreloaded.augments.ESAugments;
@@ -14,7 +15,6 @@ import extrasystemreloaded.upgrades.UpgradesHandler;
 import java.util.Random;
 import java.util.UUID;
 
-import static extrasystemreloaded.Es_ModPlugin.useRandomQuality;
 import static extrasystemreloaded.util.Utilities.RESOURCE_NAME;
 import static extrasystemreloaded.util.Utilities.getFleetCargoMap;
 
@@ -62,18 +62,18 @@ public class ExtraSystems {
     }
 
     public static float generateQuality(FleetMemberAPI fm) {
-        if (useRandomQuality()) {
+        if (ESModSettings.getBoolean(ESModSettings.RANDOM_QUALITY)) {
             Random random = new Random();
             random.setSeed(UUID.nameUUIDFromBytes((Global.getSector().getSeedString() + fm.getId()).getBytes()).getMostSignificantBits());
 
             float sum = 0.5f + 0.05f * random.nextInt(20);
             return sum;
         }
-        return Es_ModPlugin.getBaseQuality();
+        return ESModSettings.getFloat(ESModSettings.STARTING_QUALITY);
     }
 
     public boolean canUpgradeQuality(FleetMemberAPI fm) {
-        return Es_ModPlugin.getMaxQuality() > getQuality(fm);
+        return ESModSettings.getFloat(ESModSettings.MAX_QUALITY) > getQuality(fm);
     }
 
     //augments

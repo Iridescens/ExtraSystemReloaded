@@ -18,6 +18,7 @@ import java.awt.*;
 public class Magazines extends Upgrade {
     public static final String UPGRADE_KEY = "Magazines";
 
+    private static String NAME;
     private static float RELOAD_PER_SECOND_MULT;
     private static float MISSILE_MAGAZINE_MULT;
 
@@ -30,11 +31,17 @@ public class Magazines extends Upgrade {
     }
 
     @Override
-    public void loadConfig(JSONObject upgradeScaling) throws JSONException {
-        RELOAD_PER_SECOND_MULT = (float) upgradeScaling.getDouble("reloadSpeedScalar");
-        MISSILE_MAGAZINE_MULT = (float) upgradeScaling.getDouble("missileMagazineScalar");
-        ROF_SCALAR = (float) upgradeScaling.getDouble("rateOfFireUpgradeScalar");
-        ROF_QUALITY_MULT = (float) upgradeScaling.getDouble("rateOfFireQualityMult");
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public void loadConfig(JSONObject upgradeSettings) throws JSONException {
+        NAME = upgradeSettings.getString("name");
+        RELOAD_PER_SECOND_MULT = (float) upgradeSettings.getDouble("reloadSpeedScalar");
+        MISSILE_MAGAZINE_MULT = (float) upgradeSettings.getDouble("missileMagazineScalar");
+        ROF_SCALAR = (float) upgradeSettings.getDouble("rateOfFireUpgradeScalar");
+        ROF_QUALITY_MULT = (float) upgradeSettings.getDouble("rateOfFireQualityMult");
     }
 
     @Override

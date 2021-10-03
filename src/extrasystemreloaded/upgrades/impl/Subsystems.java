@@ -15,6 +15,7 @@ import java.awt.*;
 public class Subsystems extends Upgrade {
     public static final String UPGRADE_KEY = "Subsystems";
 
+    private static String NAME = "Subsystems";
     private static float PEAK_CR_MULT;
     private static float CR_LOSS_MULT; //this value is a post-scaling of the other two factors.
     //if they are reduced, this will be reduced as well.
@@ -30,13 +31,19 @@ public class Subsystems extends Upgrade {
     }
 
     @Override
-    public void loadConfig(JSONObject upgradeScaling) throws JSONException {
-        PEAK_CR_MULT = (float) upgradeScaling.getDouble("peakCrScalar");
-        CR_LOSS_MULT = (float) upgradeScaling.getDouble("crLossScalar");
-        FRIGATE_MULT = (float) upgradeScaling.getDouble("frigateMult");
-        DESTROYER_MULT = (float) upgradeScaling.getDouble("destroyerMult");
-        CRUISER_MULT = (float) upgradeScaling.getDouble("cruiserMult");
-        CAPITAL_MULT = (float) upgradeScaling.getDouble("capitalMult");
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public void loadConfig(JSONObject upgradeSettings) throws JSONException {
+        NAME = upgradeSettings.getString("name");
+        PEAK_CR_MULT = (float) upgradeSettings.getDouble("peakCrScalar");
+        CR_LOSS_MULT = (float) upgradeSettings.getDouble("crLossScalar");
+        FRIGATE_MULT = (float) upgradeSettings.getDouble("frigateMult");
+        DESTROYER_MULT = (float) upgradeSettings.getDouble("destroyerMult");
+        CRUISER_MULT = (float) upgradeSettings.getDouble("cruiserMult");
+        CAPITAL_MULT = (float) upgradeSettings.getDouble("capitalMult");
     }
 
     @Override

@@ -15,6 +15,7 @@ import java.awt.*;
 public class Technology extends Upgrade {
     public static final String UPGRADE_KEY = "Technology";
 
+    private static String NAME = "Technology";
     private static float SENSOR_MULT;
 
     private static float FLUX_SCALAR;
@@ -42,23 +43,29 @@ public class Technology extends Upgrade {
     }
 
     @Override
-    public void loadConfig(JSONObject upgradeScaling) throws JSONException {
-        SENSOR_MULT = (float) upgradeScaling.getDouble("sensorScalar");
+    public String getName() {
+        return NAME;
+    }
 
-        FLUX_SCALAR = (float) upgradeScaling.getDouble("fluxUpgradeScalar");
-        FLUX_QUALITY_MULT = (float) upgradeScaling.getDouble("fluxQualityMult");
+    @Override
+    public void loadConfig(JSONObject upgradeSettings) throws JSONException {
+        NAME = upgradeSettings.getString("name");
+        SENSOR_MULT = (float) upgradeSettings.getDouble("sensorScalar");
 
-        SHIELD_FLUX_SEC_SCALAR = (float) upgradeScaling.getDouble("shieldFluxPerSecUpgradeScalar");
-        SHIELD_FLUX_QUALITY_MULT = (float) upgradeScaling.getDouble("shieldFluxPerSecQualityMult");
-        SHIELD_FLUX_DAM_SCALAR = (float) upgradeScaling.getDouble("shieldFluxPerDamUpgradeScalar");
-        SHIELD_FLUX_DAM_QUALITY_MULT = (float) upgradeScaling.getDouble("shieldFluxPerDamQualityMult");
-        SHIELD_UNFOLD_RATE_MULT = (float) upgradeScaling.getDouble("shieldUnfoldRateScalar");
+        FLUX_SCALAR = (float) upgradeSettings.getDouble("fluxUpgradeScalar");
+        FLUX_QUALITY_MULT = (float) upgradeSettings.getDouble("fluxQualityMult");
 
-        PHASE_FLUX_SEC_SCALAR = (float) upgradeScaling.getDouble("phaseFluxPerSecUpgradeScalar");
-        PHASE_FLUX_QUALITY_MULT = (float) upgradeScaling.getDouble("phaseFluxPerSecQualityMult");
-        PHASE_ACTIVATE_FLUX_SCALAR = (float) upgradeScaling.getDouble("phaseActivateFluxUpgradeScalar");
-        PHASE_ACTIVATE_FLUX_QUALITY_MULT = (float) upgradeScaling.getDouble("phaseActivateFluxQualityMult");
-        PHASE_COOLDOWN_MULT = (float) upgradeScaling.getDouble("phaseCooldownScalar");
+        SHIELD_FLUX_SEC_SCALAR = (float) upgradeSettings.getDouble("shieldFluxPerSecUpgradeScalar");
+        SHIELD_FLUX_QUALITY_MULT = (float) upgradeSettings.getDouble("shieldFluxPerSecQualityMult");
+        SHIELD_FLUX_DAM_SCALAR = (float) upgradeSettings.getDouble("shieldFluxPerDamUpgradeScalar");
+        SHIELD_FLUX_DAM_QUALITY_MULT = (float) upgradeSettings.getDouble("shieldFluxPerDamQualityMult");
+        SHIELD_UNFOLD_RATE_MULT = (float) upgradeSettings.getDouble("shieldUnfoldRateScalar");
+
+        PHASE_FLUX_SEC_SCALAR = (float) upgradeSettings.getDouble("phaseFluxPerSecUpgradeScalar");
+        PHASE_FLUX_QUALITY_MULT = (float) upgradeSettings.getDouble("phaseFluxPerSecQualityMult");
+        PHASE_ACTIVATE_FLUX_SCALAR = (float) upgradeSettings.getDouble("phaseActivateFluxUpgradeScalar");
+        PHASE_ACTIVATE_FLUX_QUALITY_MULT = (float) upgradeSettings.getDouble("phaseActivateFluxQualityMult");
+        PHASE_COOLDOWN_MULT = (float) upgradeSettings.getDouble("phaseCooldownScalar");
     }
 
     @Override

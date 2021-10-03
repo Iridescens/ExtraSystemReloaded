@@ -1,6 +1,5 @@
 package extrasystemreloaded.augments.impl;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -12,13 +11,26 @@ import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.Utilities;
 import extrasystemreloaded.augments.Augment;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.awt.*;
 
 public class EqualizerCore extends Augment {
     public static final String AUGMENT_KEY = "EqualizerCore";
+    public static final Color MAIN_COLOR = Color.red;
     private static final String ITEM = "esr_equalizercore";
-    private static final Color[] tooltipColors = {Color.red, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
+    private static final Color[] tooltipColors = {MAIN_COLOR, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
+
+    private static String NAME = "Equalizer Core";
+
+    private static float RECOIL_REDUCTION = -25f;
+    private static float TURN_RATE_BUFF = 50f;
+
+    private static int RANGE_LIMIT_BOTTOM = 550;
+    private static int RANGE_BOTTOM_BUFF = 200;
+    private static int RANGE_LIMIT_TOP = 800;
+    private static int RANGE_TOP_BUFF = -150;
 
     @Override
     public String getKey() {
@@ -27,7 +39,12 @@ public class EqualizerCore extends Augment {
 
     @Override
     public String getName() {
-        return Global.getSettings().getString("AbilityName", getKey());
+        return NAME;
+    }
+
+    @Override
+    public Color getMainColor() {
+        return MAIN_COLOR;
     }
 
     @Override
@@ -41,6 +58,19 @@ public class EqualizerCore extends Augment {
     @Override
     public String getTooltip() {
         return "Improve recoil control and weapon turn rate. Equalizes weapon ranges to a middle-ground range.";
+    }
+
+    @Override
+    public void loadConfig(JSONObject augmentSettings) throws JSONException {
+        NAME = augmentSettings.getString("name");
+
+        RECOIL_REDUCTION = (float) augmentSettings.getDouble("recoilReduction");
+        TURN_RATE_BUFF = (float) augmentSettings.getDouble("weaponTurnRateIncrease");
+
+        RANGE_LIMIT_BOTTOM = (int) augmentSettings.getInt("rangeBottomBounds");
+        RANGE_BOTTOM_BUFF = (int) augmentSettings.getInt("rangeBottomBuff");
+        RANGE_LIMIT_TOP = (int) augmentSettings.getInt("rangeTopBounds");
+        RANGE_TOP_BUFF = (int) augmentSettings.getInt("rangeTopBuff");
     }
 
     @Override
@@ -66,7 +96,9 @@ public class EqualizerCore extends Augment {
                 tooltip.addPara("%s: Reduces recoil by %s. Increases weapon turn rate by %s. Autofire leading is %s. " +
                         "Weapons with at most %s have range increased by %s. Weapons with at least %s have range reduced by %s.", 5,
                         tooltipColors,
-                        this.getName(), "25%", "50%", "nearly perfected", "550 range", "200", "800 range", "-150");
+                        this.getName(),
+                        RECOIL_REDUCTION + "%", TURN_RATE_BUFF + "%", "nearly perfected",
+                        RANGE_LIMIT_BOTTOM + " range", RANGE_BOTTOM_BUFF + "", RANGE_LIMIT_TOP + " range", RANGE_TOP_BUFF + "");
             } else {
                 tooltip.addPara(this.getName(), tooltipColors[0], 5);
             }
@@ -76,12 +108,12 @@ public class EqualizerCore extends Augment {
     @Override
     public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
         stats.getAutofireAimAccuracy().modifyPercent(this.getBuffId(), 1000f);
-        stats.getMaxRecoilMult().modifyPercent(this.getBuffId(), -25f);
-        stats.getRecoilDecayMult().modifyPercent(this.getBuffId(), -25f);
-        stats.getRecoilPerShotMult().modifyPercent(this.getBuffId(), -25f);
+        stats.getMaxRecoilMult().modifyPercent(this.getBuffId(), RECOIL_REDUCTION);
+        stats.getRecoilDecayMult().modifyPercent(this.getBuffId(), RECOIL_REDUCTION);
+        stats.getRecoilPerShotMult().modifyPercent(this.getBuffId(), RECOIL_REDUCTION);
 
-        stats.getWeaponTurnRateBonus().modifyPercent(this.getBuffId(), 50f);
-        stats.getBeamWeaponTurnRateBonus().modifyPercent(this.getBuffId(), 50f);
+        stats.getWeaponTurnRateBonus().modifyPercent(this.getBuffId(), TURN_RATE_BUFF);
+        stats.getBeamWeaponTurnRateBonus().modifyPercent(this.getBuffId(), TURN_RATE_BUFF);
     }
 
     @Override
@@ -128,13 +160,13 @@ public class EqualizerCore extends Augment {
             }
 
             float baseRangeMod = 0;
-            if(weapon.getSpec().getMaxRange() >= 800) {
-                baseRangeMod = -150;
-            } else if (weapon.getSpec().getMaxRange() <= 550) {
-                baseRangeMod = 200;
+            if(weapon.getSpec().getMaxRange() >= RANGE_LIMIT_TOP) {
+                baseRangeMod = RANGE_TOP_BUFF;
+            } else if (weapon.getSpec().getMaxRange() <= RANGE_LIMIT_BOTTOM) {
+                baseRangeMod = RANGE_BOTTOM_BUFF;
             }
 
-            return baseRangeMod * (1f + (percentRangeIncreases/100f));
+            return baseRangeMod * (1f + (percentRangeIncreases / 100f));
         }
     }
 }

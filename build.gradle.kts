@@ -54,6 +54,7 @@ dependencies {
     implementation(fileTree(starsectorCoreDirectory) {
         include(
             "starfarer.api.jar",
+            "starfarer.api.zip",
             "starfarer.api-sources.jar",
             "starfarer_obf.jar",
             "fs.common_obf.jar",

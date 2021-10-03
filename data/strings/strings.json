@@ -8,23 +8,6 @@
 		"rare_metals":"Transplutonics",
 		"heavy_machinery":"Heavy machinery"
 	},
-	"AbilityName":{
-		"Durability":"Durability",
-		"Weapons":"Weaponry",
-		"Logistics":"Logistics",
-		"Mobility":"Mobility",
-		"Technology":"Technology",
-		"Fighters":"Fighters",
-		"Subsystems":"Subsystems",
-		"Magazines": "Magazines",
-
-		"SpooledFeeders":"Spooled Ammo Feeders",
-		"PlasmaCatalyst":"Plasma Flux Catalyst",
-		"DriveFluxVent":"Drive Flux Vent",
-		"HangarForge": "Hangar Forge",
-		"EqualizerCore": "Equalizer Core",
-		"PhasefieldEngine": "Phasefield Engine"
-	},
 	"Options":{
 		"leave":"Leave",
 		"back":"Back",

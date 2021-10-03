@@ -5,22 +5,19 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import extrasystemreloaded.ESModSettings;
 import extrasystemreloaded.util.ExtraSystems;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static extrasystemreloaded.Es_ModPlugin.HULLSIZE_TO_MAXLEVEL;
-
 public abstract class Upgrade {
     public abstract String getKey();
 
-    public abstract void loadConfig(JSONObject upgradeScaling) throws JSONException;
-
-    public String getName() {
-        return Global.getSettings().getString("AbilityName", getKey());
-    }
+    public abstract String getName();
 
     public abstract String getDescription();
+
+    public abstract void loadConfig(JSONObject upgradeSettings) throws JSONException;
 
     public String getBuffId() {
         return "ESR_" + getName();
@@ -31,7 +28,7 @@ public abstract class Upgrade {
     }
 
     public int getMaxLevel(ShipAPI.HullSize hullSize) {
-        return getMaxLevel() != -1 ? getMaxLevel() : HULLSIZE_TO_MAXLEVEL.get(hullSize);
+        return getMaxLevel() != -1 ? getMaxLevel() : ESModSettings.getHullSizeToMaxLevel().get(hullSize);
     }
 
     public int getLevel(ESUpgrades upgrades) {

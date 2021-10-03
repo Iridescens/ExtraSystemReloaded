@@ -15,6 +15,7 @@ import java.awt.*;
 public class Fighters extends Upgrade {
     public static final String UPGRADE_KEY = "Fighters";
 
+    private static String NAME = "Fighters";
     private static float REFIT_TIME_MULT;
     private static float RANGE_MULT;
     private static float REPLACEMENT_DECREASE_MULT;
@@ -26,11 +27,17 @@ public class Fighters extends Upgrade {
     }
 
     @Override
-    public void loadConfig(JSONObject upgradeScaling) throws JSONException {
-        REFIT_TIME_MULT = (float) upgradeScaling.getDouble("refitTimeScalar");
-        RANGE_MULT = (float) upgradeScaling.getDouble("rangeScalar");
-        REPLACEMENT_DECREASE_MULT = (float) upgradeScaling.getDouble("replacementDecreaseScalar");
-        REPLACEMENT_REGENERATE_MULT = (float) upgradeScaling.getDouble("replacementIncreaseScalar");
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public void loadConfig(JSONObject upgradeSettings) throws JSONException {
+        NAME = upgradeSettings.getString("name");
+        REFIT_TIME_MULT = (float) upgradeSettings.getDouble("refitTimeScalar");
+        RANGE_MULT = (float) upgradeSettings.getDouble("rangeScalar");
+        REPLACEMENT_DECREASE_MULT = (float) upgradeSettings.getDouble("replacementDecreaseScalar");
+        REPLACEMENT_REGENERATE_MULT = (float) upgradeSettings.getDouble("replacementIncreaseScalar");
     }
 
     @Override

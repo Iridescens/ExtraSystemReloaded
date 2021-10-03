@@ -2,8 +2,12 @@ package extrasystemreloaded.augments;
 
 import com.fs.starfarer.api.Global;
 import extrasystemreloaded.augments.impl.*;
+import extrasystemreloaded.upgrades.Upgrade;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +30,25 @@ public class AugmentsHandler {
         AugmentsHandler.addAugment(new HangarForge());
         AugmentsHandler.addAugment(new EqualizerCore());
         AugmentsHandler.addAugment(new PhasefieldEngine());
+        AugmentsHandler.addAugment(new HangarForgeMissiles());
+
+        loadConfigs();
+    }
+
+    public static void loadConfigs() {
+        try {
+            JSONObject settings = Global.getSettings().loadJSON("data/config/augments.json", "extra_system_reloaded");
+
+            for (Augment augment : AUGMENT_LIST) {
+                if (!settings.has(augment.getKey())) {
+                    continue;
+                }
+
+                augment.loadConfig(settings.getJSONObject(augment.getKey()));
+            }
+        } catch (JSONException | IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     public static void addAugment(Augment augment) {

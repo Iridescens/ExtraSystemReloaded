@@ -10,16 +10,20 @@ import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.Utilities;
 import extrasystemreloaded.augments.Augment;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.awt.*;
 
 public class HangarForge extends Augment {
     public static final String AUGMENT_KEY = "HangarForge";
+    public static final Color MAIN_COLOR = Color.GREEN;
     private static final String ITEM = "esr_hangarforge";
-    private static final Color[] tooltipColors = {Color.GREEN, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
+    private static final Color[] tooltipColors = {MAIN_COLOR, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
 
-    private static final float RATE_DECREASE_MODIFIER = 35f;
-    private static final float FIGHTER_REPLACEMENT_RATE_BONUS = 15f;
+    private static String NAME = "Hangar Forge";
+    private static float RATE_DECREASE_MODIFIER = -35f;
+    private static float FIGHTER_REPLACEMENT_TIME_BONUS = -15f;
 
     @Override
     public String getKey() {
@@ -28,7 +32,12 @@ public class HangarForge extends Augment {
 
     @Override
     public String getName() {
-        return Global.getSettings().getString("AbilityName", getKey());
+        return NAME;
+    }
+
+    @Override
+    public Color getMainColor() {
+        return MAIN_COLOR;
     }
 
     @Override
@@ -42,6 +51,14 @@ public class HangarForge extends Augment {
     @Override
     public String getTooltip() {
         return "Decreases fighter replacement time. Reduces the rate at which the replacement rate decreases as well.";
+    }
+
+    @Override
+    public void loadConfig(JSONObject augmentSettings) throws JSONException {
+        NAME = augmentSettings.getString("name");
+
+        RATE_DECREASE_MODIFIER = (float) augmentSettings.getDouble("replacementRateDecreaseSpeed");
+        FIGHTER_REPLACEMENT_TIME_BONUS = (float) augmentSettings.getDouble("fighterReplacementBuff");
     }
 
     @Override
@@ -67,7 +84,9 @@ public class HangarForge extends Augment {
                 tooltip.addPara("%s: Reduces fighter replacement rates by %s. " +
                                 "Reduces the rate at which replacement rate degrades by %s.", 5,
                         tooltipColors,
-                        this.getName(), FIGHTER_REPLACEMENT_RATE_BONUS + "%", RATE_DECREASE_MODIFIER + "%");
+                        this.getName(),
+                        Math.abs(FIGHTER_REPLACEMENT_TIME_BONUS) + "%",
+                        Math.abs(RATE_DECREASE_MODIFIER) + "%");
             } else {
                 tooltip.addPara(this.getName(), tooltipColors[0], 5);
             }
@@ -76,8 +95,9 @@ public class HangarForge extends Augment {
 
     @Override
     public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
-        stats.getDynamic().getStat(Stats.REPLACEMENT_RATE_DECREASE_MULT).modifyMult(getBuffId(), 1f - RATE_DECREASE_MODIFIER / 100f);
-        float timeMult = 1f / ((100f + FIGHTER_REPLACEMENT_RATE_BONUS) / 100f);
+        stats.getDynamic().getStat(Stats.REPLACEMENT_RATE_DECREASE_MULT).modifyMult(getBuffId(), 1f + RATE_DECREASE_MODIFIER / 100f);
+
+        float timeMult = 1f / ((100f + FIGHTER_REPLACEMENT_TIME_BONUS) / 100f);
         stats.getFighterRefitTimeMult().modifyMult(getBuffId(), timeMult);
     }
 }

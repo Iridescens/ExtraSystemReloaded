@@ -10,6 +10,8 @@ import extrasystemreloaded.augments.Augment;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.Utilities;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -17,8 +19,9 @@ import java.util.Map;
 
 public class PlasmaFluxCatalyst extends Augment {
     public static final String AUGMENT_KEY = "PlasmaCatalyst";
+    public static final Color MAIN_COLOR = Color.blue;
     private static final String ITEM = "esr_plasmacatalyst";
-    private static final Color[] tooltipColors = {Color.blue, ExtraSystemHM.infoColor};
+    private static final Color[] tooltipColors = {MAIN_COLOR, ExtraSystemHM.infoColor};
 
     private static Map<ShipAPI.HullSize, Integer> MAX_FLUX_EQUIPMENT = new HashMap() {{
         put(ShipAPI.HullSize.FIGHTER, 10);
@@ -28,6 +31,8 @@ public class PlasmaFluxCatalyst extends Augment {
         put(ShipAPI.HullSize.CAPITAL_SHIP, 50);
     }};
 
+    private static String NAME = "Plasma Flux Catalyst";
+
     @Override
     public String getKey() {
         return AUGMENT_KEY;
@@ -35,7 +40,12 @@ public class PlasmaFluxCatalyst extends Augment {
 
     @Override
     public String getName() {
-        return Global.getSettings().getString("AbilityName", getKey());
+        return NAME;
+    }
+
+    @Override
+    public Color getMainColor() {
+        return MAIN_COLOR;
     }
 
     @Override
@@ -49,6 +59,11 @@ public class PlasmaFluxCatalyst extends Augment {
     @Override
     public String getTooltip() {
         return "Improve flux capacitors and vents. Reduce CR if too many are installed.";
+    }
+
+    @Override
+    public void loadConfig(JSONObject augmentSettings) throws JSONException {
+        NAME = augmentSettings.getString("name");
     }
 
     @Override

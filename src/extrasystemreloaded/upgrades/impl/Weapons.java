@@ -15,6 +15,7 @@ import java.awt.*;
 public class Weapons extends Upgrade {
     public static final String UPGRADE_KEY = "Weapons";
 
+    private static String NAME = "Weapons";
     private static float WEAPON_HEALTH_MULT;
 
     private static float RANGE_SCALAR;
@@ -33,14 +34,20 @@ public class Weapons extends Upgrade {
     }
 
     @Override
-    public void loadConfig(JSONObject upgradeScaling) throws JSONException {
-        WEAPON_HEALTH_MULT = (float) upgradeScaling.getDouble("weaponHealthScalar");
-        RANGE_SCALAR = (float) upgradeScaling.getDouble("rangeUpgradeScalar");
-        RANGE_QUALITY_MULT = (float) upgradeScaling.getDouble("rangeQualityMult");
-        DAMAGE_SCALAR = (float) upgradeScaling.getDouble("damageUpgradeScalar");
-        DAMAGE_QUALITY_MULT = (float) upgradeScaling.getDouble("damageQualityMult");
-        FLUX_COST_SCALAR = (float) upgradeScaling.getDouble("fluxCostUpgradeScalar");
-        FLUX_COST_QUALITY_MULT = (float) upgradeScaling.getDouble("fluxCostQualityMult");
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public void loadConfig(JSONObject upgradeSettings) throws JSONException {
+        NAME = upgradeSettings.getString("name");
+        WEAPON_HEALTH_MULT = (float) upgradeSettings.getDouble("weaponHealthScalar");
+        RANGE_SCALAR = (float) upgradeSettings.getDouble("rangeUpgradeScalar");
+        RANGE_QUALITY_MULT = (float) upgradeSettings.getDouble("rangeQualityMult");
+        DAMAGE_SCALAR = (float) upgradeSettings.getDouble("damageUpgradeScalar");
+        DAMAGE_QUALITY_MULT = (float) upgradeSettings.getDouble("damageQualityMult");
+        FLUX_COST_SCALAR = (float) upgradeSettings.getDouble("fluxCostUpgradeScalar");
+        FLUX_COST_QUALITY_MULT = (float) upgradeSettings.getDouble("fluxCostQualityMult");
     }
 
     @Override

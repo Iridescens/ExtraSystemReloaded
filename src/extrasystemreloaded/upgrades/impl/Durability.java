@@ -14,24 +14,33 @@ import java.awt.*;
 public class Durability extends Upgrade {
     public static final String UPGRADE_KEY = "Durability";
 
+    private static String NAME = "Durability";
     private static float HULL_MULT;
     private static float ENGINE_HEALTH_MULT;
     private static float EMP_TAKEN_MULT;
 
     private static float ARMOR_SCALAR;
     private static float ARMOR_QUALITY_MULT;
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
     @Override
     public String getKey() {
         return UPGRADE_KEY;
     }
 
     @Override
-    public void loadConfig(JSONObject upgradeScaling) throws JSONException {
-        HULL_MULT = (float) upgradeScaling.getDouble("hullUpgradeScalar");
-        ENGINE_HEALTH_MULT = (float) upgradeScaling.getDouble("engineHealthScalar");
-        EMP_TAKEN_MULT = (float) upgradeScaling.getDouble("empTakenScalar");
-        ARMOR_SCALAR = (float) upgradeScaling.getDouble("armorUpgradeScalar");
-        ARMOR_QUALITY_MULT = (float) upgradeScaling.getDouble("armorQualityMult");
+    public void loadConfig(JSONObject upgradeSettings) throws JSONException {
+        NAME = upgradeSettings.getString("name");
+
+        HULL_MULT = (float) upgradeSettings.getDouble("hullUpgradeScalar");
+        ENGINE_HEALTH_MULT = (float) upgradeSettings.getDouble("engineHealthScalar");
+        EMP_TAKEN_MULT = (float) upgradeSettings.getDouble("empTakenScalar");
+        ARMOR_SCALAR = (float) upgradeSettings.getDouble("armorUpgradeScalar");
+        ARMOR_QUALITY_MULT = (float) upgradeSettings.getDouble("armorQualityMult");
     }
 
     @Override

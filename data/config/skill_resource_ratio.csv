@@ -1,9 +1,0 @@
-id,key,supplies,volatiles,organics,hand_weapons,metals,rare_metals,heavy_machinery
-0,Durability,1,0.75,2,0,3.5,0.75,3
-1,Weapons,1,2,0,1.5,2,1.5,1.5
-2,Logistics,1,1,1,0,2,3,2
-3,Mobility,1,3,1,0,1,2,1
-4,Technology,1,2,2,0,2,3,1
-5,Fighters,2,1,0,1,2,2,5
-6,Subsystems,3,0,2,0,0,0,1.5
-7,Magazines,0.5,4,0,1.5,1,0.5,2

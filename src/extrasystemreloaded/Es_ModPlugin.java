@@ -28,34 +28,13 @@ import java.util.Map;
 public class Es_ModPlugin extends BaseModPlugin {
 	private static final Logger log = Logger.getLogger(Es_ModPlugin.class);
 
-	private static final String ES_UPGRADECOST_MULTS_FILE = "data/config/skill_resource_ratio.csv";
-	private static JSONArray UPGRADE_COST_MULTIPLIERS = null;
-
-    private static float UPGRADE_COST_MINFACTOR;
-    private static float UPGRADE_COST_MAXFACTOR;
-    private static float HULL_BASE_FACTOR;
-	private static float HULL_MAX_VALUE;
-	private static float DIVIDING_RATIO;
-    private static boolean USE_RANDOM_QUALITY;
-    private static float BASE_QUALITY;
-	private static float MAX_QUALITY;
-	private static boolean UPGRADE_ALWAYS_SUCCEED;
-	private static float UPGRADE_FAILURE_MINCHANCE;
-	private static boolean KEEP_UPGRADES_ON_DEATH;
-
-	public static final Map<ShipAPI.HullSize, Integer> HULLSIZE_TO_MAXLEVEL = new HashMap<>();
-	public static final Map<ShipAPI.HullSize, Float> HULLSIZE_FACTOR = new HashMap<>();
-
 	public static final String ES_PERSISTENTUPGRADEMAP = "ES_UPGRADEMAP";
-
 	private static Map<String, ExtraSystems> ShipUpgradeData;
-
 	private static boolean debugUpgradeCosts = false;
 
 	@Override
     public void onGameLoad(boolean newGame){
-		loadConfig();
-
+		ESModSettings.loadModSettings();
 		StatUtils.loadStatCurves();
 		UpgradesHandler.populateUpgrades();
 		AugmentsHandler.populateAugments();
@@ -111,57 +90,6 @@ public class Es_ModPlugin extends BaseModPlugin {
 		ShipUpgradeData.remove(shipId);
 	}
 
-	public static void loadConfig() {
-	    try {
-	    	JSONObject settings = Global.getSettings().loadJSON("data/config/settings.json", "extra_system_reloaded");
-            UPGRADE_COST_MULTIPLIERS = Global.getSettings().loadCSV(ES_UPGRADECOST_MULTS_FILE);
-
-			HULL_BASE_FACTOR = (float) settings.getDouble("hullCostBaseFactor");
-			HULL_MAX_VALUE = (float) settings.getDouble("hullCostDiminishingMaximum");
-			UPGRADE_COST_MINFACTOR = (float) settings.getDouble("upgradeCostMinFactor");
-			UPGRADE_COST_MAXFACTOR = (float) settings.getDouble("upgradeCostMaxFactor");
-			DIVIDING_RATIO = (float) settings.getDouble("upgradeCostDividingRatio");
-
-			UPGRADE_ALWAYS_SUCCEED = settings.getBoolean("upgradeAlwaysSucceed");
-			UPGRADE_FAILURE_MINCHANCE = (float) settings.getDouble("baseFailureMinFactor");
-
-            USE_RANDOM_QUALITY = Global.getSettings().getBoolean("useRandomQuality");
-            BASE_QUALITY = (float) settings.getDouble("baseQuality");
-			MAX_QUALITY = (float) settings.getDouble("maxQuality");
-
-			KEEP_UPGRADES_ON_DEATH = settings.getBoolean("shipsKeepUpgradesOnDeath");
-
-
-			int frigateMaxUpgrades = settings.getInt("frigateMaxUpgrades");
-			int destroyerMaxUpgrades = settings.getInt("destroyerMaxUpgrades");
-			int cruiserMaxUpgrades = settings.getInt("cruiserMaxUpgrades");
-			int capitalMaxUpgrades = settings.getInt("capitalMaxUpgrades");
-
-			HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.FIGHTER, frigateMaxUpgrades);
-			HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.DEFAULT, frigateMaxUpgrades);
-			HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.FRIGATE, frigateMaxUpgrades);
-			HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.DESTROYER, destroyerMaxUpgrades);
-			HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.CRUISER, cruiserMaxUpgrades);
-			HULLSIZE_TO_MAXLEVEL.put(ShipAPI.HullSize.CAPITAL_SHIP, capitalMaxUpgrades);
-
-			calculateHullSizeFactors();
-        } catch (JSONException | IOException ignored) {
-        }
-    }
-
-    public static void calculateHullSizeFactors() {
-		float lowestMax = Integer.MAX_VALUE;
-		for(ShipAPI.HullSize hullSize : HULLSIZE_TO_MAXLEVEL.keySet()) {
-			if(HULLSIZE_TO_MAXLEVEL.get(hullSize) < lowestMax) {
-				lowestMax = HULLSIZE_TO_MAXLEVEL.get(hullSize);
-			}
-		}
-
-		for(ShipAPI.HullSize hullSize : HULLSIZE_TO_MAXLEVEL.keySet()) {
-			HULLSIZE_FACTOR.put(hullSize, lowestMax / HULLSIZE_TO_MAXLEVEL.get(hullSize));
-		}
-	}
-
 	@Override
 	public void beforeGameSave() {
 		Es_ModPlugin.removeESHullmodsFromAutoFitGoalVariants();
@@ -193,59 +121,11 @@ public class Es_ModPlugin extends BaseModPlugin {
 		removeESHullmodsFromAutoFitGoalVariants();
 	}
 
-	public static float getMaxQuality() {
-		return MAX_QUALITY;
-	}
-
-	public static boolean isUpgradeAlwaysSucceed() {
-		return UPGRADE_ALWAYS_SUCCEED;
-	}
-
-	public static float getUpgradeFailureMinChance() {
-		return UPGRADE_FAILURE_MINCHANCE;
-	}
-
-	public static boolean useRandomQuality() {
-        return USE_RANDOM_QUALITY;
-    }
-
-    public static float getBaseQuality() {
-        return BASE_QUALITY;
-    }
-
-    public static float getHullBaseFactor() {
-        return HULL_BASE_FACTOR;
-    }
-
-	public static float getHullValueMaximum() {
-		return HULL_MAX_VALUE;
-	}
-
-	public static float getDividingRatio() {
-		return DIVIDING_RATIO;
-	}
-
-    public static float getUpgradeCostMaxFactor() {
-        return UPGRADE_COST_MAXFACTOR;
-    }
-
-    public static float getUpgradeCostMinFactor() {
-        return UPGRADE_COST_MINFACTOR;
-    }
-
-    public static JSONArray getUpgradeCostMultipliers() {
-        return UPGRADE_COST_MULTIPLIERS;
-    }
-
     public static void setDebugUpgradeCosts(boolean set) {
 		debugUpgradeCosts = set;
 	}
 
 	public static boolean isDebugUpgradeCosts() {
 		return debugUpgradeCosts;
-	}
-
-	public static boolean isKeepUpgradesOnDeath() {
-		return KEEP_UPGRADES_ON_DEATH;
 	}
 }

@@ -14,6 +14,7 @@ import java.awt.*;
 public class Logistics extends Upgrade {
     public static final String UPGRADE_KEY = "Logistics";
 
+    private static String NAME = "Logistics";
     private static float MAX_CARGO_MULT;
     private static float MAX_CREW_MULT;
     private static float MAX_FUEL_MULT;
@@ -40,24 +41,30 @@ public class Logistics extends Upgrade {
     }
 
     @Override
-    public void loadConfig(JSONObject upgradeScaling) throws JSONException {
-        MAX_CARGO_MULT = (float) upgradeScaling.getDouble("cargoScalar");
-        MAX_CREW_MULT = (float) upgradeScaling.getDouble("crewScalar");
-        MAX_FUEL_MULT = (float) upgradeScaling.getDouble("fuelScalar");
-        CR_TO_DEPLOY_SCALAR = (float) upgradeScaling.getDouble("crDeployedUpgradeScalar");
-        CR_TO_DEPLOY_QUALITY_MULT = (float) upgradeScaling.getDouble("crDeployedQualityMult");
-        MIN_CREW_SCALAR = (float) upgradeScaling.getDouble("minCrewUpgradeScalar");
-        MIN_CREW_QUALITY_MULT = (float) upgradeScaling.getDouble("minCrewQualityMult");
-        FUEL_USE_SCALAR = (float) upgradeScaling.getDouble("fuelUseUpgradeScalar");
-        FUEL_USE_QUALITY_MULT = (float) upgradeScaling.getDouble("fuelUseQualityMult");
-        SUPPLIES_MONTH_SCALAR = (float) upgradeScaling.getDouble("suppliesPerMonthUpgradeScalar");
-        SUPPLIES_MONTH_QUALITY_MULT = (float) upgradeScaling.getDouble("suppliesPerMonthQualityMult");
-        SUPPLIES_RECOVERY_SCALAR = (float) upgradeScaling.getDouble("suppliesToDeployUpgradeScalar");
-        SUPPLIES_RECOVERY_QUALITY_MULT = (float) upgradeScaling.getDouble("suppliesToDeployQualityMult");
-        CR_RECOVERY_RATE_SCALAR = (float) upgradeScaling.getDouble("crRecoveryUpgradeScalar");
-        CR_RECOVERY_RATE_QUALITY_MULT = (float) upgradeScaling.getDouble("crRecoveryQualityMult");
-        REPAIR_RATE_SCALAR = (float) upgradeScaling.getDouble("repairRateUpgradeScalar");
-        REPAIR_RATE_QUALITY_MULT = (float) upgradeScaling.getDouble("repairRateQualityMult");
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public void loadConfig(JSONObject upgradeSettings) throws JSONException {
+        NAME = upgradeSettings.getString("name");
+        MAX_CARGO_MULT = (float) upgradeSettings.getDouble("cargoScalar");
+        MAX_CREW_MULT = (float) upgradeSettings.getDouble("crewScalar");
+        MAX_FUEL_MULT = (float) upgradeSettings.getDouble("fuelScalar");
+        CR_TO_DEPLOY_SCALAR = (float) upgradeSettings.getDouble("crDeployedUpgradeScalar");
+        CR_TO_DEPLOY_QUALITY_MULT = (float) upgradeSettings.getDouble("crDeployedQualityMult");
+        MIN_CREW_SCALAR = (float) upgradeSettings.getDouble("minCrewUpgradeScalar");
+        MIN_CREW_QUALITY_MULT = (float) upgradeSettings.getDouble("minCrewQualityMult");
+        FUEL_USE_SCALAR = (float) upgradeSettings.getDouble("fuelUseUpgradeScalar");
+        FUEL_USE_QUALITY_MULT = (float) upgradeSettings.getDouble("fuelUseQualityMult");
+        SUPPLIES_MONTH_SCALAR = (float) upgradeSettings.getDouble("suppliesPerMonthUpgradeScalar");
+        SUPPLIES_MONTH_QUALITY_MULT = (float) upgradeSettings.getDouble("suppliesPerMonthQualityMult");
+        SUPPLIES_RECOVERY_SCALAR = (float) upgradeSettings.getDouble("suppliesToDeployUpgradeScalar");
+        SUPPLIES_RECOVERY_QUALITY_MULT = (float) upgradeSettings.getDouble("suppliesToDeployQualityMult");
+        CR_RECOVERY_RATE_SCALAR = (float) upgradeSettings.getDouble("crRecoveryUpgradeScalar");
+        CR_RECOVERY_RATE_QUALITY_MULT = (float) upgradeSettings.getDouble("crRecoveryQualityMult");
+        REPAIR_RATE_SCALAR = (float) upgradeSettings.getDouble("repairRateUpgradeScalar");
+        REPAIR_RATE_QUALITY_MULT = (float) upgradeSettings.getDouble("repairRateQualityMult");
     }
 
     @Override

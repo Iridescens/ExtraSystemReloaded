@@ -1,4 +1,4 @@
-package extrasystemreloaded.campaign;
+package extrasystemreloaded.gui;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.*;
@@ -7,7 +7,6 @@ import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
-import com.fs.starfarer.campaign.BuffManager;
 import extrasystemreloaded.augments.Augment;
 import extrasystemreloaded.upgrades.Upgrade;
 import extrasystemreloaded.util.ExtraSystems;
@@ -19,17 +18,11 @@ import java.util.Map;
 import static extrasystemreloaded.augments.AugmentsHandler.AUGMENT_LIST;
 import static extrasystemreloaded.upgrades.UpgradesHandler.UPGRADES;
 
-public class ESDialogContext {
-    private float prevTextWidth = -1;
+public class ESGUIContext {
     private InteractionDialogAPI dialog;
     private TextPanelAPI textPanel;
     private OptionPanelAPI options;
     private VisualPanelAPI visual;
-
-    private List<Misc.Token> params;
-    private Map<String, MemoryAPI> memoryMap;
-    private MemoryAPI localMemory;
-    private String FunctionType;
 
     private MarketAPI currMarket;
 
@@ -45,22 +38,11 @@ public class ESDialogContext {
     private float shipQuality;
 
 
-    public ESDialogContext(InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
+    public ESGUIContext(InteractionDialogAPI dialog) {
         this.dialog = dialog;
         options = dialog.getOptionPanel();
         visual = dialog.getVisualPanel();
         textPanel = dialog.getTextPanel();
-
-        this.params = params;
-        this.memoryMap = memoryMap;
-
-        if(params.size() > 0) {
-            //used for ship quality and ship module dialogs
-            String newFunctionType = params.get(0).getString(memoryMap);
-            if (newFunctionType != null) {
-                FunctionType = newFunctionType;
-            }
-        }
 
         currMarket = dialog.getInteractionTarget().getMarket();
 
@@ -73,58 +55,19 @@ public class ESDialogContext {
                 iterator.remove();
             }
         }
-
-        localMemory = memoryMap.get(MemKeys.LOCAL);
-
-        String shipSelectedId = localMemory.getString("$ShipSelectedId");
-        if (shipSelectedId != null) {
-            selectedShip = getSelectedShip(shipSelectedId);
-            if(selectedShip != null) {
-                buff = ExtraSystems.getForFleetMember(selectedShip);
-                shipQuality = buff.getQuality(selectedShip);
-                shipBaseValue = selectedShip.getHullSpec().getBaseValue();
-            }
-        }
-
-        Object extraUpgradeId = localMemory.get("$UpgradeId");
-        if(extraUpgradeId != null) {
-            for(String upgradeKey : UPGRADES.keySet()) {
-                if(upgradeKey.equals((String) extraUpgradeId)) {
-                    selectedUpgrade = UPGRADES.get(upgradeKey);
-                }
-            }
-        }
-
-        Object coreId = localMemory.get("$ModuleId");
-        if(coreId != null) {
-            for(Augment augment : AUGMENT_LIST) {
-                if(augment.getKey().equals((String) coreId)) {
-                    selectedAugment = augment;
-                }
-            }
-        }
     }
 
-    public FleetMemberAPI getSelectedShip(String shipId) {
-        if (ShipList == null) {
-            return null;
-        }
-
-        for (int i = 0; i < ShipList.size(); i++) {
-            FleetMemberAPI fleetMemberAPI = ShipList.get(i);
-            if (fleetMemberAPI.getId().equals(shipId)) {
-                return fleetMemberAPI;
-            }
-        }
-        return null;
+    public void setMarket(MarketAPI market) {
+        this.currMarket = market;
     }
 
-    public List<Misc.Token> getParams() {
-        return params;
-    }
-
-    public Map<String, MemoryAPI> getMemoryMap() {
-        return memoryMap;
+    public void setSelectedShip(FleetMemberAPI fm) {
+        this.selectedShip = fm;
+        if(selectedShip != null) {
+            buff = ExtraSystems.getForFleetMember(selectedShip);
+            shipQuality = buff.getQuality(selectedShip);
+            shipBaseValue = selectedShip.getHullSpec().getBaseValue();
+        }
     }
 
     public InteractionDialogAPI getDialog() {
@@ -141,18 +84,6 @@ public class ESDialogContext {
 
     public VisualPanelAPI getVisual() {
         return visual;
-    }
-
-    public void setPrevTextWidth(float textWidth) {
-        this.prevTextWidth = textWidth;
-    }
-
-    public float getPrevTextWidth() {
-        return this.prevTextWidth;
-    }
-
-    public String getFunctionType() {
-        return FunctionType;
     }
 
     public MarketAPI getCurrMarket() {
@@ -173,10 +104,6 @@ public class ESDialogContext {
 
     public float getShipBaseValue() {
         return shipBaseValue;
-    }
-
-    public MemoryAPI getLocalMemory() {
-        return localMemory;
     }
 
     public Upgrade getSelectedUpgrade() {

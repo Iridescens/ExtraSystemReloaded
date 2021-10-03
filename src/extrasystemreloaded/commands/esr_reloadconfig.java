@@ -1,5 +1,6 @@
 package extrasystemreloaded.commands;
 
+import extrasystemreloaded.ESModSettings;
 import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.upgrades.UpgradesHandler;
 import extrasystemreloaded.util.StatUtils;
@@ -11,10 +12,11 @@ public class esr_reloadconfig implements BaseCommand {
     @Override
     public CommandResult runCommand(String args, CommandContext context) {
         if (context.isInCampaign()) {
-            Es_ModPlugin.loadConfig();
 
+            ESModSettings.loadModSettings();
             StatUtils.loadStatCurves();
             UpgradesHandler.loadConfigs();
+
             return CommandResult.SUCCESS;
         } else {
             Console.showMessage(CommonStrings.ERROR_CAMPAIGN_ONLY);

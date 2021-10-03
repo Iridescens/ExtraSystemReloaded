@@ -1,11 +1,10 @@
 package extrasystemreloaded.upgrades;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import extrasystemreloaded.ESModSettings;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static extrasystemreloaded.Es_ModPlugin.HULLSIZE_FACTOR;
 
 public class ESUpgrades {
     private final Map<String, Integer> upgrades;
@@ -19,7 +18,7 @@ public class ESUpgrades {
     }
 
     public float getHullSizeFactor(ShipAPI.HullSize hullSize) {
-        return HULLSIZE_FACTOR.get(hullSize);
+        return ESModSettings.getHullSizeFactors().get(hullSize);
     }
 
     public int getUpgrade(Upgrade upgrade) {

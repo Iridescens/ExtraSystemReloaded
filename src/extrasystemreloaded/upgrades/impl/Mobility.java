@@ -14,6 +14,7 @@ import java.awt.*;
 public class Mobility extends Upgrade {
     public static final String UPGRADE_KEY = "Mobility";
 
+    private static String NAME = "Mobility";
     private static float SPEED_MULT;
     private static float ACCELERATION_MULT;
     private static float TURN_RATE_MULT;
@@ -25,11 +26,17 @@ public class Mobility extends Upgrade {
     }
 
     @Override
-    public void loadConfig(JSONObject upgradeScaling) throws JSONException {
-        SPEED_MULT = (float) upgradeScaling.getDouble("maxSpeedScalar");
-        ACCELERATION_MULT = (float) upgradeScaling.getDouble("accelerationScalar");
-        TURN_RATE_MULT = (float) upgradeScaling.getDouble("turnRateScalar");
-        BURN_LEVEL_MULT = (float) upgradeScaling.getDouble("burnLevelScalar");
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public void loadConfig(JSONObject upgradeSettings) throws JSONException {
+        NAME = upgradeSettings.getString("name");
+        SPEED_MULT = (float) upgradeSettings.getDouble("maxSpeedScalar");
+        ACCELERATION_MULT = (float) upgradeSettings.getDouble("accelerationScalar");
+        TURN_RATE_MULT = (float) upgradeSettings.getDouble("turnRateScalar");
+        BURN_LEVEL_MULT = (float) upgradeSettings.getDouble("burnLevelScalar");
     }
 
     @Override

@@ -11,6 +11,8 @@ import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.Utilities;
 import extrasystemreloaded.augments.Augment;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.lazywizard.lazylib.VectorUtils;
 
 import java.awt.*;
@@ -18,11 +20,15 @@ import java.util.Map;
 
 public class DriveFluxVent extends Augment {
     public static final String AUGMENT_KEY = "DriveFluxVent";
+    public static final Color MAIN_COLOR = Color.magenta;
     private static final String ITEM = "esr_drivevent";
-    private static final Color[] tooltipColors = {Color.magenta, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
+    private static final Color[] tooltipColors = {MAIN_COLOR, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
 
-    private static final float VENT_SPEED_INCREASE = 30f;
-    private static final int FORWARD_SPEED_INCREASE = 30;
+    private static String NAME = "Drive Flux Vent";
+    private static float VENT_SPEED_INCREASE = 30f;
+    private static int FORWARD_SPEED_INCREASE = 30;
+    private static float FLUX_LEVEL_REQUIRED = 50f;
+    private static float SPEED_BUFF_TIME = 4f;
 
     @Override
     public String getKey() {
@@ -31,7 +37,12 @@ public class DriveFluxVent extends Augment {
 
     @Override
     public String getName() {
-        return Global.getSettings().getString("AbilityName", getKey());
+        return NAME;
+    }
+
+    @Override
+    public Color getMainColor() {
+        return MAIN_COLOR;
     }
 
     @Override
@@ -47,6 +58,16 @@ public class DriveFluxVent extends Augment {
     @Override
     public String getTooltip() {
         return "Increases vent speed, and forward speed is increased while and shortly after venting.";
+    }
+
+    @Override
+    public void loadConfig(JSONObject augmentSettings) throws JSONException {
+        NAME = augmentSettings.getString("name");
+
+        VENT_SPEED_INCREASE = (float) augmentSettings.getDouble("ventSpeedIncrease");
+        FORWARD_SPEED_INCREASE = (int) augmentSettings.getInt("forwardSpeedIncrease");
+        FLUX_LEVEL_REQUIRED = (float) augmentSettings.getDouble("fluxRequiredForBuff");
+        SPEED_BUFF_TIME = (float) augmentSettings.getDouble("buffDuration");
     }
 
     @Override
@@ -71,7 +92,7 @@ public class DriveFluxVent extends Augment {
             if (expand) {
                 tooltip.addPara("%s: Increases vent speed by %s. If venting is started while flux is above %s, " +
                                         "forward speed is increased by %s while venting and for %s afterwards.", 5, tooltipColors,
-                        this.getName(), VENT_SPEED_INCREASE + "%", "50%", String.valueOf(FORWARD_SPEED_INCREASE), "4 seconds");
+                        this.getName(), VENT_SPEED_INCREASE + "%", FLUX_LEVEL_REQUIRED + "%", String.valueOf(FORWARD_SPEED_INCREASE), SPEED_BUFF_TIME + " seconds");
             } else {
                 tooltip.addPara(this.getName(), tooltipColors[0], 5);
             }
@@ -114,7 +135,7 @@ public class DriveFluxVent extends Augment {
         }
 
         if(ship.getFluxTracker().isVenting()) {
-            if(ship.getCurrFlux() > ship.getMaxFlux() / 2f) {
+            if(ship.getCurrFlux() > ship.getMaxFlux() * FLUX_LEVEL_REQUIRED / 100f) {
                 ship.getEngineController().fadeToOtherColor(this.getBuffId(), new Color(255, 75, 255), null, 1f, 0.75f);
 
                 if (state != DriveState.VENTING) {
@@ -124,7 +145,7 @@ public class DriveFluxVent extends Augment {
         } else {
             if(state == DriveState.VENTING) {
                 customData.put(getDriveStateId(ship), DriveState.OUT);
-                customData.put(getIntervalId(ship), new IntervalUtil(4f, 4f));
+                customData.put(getIntervalId(ship), new IntervalUtil(SPEED_BUFF_TIME, SPEED_BUFF_TIME));
                 state = DriveState.OUT;
             }
 

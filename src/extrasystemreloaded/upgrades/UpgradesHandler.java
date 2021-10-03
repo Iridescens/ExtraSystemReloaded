@@ -4,7 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import extrasystemreloaded.Es_ModPlugin;
+import extrasystemreloaded.ESModSettings;
 import extrasystemreloaded.upgrades.impl.*;
 import org.apache.log4j.Level;
 import org.json.JSONException;
@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static extrasystemreloaded.Es_ModPlugin.HULLSIZE_TO_MAXLEVEL;
 
 public class UpgradesHandler {
     private static final org.apache.log4j.Logger log = Global.getLogger(UpgradesHandler.class);
@@ -51,11 +49,14 @@ public class UpgradesHandler {
 
     public static void loadConfigs() {
         try {
-            JSONObject settings = Global.getSettings().loadJSON("data/config/settings.json", "extra_system_reloaded");
-            JSONObject upgradeSettings = settings.getJSONObject(UPGRADE_SETTINGS_KEY);
+            JSONObject settings = Global.getSettings().loadJSON("data/config/upgrades.json", "extra_system_reloaded");
 
             for (Upgrade upgrade : UPGRADES_LIST) {
-                upgrade.loadConfig(upgradeSettings.getJSONObject(upgrade.getKey()));
+                if (!settings.has(upgrade.getKey())) {
+                    continue;
+                }
+
+                upgrade.loadConfig(settings.getJSONObject(upgrade.getKey()));
             }
         } catch (JSONException | IOException ex) {
             throw new RuntimeException(ex);
@@ -72,7 +73,7 @@ public class UpgradesHandler {
 
     public static ESUpgrades generateRandomStats(FleetMemberAPI fleetMember, int fp) {
         ShipAPI.HullSize hullSize = fleetMember.getHullSpec().getHullSize();
-        int maxlevel = HULLSIZE_TO_MAXLEVEL.get(hullSize);
+        int maxlevel = ESModSettings.getHullSizeToMaxLevel().get(hullSize);
         float arg1 = fp/300f;
         ESUpgrades upgrades = new ESUpgrades();
         for(Upgrade name : UPGRADES_LIST) {
@@ -87,16 +88,21 @@ public class UpgradesHandler {
         float[] resourceCosts = new float[7];
 
         float hullBaseValue = shipSelected.getHullSpec().getBaseValue();
+        float baseValueFactor = ESModSettings.getFloat(ESModSettings.HULL_COST_BASE_FACTOR);
+        float maxShipValue = ESModSettings.getFloat(ESModSettings.HULL_COST_DIMINISHING_MAXIMUM);
         float adjustedHullValue =
-                hullBaseValue * Es_ModPlugin.getHullBaseFactor()
-                + ((1 - Es_ModPlugin.getHullBaseFactor()) * hullBaseValue * (Es_ModPlugin.getHullValueMaximum() / (hullBaseValue + Es_ModPlugin.getHullValueMaximum())));
+                hullBaseValue * baseValueFactor
+                + ((1 - baseValueFactor) * hullBaseValue * (maxShipValue / (hullBaseValue + maxShipValue)));
 
-        float upgradeCostRatioByLevel = Es_ModPlugin.getUpgradeCostMinFactor() + Es_ModPlugin.getUpgradeCostMaxFactor() * ((float) level) / ((float) max);
-        float upgradeCostByHull = adjustedHullValue * upgradeCostRatioByLevel / Es_ModPlugin.getDividingRatio();
+        float upgradeCostMinFactor = ESModSettings.getFloat(ESModSettings.UPGRADE_COST_MIN_FACTOR);
+        float upgradeCostMaxFactor = ESModSettings.getFloat(ESModSettings.UPGRADE_COST_MAX_FACTOR);
+        float upgradeCostDivisor = ESModSettings.getFloat(ESModSettings.UPGRADE_COST_DIVIDING_RATIO);
+        float upgradeCostRatioByLevel = upgradeCostMinFactor + upgradeCostMaxFactor * ((float) level) / ((float) max);
+        float upgradeCostByHull = adjustedHullValue * upgradeCostRatioByLevel / upgradeCostDivisor;
 
         try {
-            for (int j = 0; j < Es_ModPlugin.getUpgradeCostMultipliers().length(); j++) {
-                final JSONObject entry = Es_ModPlugin.getUpgradeCostMultipliers().getJSONObject(j);
+            for (int j = 0; j < ESModSettings.getUpgradeCostMultipliers().length(); j++) {
+                final JSONObject entry = ESModSettings.getUpgradeCostMultipliers().getJSONObject(j);
                 if (abilitySelected.getKey().equals(entry.getString("key"))) {
                     for(int i = 0; i < 7; i++) {
                         float ratio = (float) entry.getDouble(RESOURCES_LIST.get(i));

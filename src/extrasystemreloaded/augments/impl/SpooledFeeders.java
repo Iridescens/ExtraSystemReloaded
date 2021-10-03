@@ -12,6 +12,8 @@ import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.Utilities;
 import extrasystemreloaded.augments.Augment;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
@@ -19,12 +21,17 @@ import java.util.Map;
 
 public class SpooledFeeders extends Augment {
     public static final String AUGMENT_KEY = "SpooledFeeders";
+    public static final Color MAIN_COLOR = Color.lightGray;
     private static final String ITEM = "esr_ammospool";
-    private static final Color[] tooltipColors = {Color.lightGray, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
+    private static final Color[] tooltipColors = {MAIN_COLOR, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
 
-    private static final int COOLDOWN = 16;
-    private static final int BUFF_DURATION = 5;
-    private static final int DEBUFF_DURATION = 4;
+    private static String NAME = "Spooled Feeders";
+    private static float RATE_OF_FIRE_BUFF = 100f;
+    private static float RATE_OF_FIRE_DEBUFF = -33f;
+
+    private static int COOLDOWN = 16;
+    private static int BUFF_DURATION = 5;
+    private static int DEBUFF_DURATION = 4;
 
     @Override
     public String getKey() {
@@ -34,6 +41,11 @@ public class SpooledFeeders extends Augment {
     @Override
     public String getName() {
         return Global.getSettings().getString("AbilityName", getKey());
+    }
+
+    @Override
+    public Color getMainColor() {
+        return MAIN_COLOR;
     }
 
     @Override
@@ -49,6 +61,19 @@ public class SpooledFeeders extends Augment {
     public String getTooltip() {
         return "Increases weapon firerate substantially when a weapon fires. Rate of fire slows for a time after.";
     }
+
+    @Override
+    public void loadConfig(JSONObject augmentSettings) throws JSONException {
+        NAME = augmentSettings.getString("name");
+
+        RATE_OF_FIRE_BUFF = (float) augmentSettings.getDouble("weaponFireRateBuff");
+        RATE_OF_FIRE_DEBUFF = (float) augmentSettings.getDouble("weaponFireRateDebuff");
+
+        COOLDOWN = (int) augmentSettings.getInt("buffCooldown");
+        BUFF_DURATION = (int) augmentSettings.getInt("buffActiveTime");
+        DEBUFF_DURATION = (int) augmentSettings.getInt("debuffActiveTime");
+    }
+
 
     @Override
     public boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm) {
@@ -68,14 +93,12 @@ public class SpooledFeeders extends Augment {
 
     @Override
     public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
-        if (systems.hasAugment(this.getKey())) {
-            if(expand) {
-                tooltip.addPara("%s: Weapon fire rate is increased by %s for %s when a weapon is fired. After this time, weapon fire rate is reduced by %s for %s. This can occur once every %s." +
-                                "If this ship is controlled by a player, the buff applies if a weapon is manually fired. If controlled by an AI, any non-PD weapon triggers it.", 5, tooltipColors,
-                        this.getName(), "50%", BUFF_DURATION + " seconds", "25%", DEBUFF_DURATION + " seconds", COOLDOWN + " seconds");
-            } else {
-                tooltip.addPara(this.getName(), tooltipColors[0], 5);
-            }
+        if (expand) {
+            tooltip.addPara("%s: Weapon fire rate is increased by %s for %s when a weapon is fired. After this time, weapon fire rate is reduced by %s for %s. This can occur once every %s." +
+                            "If this ship is controlled by a player, the buff applies if a weapon is manually fired. If controlled by an AI, any non-PD weapon triggers it.", 5, tooltipColors,
+                    this.getName(), RATE_OF_FIRE_BUFF + "%", BUFF_DURATION + " seconds", Math.abs(RATE_OF_FIRE_DEBUFF) + "%", DEBUFF_DURATION + " seconds", COOLDOWN + " seconds");
+        } else {
+            tooltip.addPara(this.getName(), tooltipColors[0], 5);
         }
     }
 
@@ -104,7 +127,7 @@ public class SpooledFeeders extends Augment {
     public void advanceInCombat(ShipAPI ship, float amount, float quality) {
         Map<String, Object> customData = Global.getCombatEngine().getCustomData();
         if(!customData.containsKey(getSpooledId(ship))) {
-            customData.put(getIntervalId(ship), new IntervalUtil(15f, 15f));
+            customData.put(getIntervalId(ship), new IntervalUtil(COOLDOWN, COOLDOWN));
             customData.put(getSpooledId(ship), SpoolState.SPOOLED);
         }
 
@@ -153,13 +176,13 @@ public class SpooledFeeders extends Augment {
             } else if (spooled == SpoolState.BUFFED) {
                 Global.getCombatEngine().maintainStatusForPlayerShip(this.getBuffId(), "graphics/icons/hullsys/ammo_feeder.png", "SPOOLED FEEDERS", "GIVE THEM HELL", false);
 
-                ship.getMutableStats().getBallisticRoFMult().modifyMult(this.getBuffId(), 1.5f);
-                ship.getMutableStats().getEnergyRoFMult().modifyMult(this.getBuffId(), 1.5f);
+                ship.getMutableStats().getBallisticRoFMult().modifyMult(this.getBuffId(), 1 + RATE_OF_FIRE_BUFF / 100f);
+                ship.getMutableStats().getEnergyRoFMult().modifyMult(this.getBuffId(), 1 + RATE_OF_FIRE_BUFF / 100f);
             } else if (spooled == SpoolState.DEBUFFED) {
                 Global.getCombatEngine().maintainStatusForPlayerShip(this.getBuffId(), "graphics/icons/hullsys/ammo_feeder.png", "SPOOLED FEEDERS", "FEEL THE BURN", true);
 
-                ship.getMutableStats().getBallisticRoFMult().modifyMult(this.getBuffId(), 0.75f);
-                ship.getMutableStats().getEnergyRoFMult().modifyMult(this.getBuffId(), 0.75f);
+                ship.getMutableStats().getBallisticRoFMult().modifyMult(this.getBuffId(), 1 + RATE_OF_FIRE_DEBUFF / 100f);
+                ship.getMutableStats().getEnergyRoFMult().modifyMult(this.getBuffId(), 1 + RATE_OF_FIRE_DEBUFF / 100f);
             } else if (spooled == SpoolState.RECHARGE) {
                 Global.getCombatEngine().maintainStatusForPlayerShip(this.getBuffId(), "graphics/icons/hullsys/ammo_feeder.png", "SPOOLED FEEDERS",
                         String.format("RECHARGED IN %s SECONDS", Math.round(interval.getIntervalDuration() - interval.getElapsed())), false);

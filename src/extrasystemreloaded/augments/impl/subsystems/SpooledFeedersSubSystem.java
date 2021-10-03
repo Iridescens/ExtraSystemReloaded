@@ -5,6 +5,8 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipwideAIFlags;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import data.scripts.subsystems.dl_BaseSubsystem;
+import data.scripts.util.dl_SpecLoadingUtils;
+import extrasystemreloaded.augments.impl.SpooledFeedersDroneLib;
 import org.lazywizard.lazylib.MathUtils;
 
 import java.awt.*;
@@ -13,8 +15,9 @@ import java.util.EnumSet;
 public class SpooledFeedersSubSystem extends dl_BaseSubsystem {
     public static final String SUBSYSTEM_ID = "esr_spooledfeeder";
 
-    public static final float ROF_BONUS = 1f;
-    public static final float FLUX_REDUCTION = 50f;
+    public static dl_BaseSubsystem.SubsystemData getSubsystemSpec() {
+        return dl_SpecLoadingUtils.getSubsystemData(SUBSYSTEM_ID);
+    }
 
     public float startTime = 0f;
 
@@ -27,13 +30,13 @@ public class SpooledFeedersSubSystem extends dl_BaseSubsystem {
         if (subsystemState.equals(SubsystemState.IN)) {
             startTime = Global.getCombatEngine().getTotalElapsedTime(false);
 
-            float mult = 1f + ROF_BONUS;
+            float mult = 1f + SpooledFeedersDroneLib.ROF_BUFF_SUBSYSTEM;
 
             stats.getBallisticRoFMult().modifyMult(id, mult);
-            stats.getBallisticWeaponFluxCostMod().modifyMult(id, 1f - (FLUX_REDUCTION * 0.01f));
+            stats.getBallisticWeaponFluxCostMod().modifyMult(id, 1f - (SpooledFeedersDroneLib.FLUX_BUFF_SUBSYSTEM * 0.01f));
 
             stats.getEnergyRoFMult().modifyMult(id, mult);
-            stats.getEnergyWeaponFluxCostMod().modifyMult(id, 1f - (FLUX_REDUCTION * 0.01f));
+            stats.getEnergyWeaponFluxCostMod().modifyMult(id, 1f - (SpooledFeedersDroneLib.FLUX_BUFF_SUBSYSTEM * 0.01f));
 
             stats.getHardFluxDissipationFraction().modifyMult(id, 0f);
         } else if (subsystemState.equals(SubsystemState.OUT)) {

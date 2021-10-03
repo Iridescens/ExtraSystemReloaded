@@ -1,0 +1,64 @@
+{
+    #keep in mind that some of these settings are scripted effects.
+    #setting these to zero or below zero may have unintended effects
+    #beyond just making the game easier/harder.
+
+  "SpooledFeeders": {
+      "name": "Spooled Feeders",
+      #no drone lib,
+      #the below settings are percentages, so 100 means doubled
+      "weaponFireRateBuff": 100.0, #after shooting
+      "weaponFireRateDebuff": -33.0, #after buff ends
+      "buffCooldown": 16,
+      "buffActiveTime": 5,
+      "debuffActiveTime": 4,
+
+      #with dronelib, most settings affect the added subsystem.
+      #note that certain settings are also included inside the
+      #subsystems.csv file, like cooldown and such.
+      "permanentFireRateDebuff": -20.0, #permanent percent debuff
+      "subsystemFireRateBuff": 80.0, #percent buff while subsystem is toggled
+      "subsystemWeaponFluxBuff": -33.0 #percent buff while subsystem is toggled
+  },
+  "PlasmaCatalyst": {
+    "name": "Plasma Flux Catalyst"
+  },
+  "DriveFluxVent": {
+    "name": "Drive Flux Vent",
+    "ventSpeedIncrease": 30.0, #buff to flux dissipation while venting
+    "forwardSpeedIncrease": 30, #forward speed boost
+    "fluxRequiredForBuff": 50.0, #required flux percentage to trigger the boost
+    "buffDuration": 4.0 #amount of time buff is active after venting
+  },
+  "EqualizerCore": {
+    "name": "Equalizer Core",
+    "recoilReduction": -25.0,
+    "weaponTurnRateIncrease": 50.0,
+
+    "rangeBottomBounds": 550, #weapons with base range below this
+    "rangeBottomBuff": 200, #receive a flat bonus of this.
+
+    "rangeTopBounds": 800, #weapons with base range above this
+    "rangeTopBuff": -150 #receive a flat bonus of this.
+  },
+  "HangarForge": {
+    "name": "Hangar Forge",
+    "fighterReplacementBuff": -15.0, #decreases the time to replace a fighter
+    "replacementRateDecreaseSpeed": -35.0 #this decreases the rate at which it degrades
+  },
+  "HangarForgeMissiles": {
+    "name": "Hacked Missile Forge",
+    "secondsBetweenReloads": 90,
+    "percentReloaded": 50.0
+  },
+  "PhasefieldEngine": {
+    "name": "Phasefield Engine",
+    "phaseCooldownInterval": 8, #amount of time unphased before the cost to phase resets
+    "invulnerableInterval": 2, #amount of time invulnerable when unphasing
+
+    "phaseCostModIfNegative": -100.0, #if phase cost is negative, apply this modifier.
+    "phaseCostIfZero": 10.0, #percent of base flux capacity
+    "phaseCostBaseReduction": 75.0 #reduces phase cost by this amount.
+    #this reduction applies after the other mods here.
+  }
+}

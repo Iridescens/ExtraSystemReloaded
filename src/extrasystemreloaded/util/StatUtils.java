@@ -5,6 +5,8 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import extrasystemreloaded.ESModSettings;
+import extrasystemreloaded.hullmods.ExtraSystemHM;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StatUtils {
-    private static final String STAT_CURVES_SETTINGS = "scalingCurves";
     private static final String STAT_CURVE_SCALAR = "scalar";
     private static final String STAT_CURVE_PERCENT = "percentOfLevels";
 
@@ -30,8 +31,7 @@ public class StatUtils {
     public static void loadStatCurves() {
         STAT_CURVES.clear();
         try {
-            JSONObject settings = Global.getSettings().loadJSON("data/config/settings.json", "extra_system_reloaded");
-            JSONArray curveSettings = settings.getJSONArray(STAT_CURVES_SETTINGS);
+            JSONArray curveSettings = ESModSettings.getArray(ESModSettings.SCALING_CURVES);
 
             for(int i = 0; i < curveSettings.length(); i++) {
                 JSONObject curve = curveSettings.getJSONObject(i);
@@ -43,7 +43,7 @@ public class StatUtils {
                 STAT_CURVES.add(new StatCurve((float) curve.getDouble(STAT_CURVE_SCALAR), (float) curve.getDouble(STAT_CURVE_PERCENT)));
             }
 
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
@@ -68,6 +68,8 @@ public class StatUtils {
         FloatHolder finalVal = new FloatHolder(0f);
         FloatHolder levelAsFloat = new FloatHolder(level);
         float qualityFactor = (float) Math.pow(1f + quality * 0.33f, 1f + qualityMult / 5f);
+
+        ExtraSystemHM.log.info(String.format("qual %s mult %s fact %s", quality, qualityMult, qualityFactor));
 
         for(StatCurve curve : STAT_CURVES) {
             curve.doFloatCurve(finalVal, levelAsFloat, maxLevel, levelFactor, qualityFactor, hullSizeFactor);

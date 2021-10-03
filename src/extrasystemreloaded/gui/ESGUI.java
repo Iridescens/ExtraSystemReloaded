@@ -1,23 +1,17 @@
-package extrasystemreloaded.campaign.rulecmd;
+package extrasystemreloaded.gui;
 
-import com.fs.starfarer.api.campaign.*;
+import com.fs.starfarer.api.campaign.FleetMemberPickerListener;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import extrasystemreloaded.campaign.ESDialog;
+import com.fs.starfarer.api.ui.CustomPanelAPI;
 import extrasystemreloaded.campaign.ESDialogContext;
 
 import java.util.List;
 
-public class Es_ShipListDialog extends ESDialog {
-    private static final int NumShipsPerPage = 5;
-    public static String RULE_DIALOG_OPTION = "ESShipList";
-    private static String RULE_PREV_OPTION = "ESShipPickerPREV";
-    private static String RULE_NEXT_OPTION = "ESShipPickerNEXT";
-
-    @Override
-    protected void process(final ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
-        options.clearOptions();
-
+public class ESGUI {
+    public static void showGUI(final ESDialogContext context) {
         final InteractionDialogAPI dialog = context.getDialog();
+        context.getOptions().clearOptions();
 
         List<FleetMemberAPI> validSelectionList = context.getShipList();
         int rows = validSelectionList.size() > 5 ? (int) Math.ceil(validSelectionList.size() / 5f) : 1;
@@ -30,7 +24,7 @@ public class Es_ShipListDialog extends ESDialog {
                     public void pickedFleetMembers(List<FleetMemberAPI> members) {
                         if (members != null && !members.isEmpty()) {
                             context.getLocalMemory().set("$ShipSelectedId", members.get(0).getId());
-                            dialog.getPlugin().optionSelected(Es_ShipDialog.RULE_DIALOG_OPTION, Es_ShipDialog.RULE_DIALOG_OPTION);
+                            populateOptions(context);
                         } else {
                             //sue me
                             dialog.getPlugin().optionSelected("ESMainMenu", "ESMainMenu");
@@ -42,5 +36,23 @@ public class Es_ShipListDialog extends ESDialog {
                         dialog.getPlugin().optionSelected("ESMainMenu", "ESMainMenu");
                     }
                 });
+    }
+
+    private static void populateOptions(ESDialogContext context) {
+        context.getLocalMemory().set("$GUIShown", true);
+        context.getOptions().clearOptions();
+
+        int xOffset = 0;
+        int yOffset = 600;
+
+        context.getDialog().setXOffset(xOffset);
+        context.getDialog().setYOffset(yOffset);
+
+        ShipPanel panel = new ShipPanel(context);
+        CustomPanelAPI customPanel = context.getVisual().showCustomPanel(1200f, 600f, panel);
+        customPanel.getPosition().setYAlignOffset(-xOffset).setXAlignOffset(-yOffset).inMid();
+        panel.populateGUI(customPanel);
+
+        context.getOptions().addOption("Exit", "ESMainMenu");
     }
 }

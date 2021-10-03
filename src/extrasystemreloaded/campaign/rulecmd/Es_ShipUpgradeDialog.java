@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.util.Misc;
+import extrasystemreloaded.ESModSettings;
 import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
@@ -52,7 +53,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         }
 
         options.addOption("Back to ship list", Es_ShipListDialog.RULE_DIALOG_OPTION);
-        options.addOption("Back to main menu", ESDialog.RULE_DIALOG_OPTION);
+        options.addOption("Back to main menu", Es_MainMenu.RULE_DIALOG_OPTION);
     }
 
     private void showUpgradeOptions(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
@@ -287,12 +288,13 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         int max = abilitySelected.getMaxLevel(hullSize);
         int currentLevel = buff.getUpgrade(abilitySelected);
 
-        boolean success = true;
-        if(!Es_ModPlugin.isUpgradeAlwaysSucceed() && currentLevel!=0 ) {
-            float possibility = (float) Math.cos(Math.PI*currentLevel*0.5f/max)*(1f-Es_ModPlugin.getUpgradeFailureMinChance())+Es_ModPlugin.getUpgradeFailureMinChance();
-            if ((float)Math.random()>=possibility) {
-                success = false;
-            }
+        boolean success = ESModSettings.getBoolean(ESModSettings.UPGRADE_ALWAYS_SUCCEED);
+        if(!success && currentLevel != 0) {
+            float minChanceOfFailure = ESModSettings.getFloat(ESModSettings.UPGRADE_FAILURE_CHANCE);
+            float possibility = (float) Math.cos(Math.PI * currentLevel * 0.5f / max)
+                    * (1f - minChanceOfFailure) + minChanceOfFailure;
+
+            success = ((float) Math.random()) < possibility;
         }
 
         if(success) {
@@ -374,11 +376,6 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         if (!Es_ModPlugin.isDebugUpgradeCosts()) {
             float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, level, buff.getQuality(selectedShip));
 
-            float possibility = 1f;
-            if (!Es_ModPlugin.isUpgradeAlwaysSucceed() && level != 0) {
-                possibility = (float) Math.cos(Math.PI * level * 0.5f / max) * (1f - Es_ModPlugin.getUpgradeFailureMinChance()) + Es_ModPlugin.getUpgradeFailureMinChance();
-            }
-
             int creditCost = UpgradesHandler.getCreditCost(currMarket, resourceCosts, level, max);
             String needCredits = Misc.getFormat().format(creditCost);
             textPanel.addParagraph(TextTip.costHeader + needCredits + " credits OR resources listed", Color.green);
@@ -396,11 +393,21 @@ public class Es_ShipUpgradeDialog extends ESDialog {
                 }
             }
             textPanel.addParagraph("-----------------------", Color.gray);
-            textPanel.addParagraph(TextTip.ability3);
-            String text1 = Math.round(possibility * 1000f) / 10f + "%";
-            textPanel.appendToLastParagraph(text1);
-            textPanel.highlightLastInLastPara(text1, Color.green);
-            textPanel.appendToLastParagraph(TextTip.ability4);
+
+            if(!ESModSettings.getBoolean(ESModSettings.UPGRADE_ALWAYS_SUCCEED)) {
+                float possibility = 1f;
+                if (level != 0) {
+                    float minChanceOfFailure = ESModSettings.getFloat(ESModSettings.UPGRADE_FAILURE_CHANCE);
+                    possibility = (float) Math.cos(Math.PI * level * 0.5f / max)
+                            * (1f - minChanceOfFailure) + minChanceOfFailure;
+                }
+
+                textPanel.addParagraph(TextTip.ability3);
+                String text1 = Math.round(possibility * 1000f) / 10f + "%";
+                textPanel.appendToLastParagraph(text1);
+                textPanel.highlightLastInLastPara(text1, Color.green);
+                textPanel.appendToLastParagraph(TextTip.ability4);
+            }
         }
 
         return isCanLevelUp;

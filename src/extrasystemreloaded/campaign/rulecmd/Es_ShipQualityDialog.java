@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.VisualPanelAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
+import extrasystemreloaded.ESModSettings;
 import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
@@ -20,7 +21,7 @@ import static extrasystemreloaded.util.Utilities.*;
 public class Es_ShipQualityDialog extends ESDialog {
     public static final String RULE_MENUSTATE = "ESQuality";
     public static final String RULE_DIALOG_OPTION = "ESShipQualityPicked";
-    private static final float baseQualityStep = 0.025f;
+    private static final float baseQualityStep = 0.05f;
 
     @Override
     protected void process(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
@@ -35,7 +36,7 @@ public class Es_ShipQualityDialog extends ESDialog {
         }
 
         options.addOption("Back to ship list", Es_ShipListDialog.RULE_DIALOG_OPTION);
-        options.addOption("Back to main menu", ESDialog.RULE_DIALOG_OPTION);
+        options.addOption("Back to main menu", Es_MainMenu.RULE_DIALOG_OPTION);
     }
 
     private void showQualityOptions(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
@@ -46,12 +47,13 @@ public class Es_ShipQualityDialog extends ESDialog {
         ExtraSystems buff = context.getBuff();
         float shipQuality = context.getShipQuality();
         float shipBaseValue = context.getShipBaseValue();
-        float estimatedOverhaulCost = Math.round(shipBaseValue * (float) Math.pow(shipQuality, 2) / 2 * 100f) / 100f;
+        float upgradeQualityMult = getMarketQualityMult(context.getCurrMarket());
+        float estimatedOverhaulCost = getQualityUpgradePrice(shipBaseValue, shipQuality, upgradeQualityMult);
 
         switch (functionType) {
             case "QualityUpgradeSelected":
                 if (selectedShip != null) {
-                    float bonusQuality = bonusQualityAtMarket(context.getCurrMarket());
+                    float bonusQuality = baseQualityStep * upgradeQualityMult;
                     textPanel.addParagraph(TextTip.quality1);
                     String shipQualityText = "" + Math.round(shipQuality * 1000f) / 1000f + getQualityName(shipQuality);
                     textPanel.appendToLastParagraph(" " + shipQualityText);
@@ -79,9 +81,9 @@ public class Es_ShipQualityDialog extends ESDialog {
                 break;
             case "ApplyQualityUpgrade":
                 if (selectedShip != null) {
-                    float bonusQuality = bonusQualityAtMarket(context.getCurrMarket());
+                    float bonusQuality = baseQualityStep * upgradeQualityMult;
                     float newQuality = Math.round((shipQuality + bonusQuality) * 1000f) / 1000f; // qualityFactor + bonus
-                    newQuality = Math.min(newQuality, Es_ModPlugin.getMaxQuality());
+                    newQuality = Math.min(newQuality, ESModSettings.getFloat(ESModSettings.MAX_QUALITY));
 
                     buff.putQuality(newQuality);
                     buff.save(selectedShip);
@@ -96,8 +98,7 @@ public class Es_ShipQualityDialog extends ESDialog {
                     textPanel.highlightLastInLastPara("" + newQuality, getQualityColor(newQuality));
 
                     if(buff.canUpgradeQuality(selectedShip)) {
-                        estimatedOverhaulCost = Math.round(shipBaseValue * (float) Math.pow(newQuality, 2) / 2 * 100f) / 100f;
-
+                        estimatedOverhaulCost = getQualityUpgradePrice(shipBaseValue, newQuality, upgradeQualityMult);
                         String shipQualityText = "On-site team estimates that another overhaul would cost %s credits for a quality increase of %s.";
                         String needCredits = Misc.getFormat().format(estimatedOverhaulCost);
                         textPanel.addParagraph(String.format(shipQualityText, estimatedOverhaulCost, bonusQuality));
@@ -112,6 +113,7 @@ public class Es_ShipQualityDialog extends ESDialog {
                             options.setTooltip("ESShipQualityApply", "Insufficient credits");
                         }
                     } else {
+                        textPanel.addParagraph("The quality of this ship has reached its peak.");
                         options.addOption("The quality of this ship has reached its peak.", "DoNothing");
                         options.setEnabled("DoNothing", false);
                     }
@@ -130,33 +132,37 @@ public class Es_ShipQualityDialog extends ESDialog {
         return cost <= fleet.getCargo().getCredits().get() || Es_ModPlugin.isDebugUpgradeCosts();
     }
 
-    private float bonusQualityAtMarket(MarketAPI currMarket) {
-        float qualityMult = 2;
+    private float getMarketQualityMult(MarketAPI currMarket) {
+        float qualityMult = 1;
         if(currMarket.hasIndustry("heavyindustry")) {
-            qualityMult+=1;
+            qualityMult+=0.5;
         }
         if(currMarket.hasIndustry("orbitalworks")) {
-            qualityMult+=2;
-        }
-        if(currMarket.hasIndustry("IndEvo_Scrapyard")) {
-            qualityMult+=0.5;
-        }
-        if(currMarket.hasIndustry("IndEvo_EngHub")) {
-            qualityMult+=0.5;
-        }
-        if(currMarket.hasIndustry("ms_modularFac")) {
-            qualityMult+=0.5;
-        }
-        if(currMarket.hasIndustry("ms_massIndustry")) {
-            qualityMult+=0.5;
-        }
-        if(currMarket.hasIndustry("ms_militaryProduction")) {
             qualityMult+=1;
         }
+        if(currMarket.hasIndustry("IndEvo_Scrapyard")) {
+            qualityMult+=0.25;
+        }
+        if(currMarket.hasIndustry("IndEvo_EngHub")) {
+            qualityMult+=0.25;
+        }
+        if(currMarket.hasIndustry("ms_modularFac")) {
+            qualityMult+=0.25;
+        }
+        if(currMarket.hasIndustry("ms_massIndustry")) {
+            qualityMult+=0.25;
+        }
+        if(currMarket.hasIndustry("ms_militaryProduction")) {
+            qualityMult+=0.5;
+        }
         if(currMarket.hasIndustry("ms_orbitalShipyard")) {
-            qualityMult+=2;
+            qualityMult+=1;
         }
 
-        return baseQualityStep * (2 + (currMarket.hasIndustry("heavyindustry") ? 1 : 0) + (currMarket.hasIndustry("orbitalworks") ? 2 : 0));
+        return qualityMult;
+    }
+
+    private float getQualityUpgradePrice(float shipBaseValue, float baseQuality, float upgradeQualityMult) {
+        return Math.round(shipBaseValue * (float) Math.pow(baseQuality, 2) / (2f + 0.25f * (upgradeQualityMult - 1)) * 100f) / 100f;
     }
 }
