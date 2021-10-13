@@ -65,6 +65,6 @@ public class Es_ShipDialog extends ESDialog {
         }
 
         options.addOption("Back to ship list", Es_ShipListDialog.RULE_DIALOG_OPTION);
-        options.addOption("Back to main menu", Es_MainMenu.RULE_DIALOG_OPTION);
+        options.addOption("Back to main menu", ESDialog.RULE_DIALOG_OPTION);
     }
 }

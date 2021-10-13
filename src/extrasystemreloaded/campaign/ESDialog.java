@@ -14,11 +14,14 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class ESDialog extends BaseCommandPlugin {
+    public static final String RULE_DIALOG_OPTION = "ESMainMenu";
+    public static final String RULE_MENUSTATE = "ESMainMenu";
 
     protected static Logger log;
 
+    @Override
     public boolean doesCommandAddOptions() {
-        return true;
+        return false;
     }
 
     @Override

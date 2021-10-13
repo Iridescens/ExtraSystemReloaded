@@ -13,7 +13,9 @@ import java.util.Map;
 import static extrasystemreloaded.upgrades.UpgradesHandler.UPGRADES;
 
 public class Es_UpgradePicked extends BaseCommandPlugin {
+    public static final String MEM_KEY = "$upgradeId";
     private static final org.apache.log4j.Logger log = Global.getLogger(Es_UpgradePicked.class);
+
     @Override
     public boolean execute(String ruleId, InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
 
@@ -23,7 +25,7 @@ public class Es_UpgradePicked extends BaseCommandPlugin {
 
             switch (action) {
                 case "remove":
-                    memory.set("$UpgradeId", null);
+                    memory.set(MEM_KEY, null);
                     break;
                 case "exists":
                     String upgradeId = params.get(1).getString(memoryMap);
@@ -34,9 +36,9 @@ public class Es_UpgradePicked extends BaseCommandPlugin {
                     }
                     return false;
                 case "get":
-                    return memory.get("$UpgradeId") != null;
+                    return memory.get(MEM_KEY) != null;
                 case "set":
-                    memory.set("$UpgradeId", params.get(1).getString(memoryMap));
+                    memory.set(MEM_KEY, params.get(1).getString(memoryMap));
                 default:
                     break;
             }

@@ -29,7 +29,7 @@ public class Es_ShipListDialog extends ESDialog {
                     @Override
                     public void pickedFleetMembers(List<FleetMemberAPI> members) {
                         if (members != null && !members.isEmpty()) {
-                            context.getLocalMemory().set("$ShipSelectedId", members.get(0).getId());
+                            context.getLocalMemory().set(Es_ShipPicked.MEM_KEY, members.get(0).getId());
                             dialog.getPlugin().optionSelected(Es_ShipDialog.RULE_DIALOG_OPTION, Es_ShipDialog.RULE_DIALOG_OPTION);
                         } else {
                             //sue me

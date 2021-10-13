@@ -14,7 +14,9 @@ import java.util.Map;
 import static extrasystemreloaded.augments.AugmentsHandler.AUGMENT_LIST;
 
 public class Es_AugmentPicked extends BaseCommandPlugin {
+    public static final String MEM_KEY = "$augmentId";
     private static final org.apache.log4j.Logger log = Global.getLogger(Es_AugmentPicked.class);
+
     @Override
     public boolean execute(String ruleId, InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
 
@@ -24,7 +26,7 @@ public class Es_AugmentPicked extends BaseCommandPlugin {
 
             switch (action) {
                 case "remove":
-                    memory.set("$ModuleId", null);
+                    memory.set(MEM_KEY, null);
                     break;
                 case "exists":
                     String moduleId = params.get(1).getString(memoryMap);
@@ -35,9 +37,9 @@ public class Es_AugmentPicked extends BaseCommandPlugin {
                     }
                     return false;
                 case "get":
-                    return memory.get("$ModuleId") != null;
+                    return memory.get(MEM_KEY) != null;
                 case "set":
-                    memory.set("$ModuleId", params.get(1).getString(memoryMap));
+                    memory.set(MEM_KEY, params.get(1).getString(memoryMap));
                 default:
                     break;
             }

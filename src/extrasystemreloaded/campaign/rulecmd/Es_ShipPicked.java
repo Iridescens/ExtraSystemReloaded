@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Es_ShipPicked extends BaseCommandPlugin {
+    public static final String MEM_KEY = "$shipId";
     private static final org.apache.log4j.Logger log = Global.getLogger(Es_ShipPicked.class);
+
     @Override
     public boolean execute(String ruleId, InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
         MemoryAPI memory = memoryMap.get(MemKeys.LOCAL);
@@ -22,7 +24,7 @@ public class Es_ShipPicked extends BaseCommandPlugin {
 
             switch (action) {
                 case "remove":
-                    memory.set("$ShipSelectedId", null);
+                    memory.set(MEM_KEY, null);
                     break;
                 case "exists":
                     String shipSelectedId = params.get(1).getString(memoryMap);
@@ -36,9 +38,9 @@ public class Es_ShipPicked extends BaseCommandPlugin {
                     }
                     return false;
                 case "get":
-                    return memory.getString("$ShipSelectedId") != null;
+                    return memory.getString(MEM_KEY) != null;
                 case "set":
-                    memory.set("$ShipSelectedId", params.get(1).getString(memoryMap));
+                    memory.set(MEM_KEY, params.get(1).getString(memoryMap));
                 default:
                     break;
             }

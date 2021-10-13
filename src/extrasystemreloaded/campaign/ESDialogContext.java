@@ -9,6 +9,9 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.campaign.BuffManager;
 import extrasystemreloaded.augments.Augment;
+import extrasystemreloaded.campaign.rulecmd.Es_AugmentPicked;
+import extrasystemreloaded.campaign.rulecmd.Es_ShipPicked;
+import extrasystemreloaded.campaign.rulecmd.Es_UpgradePicked;
 import extrasystemreloaded.upgrades.Upgrade;
 import extrasystemreloaded.util.ExtraSystems;
 
@@ -76,7 +79,7 @@ public class ESDialogContext {
 
         localMemory = memoryMap.get(MemKeys.LOCAL);
 
-        String shipSelectedId = localMemory.getString("$ShipSelectedId");
+        String shipSelectedId = localMemory.getString(Es_ShipPicked.MEM_KEY);
         if (shipSelectedId != null) {
             selectedShip = getSelectedShip(shipSelectedId);
             if(selectedShip != null) {
@@ -86,7 +89,8 @@ public class ESDialogContext {
             }
         }
 
-        Object extraUpgradeId = localMemory.get("$UpgradeId");
+        Object extraUpgradeId = localMemory.get(Es_UpgradePicked.MEM_KEY);
+        System.out.printf("Upgrade ID: %s\n", extraUpgradeId);
         if(extraUpgradeId != null) {
             for(String upgradeKey : UPGRADES.keySet()) {
                 if(upgradeKey.equals((String) extraUpgradeId)) {
@@ -95,7 +99,8 @@ public class ESDialogContext {
             }
         }
 
-        Object coreId = localMemory.get("$ModuleId");
+        Object coreId = localMemory.get(Es_AugmentPicked.MEM_KEY);
+        System.out.printf("Augment ID: %s\n", coreId);
         if(coreId != null) {
             for(Augment augment : AUGMENT_LIST) {
                 if(augment.getKey().equals((String) coreId)) {

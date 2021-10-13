@@ -40,7 +40,7 @@ public class SpooledFeeders extends Augment {
 
     @Override
     public String getName() {
-        return Global.getSettings().getString("AbilityName", getKey());
+        return NAME;
     }
 
     @Override
