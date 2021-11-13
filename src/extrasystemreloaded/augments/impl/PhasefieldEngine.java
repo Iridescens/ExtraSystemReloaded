@@ -26,10 +26,11 @@ public class PhasefieldEngine extends Augment {
 
     private static String NAME = "Phasefield Engine";
 
-    private static int PHASE_COOLDOWN_INTERVAL = 8;
+    private static int PHASE_RESET_INTERVAL = 8;
     private static int INVULNERABLE_INTERVAL = 2;
 
-    private static float PHASE_COST_PERCENT_REDUCTION = 75f;
+    private static float PHASE_COOLDOWN_PERCENT_REDUCTION = -50f;
+    private static float PHASE_COST_PERCENT_REDUCTION = -75f;
     private static float PHASE_COST_PERCENT_IF_NEGATIVE = -100f;
     private static float PHASE_COST_IF_ZERO = 10f;
 
@@ -68,9 +69,10 @@ public class PhasefieldEngine extends Augment {
     public void loadConfig(JSONObject augmentSettings) throws JSONException {
         NAME = augmentSettings.getString("name");
 
-        PHASE_COOLDOWN_INTERVAL = (int) augmentSettings.getInt("phaseCooldownInterval");
+        PHASE_RESET_INTERVAL = (int) augmentSettings.getInt("phaseResetInterval");
         INVULNERABLE_INTERVAL = (int) augmentSettings.getInt("invulnerableInterval");
 
+        PHASE_COOLDOWN_PERCENT_REDUCTION = (float) augmentSettings.getDouble("phaseCooldownReduction");
         PHASE_COST_PERCENT_REDUCTION = (float) augmentSettings.getDouble("phaseCostBaseReduction");
         PHASE_COST_PERCENT_IF_NEGATIVE = (float) augmentSettings.getDouble("phaseCostModIfNegative");
         PHASE_COST_IF_ZERO = (float) augmentSettings.getDouble("phaseCostIfZero");
@@ -109,8 +111,8 @@ public class PhasefieldEngine extends Augment {
                             "before this augment is applied. ", 5, tooltipColors,
 
                     this.getName(),
-                    PHASE_COST_PERCENT_REDUCTION + "%",
-                    PHASE_COOLDOWN_INTERVAL + " seconds",
+                    Math.abs(PHASE_COST_PERCENT_REDUCTION) + "%",
+                    PHASE_RESET_INTERVAL + " seconds",
                     INVULNERABLE_INTERVAL + " seconds",
                     PHASE_COST_IF_ZERO * 100 + "%");
         } else {
@@ -126,7 +128,8 @@ public class PhasefieldEngine extends Augment {
             stats.getPhaseCloakActivationCostBonus().modifyPercent(getBuffId() + "base", -100f);
         }
 
-        stats.getPhaseCloakActivationCostBonus().modifyPercent(getBuffId(), -75f);
+        stats.getPhaseCloakActivationCostBonus().modifyPercent(getBuffId(), PHASE_COST_PERCENT_REDUCTION);
+        stats.getPhaseCloakCooldownBonus().modifyPercent(getBuffId(), PHASE_COOLDOWN_PERCENT_REDUCTION);
     }
 
     private String getPhaseStateId(ShipAPI ship) {
@@ -158,7 +161,7 @@ public class PhasefieldEngine extends Augment {
     }
 
     private IntervalUtil createPhaseCostInterval(ShipAPI ship) {
-        IntervalUtil phaseCostInterval = new IntervalUtil(PHASE_COOLDOWN_INTERVAL, PHASE_COOLDOWN_INTERVAL);
+        IntervalUtil phaseCostInterval = new IntervalUtil(PHASE_RESET_INTERVAL, PHASE_RESET_INTERVAL);
         Global.getCombatEngine().getCustomData().put(getPhaseCostId(ship), phaseCostInterval);
         return phaseCostInterval;
     }
@@ -244,7 +247,7 @@ public class PhasefieldEngine extends Augment {
             if (phaseInterval == null) {
                 createPhaseCostInterval(ship);
             } else {
-                phaseInterval.setInterval(PHASE_COOLDOWN_INTERVAL, PHASE_COOLDOWN_INTERVAL);
+                phaseInterval.setInterval(PHASE_RESET_INTERVAL, PHASE_RESET_INTERVAL);
             }
             addToTimesPhased(ship);
             ship.getMutableStats().getPhaseCloakActivationCostBonus().modifyMult(this.getBuffId(), (float) Math.pow(2, getTimesPhasedInInterval(ship)));
@@ -267,7 +270,7 @@ public class PhasefieldEngine extends Augment {
         }
 
         if (phaseInterval != null) {
-            String phasedTimesText = String.format("PHASED %s TIMES, REFRESH IN %s", getTimesPhasedInInterval(ship), StatUtils.formatFloatUnrounded(PHASE_COOLDOWN_INTERVAL - phaseInterval.getElapsed()));
+            String phasedTimesText = String.format("PHASED %s TIMES, REFRESH IN %s", getTimesPhasedInInterval(ship), StatUtils.formatFloatUnrounded(PHASE_RESET_INTERVAL - phaseInterval.getElapsed()));
             Global.getCombatEngine().maintainStatusForPlayerShip(getTimesPhasedId(ship), "graphics/icons/hullsys/temporal_shell.png", "PHASEFIELD ENGINE", phasedTimesText, false);
             if(!isPhasing(ship)) {
                 phaseInterval.advance(amount);

@@ -21,6 +21,7 @@ import org.lwjgl.input.Keyboard;
 import java.awt.*;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import static extrasystemreloaded.util.StatUtils.formatFloat;
 
@@ -130,6 +131,20 @@ public class ExtraSystemHM extends BaseHullMod {
         FleetMemberAPI fm = FleetMemberUtils.findMemberForStats(stats);
         if(fm == null) {
             return;
+        }
+
+        try {
+            if (!stats.getVariant().getStationModules().isEmpty()) {
+                FleetMemberUtils.moduleMap.clear();
+
+                for (Map.Entry<String, String> e : stats.getVariant().getStationModules().entrySet()) {
+                    ShipVariantAPI module = stats.getVariant().getModuleVariant(e.getKey());
+
+                    FleetMemberUtils.moduleMap.put(module.getHullVariantId(), fm);
+                }
+            }
+        } catch (Exception e) {
+            log.info("Failed to get modules", e);
         }
 
         ExtraSystems extraSystems = this.getExtraSystems(fm);

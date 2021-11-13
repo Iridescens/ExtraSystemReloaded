@@ -40,7 +40,6 @@ public class ESDialogContext {
     private List<FleetMemberAPI> ShipList;
 
     private FleetMemberAPI selectedShip;
-    private float shipBaseValue;
 
     private ExtraSystems buff;
     private Augment selectedAugment;
@@ -85,7 +84,6 @@ public class ESDialogContext {
             if(selectedShip != null) {
                 buff = ExtraSystems.getForFleetMember(selectedShip);
                 shipQuality = buff.getQuality(selectedShip);
-                shipBaseValue = selectedShip.getHullSpec().getBaseValue();
             }
         }
 
@@ -174,10 +172,6 @@ public class ESDialogContext {
 
     public float getShipQuality() {
         return shipQuality;
-    }
-
-    public float getShipBaseValue() {
-        return shipBaseValue;
     }
 
     public MemoryAPI getLocalMemory() {

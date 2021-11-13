@@ -3,24 +3,20 @@ package extrasystemreloaded;
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.augments.AugmentsHandler;
-import extrasystemreloaded.campaign.battle.EngagementListener;
+import extrasystemreloaded.campaign.CampaignListener;
 import extrasystemreloaded.campaign.salvage.SalvageListener;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.upgrades.UpgradesHandler;
 import extrasystemreloaded.util.ExtraSystems;
+import extrasystemreloaded.util.FleetMemberUtils;
 import extrasystemreloaded.util.StatUtils;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.lazywizard.console.Console;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,15 +28,21 @@ public class Es_ModPlugin extends BaseModPlugin {
 	private static Map<String, ExtraSystems> ShipUpgradeData;
 	private static boolean debugUpgradeCosts = false;
 
+	private static CampaignListener campaignListener = null;
+	private static SalvageListener salvageListener = null;
+
 	@Override
     public void onGameLoad(boolean newGame){
+		FleetMemberUtils.moduleMap.clear();
+
 		ESModSettings.loadModSettings();
 		StatUtils.loadStatCurves();
 		UpgradesHandler.populateUpgrades();
 		AugmentsHandler.populateAugments();
 
-		Global.getSector().getListenerManager().addListener(new SalvageListener(), true);
-		Global.getSector().addTransientListener(new EngagementListener(false));
+
+		Global.getSector().getListenerManager().addListener(salvageListener = new SalvageListener(), true);
+		Global.getSector().addTransientScript(campaignListener = new CampaignListener(false));
 
 		loadUpgradeData();
 
@@ -92,7 +94,17 @@ public class Es_ModPlugin extends BaseModPlugin {
 
 	@Override
 	public void beforeGameSave() {
+		Global.getSector().removeTransientScript(campaignListener);
+		Global.getSector().removeListener(campaignListener);
+		Global.getSector().getListenerManager().removeListener(salvageListener);
+
 		Es_ModPlugin.removeESHullmodsFromAutoFitGoalVariants();
+	}
+
+	@Override
+	public void afterGameSave() {
+		Global.getSector().addTransientScript(campaignListener = new CampaignListener(false));
+		Global.getSector().getListenerManager().addListener(salvageListener = new SalvageListener(), true);
 	}
 
 	public static void removeESHullmodsFromAutoFitGoalVariants() {

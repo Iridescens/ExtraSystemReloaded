@@ -45,19 +45,19 @@
 	# break the max level limit it will completely ignore that. i recommend always having a -1 in there.
 	"scalingCurves": [
 		{
-			"scalar": 0.65,         #65% power
+			"scalar": 1,         #65% power
 			"percentOfLevels": 0.35 #applies for 35% of the first levels
 		},
 		{
-			"scalar": 0.3,          #30% power
+			"scalar": 0.66,          #30% power
 			"percentOfLevels": 0.25 #applies for 25% of the next levels
 		},
 		{
-			"scalar": 0.1,          #10% power
+			"scalar": 0.33,          #10% power
 			"percentOfLevels": 0.1  #applies for 10% of the next levels.
 		},
 		{
-			"scalar": 0.05,         #5% power
+			"scalar": 0.1,         #5% power
 			"percentOfLevels": -1   #applies for any remaining levels (by default, the last 35%)
 		}
 	],

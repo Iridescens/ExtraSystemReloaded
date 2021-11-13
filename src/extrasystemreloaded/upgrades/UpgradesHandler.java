@@ -126,16 +126,24 @@ public class UpgradesHandler {
     }
 
     public static int getCreditCost(MarketAPI market, float[] resourceCosts, int level, int max) {
-        float finalCost = 0;
-        for(int i = 0; i < 7; i++) {
-            finalCost += getCreditCost(market, resourceCosts[i], i);
+        float resourceCost = 0;
+        for (int i = 0; i < 7; i++) {
+            resourceCost += getCreditCost(market, resourceCosts[i], i);
         }
+        return (int) resourceCost;
+    }
 
+    public static int getFinalCreditCost(MarketAPI market, float[] resourceCosts, int level, int max) {
+        float creditCost = getCreditCost(market, resourceCosts, level, max);
+        return (int) (creditCost + getConvenienceCreditCost(market, creditCost, level, max));
+    }
+
+    public static int getConvenienceCreditCost(MarketAPI market, float resourceCostTotal, int level, int max) {
         float rel = market.getFaction().getRelToPlayer().getRel();
         float exp = (float) (1 + 3.25 * level / max);
         float base = 2f - 0.5f * rel;
-        float additive = (float) (finalCost * (0.5f * Math.pow(base, exp)));
+        float additive = (float) (resourceCostTotal * (0.5f * Math.pow(base, exp)));
 
-        return (int) (finalCost + additive);
+        return (int) additive;
     }
 }

@@ -69,8 +69,6 @@ public class StatUtils {
         FloatHolder levelAsFloat = new FloatHolder(level);
         float qualityFactor = (float) Math.pow(1f + quality * 0.33f, 1f + qualityMult / 5f);
 
-        ExtraSystemHM.log.info(String.format("qual %s mult %s fact %s", quality, qualityMult, qualityFactor));
-
         for(StatCurve curve : STAT_CURVES) {
             curve.doFloatCurve(finalVal, levelAsFloat, maxLevel, levelFactor, qualityFactor, hullSizeFactor);
         }
@@ -134,6 +132,9 @@ public class StatUtils {
             if(level.getValue() <= 0f) {
                 return;
             }
+
+            //todo - determine if this is good. stat curves in settings have been adjusted for this.
+            qualityFactor = 1;
 
             if(percentOfLevels == -1) {
                 stat.add(levelFactor * qualityFactor * level.getValue() * hullSizeFactor * statScalar);
