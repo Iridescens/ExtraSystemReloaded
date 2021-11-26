@@ -4,7 +4,7 @@
 object Variables {
     // Note: On Linux, if you installed Starsector into ~/something, you have to write /home/<user>/ instead of ~/
     val starsectorDirectory = "C:/Games/Starsector"
-    val modVersion = "0.8.6"
+    val modVersion = "0.8.7"
     val jarFileName = "ExtraSystemCore.jar"
 
     val modId = "extra_system_reloaded"
@@ -136,7 +136,7 @@ tasks {
     // If enabled, will copy your mod to the /mods directory when run (and whenever gradle syncs).
     // Disabled by default, as it is not needed if your mod directory is symlinked into your /mods folder.
     register<Copy>("install-mod") {
-        val enabled = false;
+        val enabled = true;
 
         if (!enabled) return@register
 

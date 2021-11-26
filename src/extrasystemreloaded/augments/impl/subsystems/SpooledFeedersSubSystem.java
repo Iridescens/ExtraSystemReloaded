@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.WeaponAPI;
 import data.scripts.subsystems.dl_BaseSubsystem;
 import data.scripts.util.dl_SpecLoadingUtils;
 import extrasystemreloaded.augments.impl.SpooledFeedersDroneLib;
+import extrasystemreloaded.hullmods.ExtraSystemHM;
 import org.lazywizard.lazylib.MathUtils;
 
 import java.awt.*;
@@ -30,7 +31,8 @@ public class SpooledFeedersSubSystem extends dl_BaseSubsystem {
         if (subsystemState.equals(SubsystemState.IN)) {
             startTime = Global.getCombatEngine().getTotalElapsedTime(false);
 
-            float mult = 1f + SpooledFeedersDroneLib.ROF_BUFF_SUBSYSTEM / 100;
+            float mult = 1f + SpooledFeedersDroneLib.ROF_BUFF_SUBSYSTEM / 100f;
+            ExtraSystemHM.log.info(String.format("[SpooledSubSys] mult: %s", mult));
 
             stats.getBallisticRoFMult().modifyMult(id, mult);
             stats.getBallisticWeaponFluxCostMod().modifyMult(id, 1f - (SpooledFeedersDroneLib.FLUX_BUFF_SUBSYSTEM * 0.01f));
@@ -41,6 +43,10 @@ public class SpooledFeedersSubSystem extends dl_BaseSubsystem {
             stats.getHardFluxDissipationFraction().modifyMult(id, 0f);
         } else if (subsystemState.equals(SubsystemState.OUT)) {
             stats.getHardFluxDissipationFraction().unmodify(id);
+            stats.getBallisticRoFMult().unmodify(id);
+            stats.getBallisticWeaponFluxCostMod().unmodify(id);
+            stats.getEnergyRoFMult().unmodify(id);
+            stats.getEnergyWeaponFluxCostMod().unmodify(id);
         }
 
         if (subsystemState.equals(SubsystemState.ACTIVE)) {
@@ -63,11 +69,12 @@ public class SpooledFeedersSubSystem extends dl_BaseSubsystem {
     }
 
     private float getAddedFlux(float currTime) {
-        return ship.getMutableStats().getFluxDissipation().getModifiedValue() * (0.05f * Math.min(4f, (currTime - startTime) / 4));
+        return ship.getMutableStats().getFluxDissipation().getModifiedValue() * (0.05f * Math.min(4f, (currTime - startTime) / 4f));
     }
 
     @Override
     public void unapply(MutableShipStatsAPI stats, String id) {
+        stats.getHardFluxDissipationFraction().unmodify(id);
         stats.getBallisticRoFMult().unmodify(id);
         stats.getBallisticWeaponFluxCostMod().unmodify(id);
         stats.getEnergyRoFMult().unmodify(id);
