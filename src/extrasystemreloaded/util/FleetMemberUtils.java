@@ -13,12 +13,19 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class FleetMemberUtils {
+    public static final Map<String, FleetMemberAPI> moduleMap = new HashMap<>();
     private static final Logger log = Logger.getLogger(FleetMemberUtils.class);
 
     private FleetMemberUtils() {
     }
 
     public static FleetMemberAPI findMemberFromShip(ShipAPI ship) {
+        String id = ship.getVariant().getHullVariantId();
+
+        if(moduleMap.containsKey(id)) {
+            return moduleMap.get(id);
+        }
+
         if(ship.getParentStation() != null) {
             return findMemberFromShip(ship.getParentStation());
         }
@@ -31,6 +38,12 @@ public class FleetMemberUtils {
     }
 
     public static FleetMemberAPI findMemberForStats(MutableShipStatsAPI stats) {
+        String id = stats.getVariant().getHullVariantId();
+
+        if(moduleMap.containsKey(id)) {
+            return moduleMap.get(id);
+        }
+
         if (stats.getFleetMember() != null) {
             return stats.getFleetMember();
         }

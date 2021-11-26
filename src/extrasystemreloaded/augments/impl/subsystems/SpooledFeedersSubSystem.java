@@ -47,9 +47,10 @@ public class SpooledFeedersSubSystem extends dl_BaseSubsystem {
             float currTime = Global.getCombatEngine().getTotalElapsedTime(false);
             float addedFlux = getAddedFlux(currTime);
 
-            if(ship.getFluxTracker().getCurrFlux() + addedFlux > ship.getFluxTracker().getMaxFlux()) {
+            if(ship.getFluxTracker().isOverloadedOrVenting()
+                    || ship.getFluxTracker().getCurrFlux() + addedFlux > ship.getFluxTracker().getMaxFlux()) {
 
-                //deactive system before overload
+                //deactive system
                 activate();
                 return;
             }

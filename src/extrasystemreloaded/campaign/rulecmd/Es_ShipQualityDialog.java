@@ -46,9 +46,8 @@ public class Es_ShipQualityDialog extends ESDialog {
         FleetMemberAPI selectedShip = context.getSelectedShip();
         ExtraSystems buff = context.getBuff();
         float shipQuality = context.getShipQuality();
-        float shipBaseValue = context.getShipBaseValue();
         float upgradeQualityMult = getMarketQualityMult(context.getCurrMarket());
-        float estimatedOverhaulCost = getQualityUpgradePrice(shipBaseValue, shipQuality, upgradeQualityMult);
+        float estimatedOverhaulCost = getQualityUpgradePrice(selectedShip, shipQuality, upgradeQualityMult);
 
         switch (functionType) {
             case "QualityUpgradeSelected":
@@ -98,7 +97,7 @@ public class Es_ShipQualityDialog extends ESDialog {
                     textPanel.highlightLastInLastPara("" + newQuality, getQualityColor(newQuality));
 
                     if(buff.canUpgradeQuality(selectedShip)) {
-                        estimatedOverhaulCost = getQualityUpgradePrice(shipBaseValue, newQuality, upgradeQualityMult);
+                        estimatedOverhaulCost = getQualityUpgradePrice(selectedShip, newQuality, upgradeQualityMult);
                         String shipQualityText = "On-site team estimates that another overhaul would cost %s credits for a quality increase of %s.";
                         String needCredits = Misc.getFormat().format(estimatedOverhaulCost);
                         textPanel.addParagraph(String.format(shipQualityText, estimatedOverhaulCost, bonusQuality));
@@ -162,7 +161,10 @@ public class Es_ShipQualityDialog extends ESDialog {
         return qualityMult;
     }
 
-    private float getQualityUpgradePrice(float shipBaseValue, float baseQuality, float upgradeQualityMult) {
-        return Math.round(shipBaseValue * (float) Math.pow(baseQuality, 2) / (2f + 0.25f * (upgradeQualityMult - 1)) * 100f) / 100f;
+    private float getQualityUpgradePrice(FleetMemberAPI selectedShip, float shipQuality, float upgradeQualityMult) {
+        float shipBaseValue = Math.min(Math.min(selectedShip.getBaseDeployCost(), 1) * 40000, selectedShip.getBaseValue());
+        return Math.round(shipBaseValue * (float) Math.pow(shipQuality, 2) / (2f + 0.25f * (upgradeQualityMult - 1)) * 100f) / 100f;
     }
+
+
 }

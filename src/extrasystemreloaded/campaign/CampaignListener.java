@@ -1,18 +1,22 @@
-package extrasystemreloaded.campaign.battle;
+package extrasystemreloaded.campaign;
 
+import com.fs.starfarer.api.EveryFrameScript;
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
+import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.ESModSettings;
 import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
+import extrasystemreloaded.util.FleetMemberUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EngagementListener extends BaseCampaignEventListener {
-    public EngagementListener(boolean permaRegister) {
+public class CampaignListener extends BaseCampaignEventListener implements EveryFrameScript {
+    public CampaignListener(boolean permaRegister) {
         super(permaRegister);
     }
 
@@ -32,5 +36,21 @@ public class EngagementListener extends BaseCampaignEventListener {
             ExtraSystemHM.removeFromFleetMember(fm);
             Es_ModPlugin.removeData(fm.getId());
         }
+    }
+
+    @Override
+    public boolean isDone() {
+        return false;
+    }
+
+    @Override
+    public boolean runWhilePaused() {
+        return !FleetMemberUtils.moduleMap.isEmpty();
+    }
+
+    @Override
+    public void advance(float v) {
+        if (Global.getSector().getCampaignUI().getCurrentCoreTab() != CoreUITabId.REFIT)
+            FleetMemberUtils.moduleMap.clear();
     }
 }
