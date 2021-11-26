@@ -30,7 +30,7 @@ public class SpooledFeedersSubSystem extends dl_BaseSubsystem {
         if (subsystemState.equals(SubsystemState.IN)) {
             startTime = Global.getCombatEngine().getTotalElapsedTime(false);
 
-            float mult = 1f + SpooledFeedersDroneLib.ROF_BUFF_SUBSYSTEM;
+            float mult = 1f + SpooledFeedersDroneLib.ROF_BUFF_SUBSYSTEM / 100;
 
             stats.getBallisticRoFMult().modifyMult(id, mult);
             stats.getBallisticWeaponFluxCostMod().modifyMult(id, 1f - (SpooledFeedersDroneLib.FLUX_BUFF_SUBSYSTEM * 0.01f));
