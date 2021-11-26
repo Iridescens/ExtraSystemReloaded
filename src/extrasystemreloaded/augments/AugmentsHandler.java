@@ -31,6 +31,7 @@ public class AugmentsHandler {
         AugmentsHandler.addAugment(new EqualizerCore());
         AugmentsHandler.addAugment(new PhasefieldEngine());
         AugmentsHandler.addAugment(new HangarForgeMissiles());
+        AugmentsHandler.addAugment(new AlphaSubcore());
 
         loadConfigs();
     }

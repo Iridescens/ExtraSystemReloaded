@@ -201,4 +201,36 @@ public class Utilities {
         return false;
     }
 
+
+    public static void removePlayerCommodity(String id)
+    {
+        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        if (playerFleet == null)
+            return;
+        List<CargoStackAPI> playerCargoStacks = playerFleet.getCargo().getStacksCopy();
+
+        for (CargoStackAPI cargoStack : playerCargoStacks) {
+            if (cargoStack.isCommodityStack() && cargoStack.getCommodityId().equals(id)) {
+                cargoStack.subtract(1);
+                if (cargoStack.getSize() <= 0)
+                    playerFleet.getCargo().removeStack(cargoStack);
+                return;
+            }
+        }
+    }
+
+    public static boolean playerHasCommodity(String id)
+    {
+        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        if (playerFleet == null)
+            return false;
+        List<CargoStackAPI> playerCargoStacks = playerFleet.getCargo().getStacksCopy();
+
+        for (CargoStackAPI cargoStack : playerCargoStacks) {
+            if (cargoStack.isCommodityStack() && cargoStack.getCommodityId().equals(id) && cargoStack.getSize() > 0)
+                return true;
+        }
+
+        return false;
+    }
 }
