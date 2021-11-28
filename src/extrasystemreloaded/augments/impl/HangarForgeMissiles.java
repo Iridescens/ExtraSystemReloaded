@@ -122,6 +122,7 @@ public class HangarForgeMissiles extends Augment {
         }
 
         reloadInterval.advance(amount);
+
         if(reloadInterval.intervalElapsed()) {
 
             boolean addedAmmo = false;
@@ -142,7 +143,7 @@ public class HangarForgeMissiles extends Augment {
                 reloadInterval.setInterval(SECONDS_PER_RELOAD, SECONDS_PER_RELOAD);
 
                 Global.getCombatEngine().addFloatingText(
-                        ship.getFixedLocation(),
+                        ship.getLocation(),
                         "Reloaded missiles!",
                         8,
                         Color.WHITE,
