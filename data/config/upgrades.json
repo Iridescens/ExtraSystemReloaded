@@ -72,7 +72,7 @@
     "maxSpeedScalar": 1,
     "accelerationScalar": 3,
     "turnRateScalar": 3,
-    "burnLevelScalar": 1
+    "burnLevelScalar": 2
   },
   "Subsystems": {
     "name": "Subsystems",
@@ -97,7 +97,6 @@
   },
   "Magazines": {
     "name": "Magazines",
-    "reloadSpeedScalar": 0.05,
     "missileMagazineScalar": 3.33,
     "rateOfFireUpgradeScalar": 3,
     "rateOfFireQualityMult": 1.66

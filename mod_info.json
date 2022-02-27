@@ -4,9 +4,9 @@
     "name": "Extra System Reloaded",
     "author": "Created by Originem. Reloaded by Iridescens & President Matt Damon",
     "utility": "false",
-    "version": { "major":"0", "minor": "8", "patch": "4" },
+    "version": { "major":"0", "minor": "8", "patch": "5" },
     "description": "Upgrade ships at non-hostile markets!",
-    "gameVersion": "0.95a-RC15",
+    "gameVersion": "0.95.1a-RC6",
     "jars":["jars/ExtraSystemCore.jar"],
     "modPlugin":"extrasystemreloaded.Es_ModPlugin",
     "dependencies": [

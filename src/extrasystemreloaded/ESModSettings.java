@@ -52,15 +52,19 @@ public class ESModSettings {
     }
 
     public static int getInt(String key) {
-        return (int) get(key);
+        Object value = get(key);
+        if(value instanceof Number) {
+            return ((Number) value).intValue();
+        }
+        throw new IllegalArgumentException("The value [%s] in the Extra Systems Reloaded config is not a number.");
     }
 
     public static float getFloat(String key) {
         Object value = get(key);
-        if(value instanceof Double) {
-            return (float) (double) value;
+        if(value instanceof Number) {
+            return ((Number) value).floatValue();
         }
-        return (float) get(key);
+        throw new IllegalArgumentException("The value [%s] in the Extra Systems Reloaded config is not a number.");
     }
 
     public static JSONObject getObject(String key) {

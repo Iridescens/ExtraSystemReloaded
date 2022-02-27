@@ -62,12 +62,12 @@ public class Fighters extends Upgrade {
             if(expand) {
                 tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Fighter refit time: %s",
-                        fm.getStats().getFighterRefitTimeMult().getPercentStatMod(this.getBuffId()).getValue());
+                StatUtils.addMultBonusToTooltip(tooltip, "  Fighter refit time: %s",
+                        fm.getStats().getFighterRefitTimeMult().getMultStatMod(this.getBuffId()).getValue());
                 StatUtils.addPercentBonusToTooltip(tooltip, "  Fighter range: +%s",
                         fm.getStats().getFighterWingRange().getPercentBonus(this.getBuffId()).getValue());
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Replacement rate decrease multiplier: %s",
-                        fm.getStats().getDynamic().getStat(Stats.REPLACEMENT_RATE_DECREASE_MULT).getPercentStatMod(this.getBuffId()).getValue());
+                StatUtils.addMultBonusToTooltip(tooltip, "  Replacement rate decrease multiplier: %s",
+                        fm.getStats().getDynamic().getStat(Stats.REPLACEMENT_RATE_DECREASE_MULT).getMultStatMod(this.getBuffId()).getValue());
                 StatUtils.addPercentBonusToTooltip(tooltip, "  Replacement rate increase multiplier: +%s",
                         fm.getStats().getDynamic().getStat(Stats.REPLACEMENT_RATE_INCREASE_MULT).getPercentStatMod(this.getBuffId()).getValue());
             } else {

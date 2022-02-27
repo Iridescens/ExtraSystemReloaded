@@ -97,8 +97,8 @@ public class Weapons extends Upgrade {
                 StatUtils.addPercentBonusToTooltip(tooltip, "  Weapons damage: +%s",
                         fm.getStats().getBallisticWeaponDamageMult().getPercentStatMod(this.getBuffId()).getValue());
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Weapons flux cost: %s",
-                        fm.getStats().getBallisticWeaponFluxCostMod().getPercentBonus(this.getBuffId()).getValue());
+                StatUtils.addMultBonusToTooltip(tooltip, "  Weapons flux cost: %s",
+                        fm.getStats().getBallisticWeaponFluxCostMod().getMultBonus(this.getBuffId()).getValue());
 
                 StatUtils.addPercentBonusToTooltip(tooltip, "  Weapon mounts durability: +%s",
                         fm.getStats().getWeaponHealthBonus().getPercentBonus(this.getBuffId()).getValue());

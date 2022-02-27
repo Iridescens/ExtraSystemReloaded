@@ -1,17 +1,12 @@
 package extrasystemreloaded.augments;
 
 import com.fs.starfarer.api.Global;
-import extrasystemreloaded.augments.impl.*;
-import extrasystemreloaded.upgrades.Upgrade;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AugmentsHandler {
     public static final Logger log = Logger.getLogger(AugmentsHandler.class);
@@ -19,25 +14,29 @@ public class AugmentsHandler {
     public static final List<Augment> AUGMENT_LIST = new ArrayList<>();
 
     public static void populateAugments() {
-        if(Global.getSettings().getModManager().isModEnabled("dronelib")) {
-            AugmentsHandler.addAugment(new SpooledFeedersDroneLib());
-        } else {
-            AugmentsHandler.addAugment(new SpooledFeeders());
+        try {
+            JSONObject settings = Global.getSettings().getMergedJSONForMod("data/config/augments.json", "extra_system_reloaded");
+
+            Iterator augIterator = settings.keys();
+            while(augIterator.hasNext()) {
+                JSONObject augObj = (JSONObject) settings.getJSONObject((String) augIterator.next());
+
+                Class<?> clzz = Global.getSettings().getScriptClassLoader().loadClass(augObj.getString("augmentClass"));
+                Augment augment = (Augment) clzz.newInstance();
+
+                if(augment.shouldLoad()) {
+                    augment.loadConfig(settings.getJSONObject(augment.getKey()));
+                    AugmentsHandler.addAugment(augment);
+                }
+            }
+        } catch (JSONException | IOException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+            throw new RuntimeException(ex);
         }
-
-        AugmentsHandler.addAugment(new PlasmaFluxCatalyst());
-        AugmentsHandler.addAugment(new DriveFluxVent());
-        AugmentsHandler.addAugment(new HangarForge());
-        AugmentsHandler.addAugment(new EqualizerCore());
-        AugmentsHandler.addAugment(new PhasefieldEngine());
-        AugmentsHandler.addAugment(new HangarForgeMissiles());
-
-        loadConfigs();
     }
 
     public static void loadConfigs() {
         try {
-            JSONObject settings = Global.getSettings().loadJSON("data/config/augments.json", "extra_system_reloaded");
+            JSONObject settings = Global.getSettings().getMergedJSONForMod("data/config/augments.json", "extra_system_reloaded");
 
             for (Augment augment : AUGMENT_LIST) {
                 if (!settings.has(augment.getKey())) {

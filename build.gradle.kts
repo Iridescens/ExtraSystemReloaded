@@ -4,14 +4,14 @@
 object Variables {
     // Note: On Linux, if you installed Starsector into ~/something, you have to write /home/<user>/ instead of ~/
     val starsectorDirectory = "C:/Games/Starsector"
-    val modVersion = "0.8.4"
+    val modVersion = "0.8.5"
     val jarFileName = "ExtraSystemCore.jar"
 
     val modId = "extra_system_reloaded"
     val modName = "Extra System Reloaded"
     val author = "Created by Originem. Reloaded by Iridescens & President Matt Damon"
     val description = "Upgrade ships at non-hostile markets!"
-    val gameVersion = "0.95a-RC15"
+    val gameVersion = "0.95.1a-RC6"
     val jars = arrayOf("jars/$jarFileName")
     val modPlugin = "extrasystemreloaded.Es_ModPlugin"
     val isUtilityMod = false

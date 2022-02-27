@@ -108,9 +108,9 @@ public class EqualizerCore extends Augment {
     @Override
     public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
         stats.getAutofireAimAccuracy().modifyPercent(this.getBuffId(), 1000f);
-        stats.getMaxRecoilMult().modifyPercent(this.getBuffId(), RECOIL_REDUCTION);
-        stats.getRecoilDecayMult().modifyPercent(this.getBuffId(), RECOIL_REDUCTION);
-        stats.getRecoilPerShotMult().modifyPercent(this.getBuffId(), RECOIL_REDUCTION);
+        stats.getMaxRecoilMult().modifyMult(this.getBuffId(), Math.abs(RECOIL_REDUCTION) / 100f);
+        stats.getRecoilDecayMult().modifyMult(this.getBuffId(), Math.abs(RECOIL_REDUCTION) / 100f);
+        stats.getRecoilPerShotMult().modifyMult(this.getBuffId(), Math.abs(RECOIL_REDUCTION) / 100f);
 
         stats.getWeaponTurnRateBonus().modifyPercent(this.getBuffId(), TURN_RATE_BUFF);
         stats.getBeamWeaponTurnRateBonus().modifyPercent(this.getBuffId(), TURN_RATE_BUFF);

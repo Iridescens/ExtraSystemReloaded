@@ -111,7 +111,7 @@ public class PhasefieldEngine extends Augment {
                             "before this augment is applied. ", 5, tooltipColors,
 
                     this.getName(),
-                    Math.abs(PHASE_COST_PERCENT_REDUCTION) + "%",
+                    Math.abs(PHASE_COST_PERCENT_REDUCTION / 100f) + "x",
                     PHASE_RESET_INTERVAL + " seconds",
                     INVULNERABLE_INTERVAL + " seconds",
                     PHASE_COST_IF_ZERO * 100 + "%");
@@ -125,11 +125,11 @@ public class PhasefieldEngine extends Augment {
         if(fm.getHullSpec().getShieldSpec().getPhaseCost() == 0) {
             stats.getPhaseCloakActivationCostBonus().modifyFlat(getBuffId() + "base", PHASE_COST_IF_ZERO / 100f);
         } else if (fm.getHullSpec().getShieldSpec().getPhaseCost() < 0) {
-            stats.getPhaseCloakActivationCostBonus().modifyPercent(getBuffId() + "base", -100f);
+            stats.getPhaseCloakActivationCostBonus().modifyMult(getBuffId() + "base", -1f);
         }
 
-        stats.getPhaseCloakActivationCostBonus().modifyPercent(getBuffId(), PHASE_COST_PERCENT_REDUCTION);
-        stats.getPhaseCloakCooldownBonus().modifyPercent(getBuffId(), PHASE_COOLDOWN_PERCENT_REDUCTION);
+        stats.getPhaseCloakActivationCostBonus().modifyMult(getBuffId(), PHASE_COST_PERCENT_REDUCTION / 100f);
+        stats.getPhaseCloakCooldownBonus().modifyMult(getBuffId(), PHASE_COOLDOWN_PERCENT_REDUCTION / 100f);
     }
 
     private String getPhaseStateId(ShipAPI ship) {

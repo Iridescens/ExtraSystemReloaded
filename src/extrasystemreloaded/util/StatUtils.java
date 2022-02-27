@@ -10,6 +10,7 @@ import extrasystemreloaded.hullmods.ExtraSystemHM;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.lazywizard.lazylib.MathUtils;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -49,19 +50,35 @@ public class StatUtils {
     }
 
     public static void setStatPercentBonus(StatBonus stat, String buffId, float mult) {
-        stat.modifyPercent(buffId, mult);
+        if(mult < 0) {
+            stat.modifyMult(buffId, (1f - Math.abs(mult / 100f)));
+        } else {
+            stat.modifyPercent(buffId, mult);
+        }
     }
 
     public static void setStatPercentBonus(MutableStat stat, String buffId, float mult) {
-        stat.modifyPercent(buffId, mult);
+        if(mult < 0) {
+            stat.modifyMult(buffId, (1f - Math.abs(mult / 100f)));
+        } else {
+            stat.modifyPercent(buffId, mult);
+        }
     }
 
     public static void setStatPercentBonus(StatBonus stat, String buffId, int level, float quality, float mult, float hullSizeFactor) {
-        stat.modifyPercent(buffId, mult * level * quality * hullSizeFactor);
+        if(mult < 0) {
+            stat.modifyMult(buffId, Math.max(0f, 1f - Math.abs((mult * level * quality * hullSizeFactor) / 100f)));
+        } else {
+            stat.modifyPercent(buffId, mult * level * quality * hullSizeFactor);
+        }
     }
 
     public static void setStatPercentBonus(MutableStat stat, String buffId, int level, float quality, float mult, float hullSizeFactor) {
-        stat.modifyPercent(buffId, mult * level * quality * hullSizeFactor);
+        if(mult < 0) {
+            stat.modifyMult(buffId, (1f - Math.abs((mult * level * quality * hullSizeFactor) / 100f)));
+        } else {
+            stat.modifyPercent(buffId, mult * level * quality * hullSizeFactor);
+        }
     }
 
     public static float getDiminishingReturnsTotal(int level, int maxLevel, float quality, float levelFactor, float qualityMult, float hullSizeFactor) {
@@ -94,6 +111,26 @@ public class StatUtils {
 
     public static void addPercentBonusToTooltipUnrounded(TooltipMakerAPI tooltip, String format, float bonusPercent, float originalValue) {
         tooltip.addPara(format, 0, Misc.getHighlightColor(), formatFloatUnrounded(bonusPercent) + "%", formatFloatUnrounded(originalValue * 0.01f * bonusPercent));
+    }
+
+    public static void addDoubleMultBonusToTooltip(TooltipMakerAPI tooltip, String format, float bonusMult, float originalValue1, float originalValue2) {
+        tooltip.addPara(format, 0, Misc.getHighlightColor(), formatFloat((bonusMult - 1f) * 100f) + "%", formatFloat(originalValue1 - originalValue1 * bonusMult), formatFloat(originalValue2 - originalValue2 * bonusMult));
+    }
+
+    public static void addMultBonusToTooltip(TooltipMakerAPI tooltip, String format, float bonusMult, float originalValue) {
+        tooltip.addPara(format, 0, Misc.getHighlightColor(), formatFloat( (bonusMult - 1f) * 100f) + "%", formatFloat(originalValue - originalValue * bonusMult));
+    }
+
+    public static void addMultBonusToTooltip(TooltipMakerAPI tooltip, String format, float bonusMult) {
+        tooltip.addPara(format, 0, Misc.getHighlightColor(), formatFloat((bonusMult - 1f) * 100f) + "%");
+    }
+
+    public static void addMultBonusToTooltipUnrounded(TooltipMakerAPI tooltip, String format, float bonusMult) {
+        tooltip.addPara(format, 0, Misc.getHighlightColor(), formatFloatUnrounded((bonusMult - 1f) * 100f) + "%");
+    }
+
+    public static void addMultBonusToTooltipUnrounded(TooltipMakerAPI tooltip, String format, float bonusMult, float originalValue) {
+        tooltip.addPara(format, 0, Misc.getHighlightColor(), formatFloatUnrounded((bonusMult - 1f) * 100f) + "%", formatFloatUnrounded(originalValue - originalValue * bonusMult));
     }
 
     public static String formatFloatUnrounded(float theFloat) {

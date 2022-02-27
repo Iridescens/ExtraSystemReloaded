@@ -38,6 +38,14 @@ public abstract class Augment {
 
     public abstract boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm);
 
+    public boolean shouldLoad() {
+        return true;
+    }
+
+    public void initialize() {
+        AugmentsHandler.addAugment(this);
+    }
+
     public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
 
     }

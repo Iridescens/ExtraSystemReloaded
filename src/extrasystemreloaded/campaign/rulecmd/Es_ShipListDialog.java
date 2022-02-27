@@ -20,8 +20,8 @@ public class Es_ShipListDialog extends ESDialog {
         final InteractionDialogAPI dialog = context.getDialog();
 
         List<FleetMemberAPI> validSelectionList = context.getShipList();
-        int rows = validSelectionList.size() > 5 ? (int) Math.ceil(validSelectionList.size() / 5f) : 1;
-        int cols = Math.min(validSelectionList.size(), 5);
+        int rows = validSelectionList.size() > 8 ? (int) Math.ceil(validSelectionList.size() / 8f) : 1;
+        int cols = Math.min(validSelectionList.size(), 10);
         cols = Math.max(cols, 4);
 
         dialog.showFleetMemberPickerDialog("Select ship", "Confirm", "Cancel", rows,
