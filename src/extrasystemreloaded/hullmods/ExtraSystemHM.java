@@ -231,11 +231,14 @@ public class ExtraSystemHM extends BaseHullMod {
             }
         } catch (Throwable th) {
             log.info("Caught augment description exception", th);
+            tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0);
         }
 
         boolean addedUpgradeSection = false;
         try {
             for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+                if (extraSystems.getUpgrade(upgrade) < 1) continue;
+
                 if (!addedUpgradeSection) {
                     addedUpgradeSection = true;
                     tooltip.addSectionHeading("Upgrades", Alignment.MID, 6);
@@ -246,6 +249,7 @@ public class ExtraSystemHM extends BaseHullMod {
             }
         } catch (Throwable th) {
             log.info("Caught upgrade description exception", th);
+            tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0);
         }
 
         if (expand) {
