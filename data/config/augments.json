@@ -66,5 +66,9 @@
     "phaseCostIfZero": 10.0, #percent of base flux capacity
     "phaseCostBaseReduction": -75.0 #reduces phase cost by this amount.
     #this reduction applies after the other mods here.
+  },
+  "AlphaSubcore": {
+    "name": "Alpha Subcore",
+    "augmentClass": "extrasystemreloaded.augments.impl.AlphaSubcore"
   }
 }

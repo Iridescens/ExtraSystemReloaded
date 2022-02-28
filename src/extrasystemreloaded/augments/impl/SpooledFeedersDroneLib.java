@@ -1,13 +1,11 @@
 package extrasystemreloaded.augments.impl;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import data.scripts.subsystems.dl_BaseSubsystem;
-import data.scripts.util.dl_SpecLoadingUtils;
 import data.scripts.util.dl_SubsystemUtils;
 import extrasystemreloaded.augments.Augment;
 import extrasystemreloaded.augments.impl.subsystems.SpooledFeedersSubSystem;
