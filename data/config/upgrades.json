@@ -15,10 +15,10 @@
   #if a variable ends with Scalar, it is a flat multiplier multiplied with level.
   "Weapons": {
     "name": "Weapons",
-    "damageUpgradeScalar": 5,
-    "damageQualityMult": 1.5,
-    "rangeUpgradeScalar": 1.66,
-    "rangeQualityMult": 2.25,
+    "damageUpgradeScalar": 3,
+    "damageQualityMult": 1.33,
+    "rangeUpgradeScalar": 1.25,
+    "rangeQualityMult": 2,
     "fluxCostUpgradeScalar": -3.66,
     "fluxCostQualityMult": 1.75,
     "weaponHealthScalar": 2
@@ -98,7 +98,7 @@
   "Magazines": {
     "name": "Magazines",
     "missileMagazineScalar": 3.33,
-    "rateOfFireUpgradeScalar": 3,
-    "rateOfFireQualityMult": 1.66
+    "rateOfFireUpgradeScalar": 5,
+    "rateOfFireQualityMult": 1.33
   }
 }
