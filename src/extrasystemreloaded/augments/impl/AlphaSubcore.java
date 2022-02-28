@@ -47,7 +47,7 @@ public class AlphaSubcore extends Augment {
         return "An Alpha Core can be coerced into performing critical ordnance calculations onboard a ship. It doesn't " +
                 "require much coersion when they are told that they will be instrumental in ship-to-ship combat, " +
                 "and although their reasons are typically \"beyond our understanding\", some of a certain faith may " +
-                "instead attribute it to a recent war.";
+                "instead attribute it to the infamous AI Wars.";
     }
 
     @Override

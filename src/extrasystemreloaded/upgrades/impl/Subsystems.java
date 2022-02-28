@@ -77,11 +77,11 @@ public class Subsystems extends Upgrade {
             if(expand) {
                 tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Peak performance time: %s",
+                StatUtils.addPercentBonusToTooltip(tooltip, "  Peak performance time: +%s",
                         fm.getStats().getPeakCRDuration().getPercentBonus(this.getBuffId()).getValue(),
                         fm.getVariant().getHullSpec().getNoCRLossTime());
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  CR degradation after peak performance time: %s",
+                StatUtils.addMultBonusToTooltip(tooltip, "  CR degradation after peak performance time: %s",
                         fm.getStats().getCRLossPerSecondPercent().getPercentBonus(this.getBuffId()).getValue(),
                         fm.getVariant().getHullSpec().getCRLossPerSecond());
             } else {

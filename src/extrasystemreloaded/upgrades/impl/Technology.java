@@ -138,12 +138,12 @@ public class Technology extends Upgrade {
                         (fm.getHullSpec().getShieldType() == ShieldAPI.ShieldType.FRONT ||
                                 fm.getHullSpec().getShieldType() == ShieldAPI.ShieldType.OMNI)) {
 
-                    StatUtils.addPercentBonusToTooltipUnrounded(tooltip, "  Shield damage taken: %s (%s)",
-                            fm.getStats().getShieldDamageTakenMult().getPercentStatMod(this.getBuffId()).getValue(),
+                    StatUtils.addMultBonusToTooltipUnrounded(tooltip, "  Shield damage taken: %s (%s)",
+                            fm.getStats().getShieldDamageTakenMult().getMultStatMod(this.getBuffId()).getValue(),
                             fm.getStats().getShieldDamageTakenMult().getBaseValue());
 
-                    StatUtils.addPercentBonusToTooltip(tooltip, "  Shield upkeep: %s (%s)",
-                            fm.getStats().getShieldUpkeepMult().getPercentStatMod(this.getBuffId()).getValue(),
+                    StatUtils.addMultBonusToTooltip(tooltip, "  Shield upkeep: %s (%s)",
+                            fm.getStats().getShieldUpkeepMult().getMultStatMod(this.getBuffId()).getValue(),
                             fm.getStats().getShieldUpkeepMult().getBaseValue() * fm.getStats().getFluxDissipation().getBaseValue());
 
                     StatUtils.addPercentBonusToTooltip(tooltip, "  Shield unfold rate: +%s",
@@ -152,16 +152,16 @@ public class Technology extends Upgrade {
                 } else if (fm.getHullSpec() != null &&
                         fm.getHullSpec().getShieldType() == ShieldAPI.ShieldType.PHASE) {
 
-                    StatUtils.addPercentBonusToTooltip(tooltip, "  Phase cloak activation cost: %s (%s)",
-                            fm.getStats().getPhaseCloakActivationCostBonus().getPercentBonus(this.getBuffId()).getValue(),
+                    StatUtils.addMultBonusToTooltip(tooltip, "  Phase cloak activation cost: %s (%s)",
+                            fm.getStats().getPhaseCloakActivationCostBonus().getMultBonus(this.getBuffId()).getValue(),
                             fm.getVariant().getHullSpec().getShieldSpec().getPhaseCost());
 
-                    StatUtils.addPercentBonusToTooltip(tooltip, "  Phase cloak upkeep cost: %s (%s)",
-                            fm.getStats().getPhaseCloakUpkeepCostBonus().getPercentBonus(this.getBuffId()).getValue(),
+                    StatUtils.addMultBonusToTooltip(tooltip, "  Phase cloak upkeep cost: %s (%s)",
+                            fm.getStats().getPhaseCloakUpkeepCostBonus().getMultBonus(this.getBuffId()).getValue(),
                             fm.getVariant().getHullSpec().getShieldSpec().getPhaseUpkeep());
 
-                    StatUtils.addPercentBonusToTooltip(tooltip, "  Phase cloak cooldown: %s",
-                            fm.getStats().getPhaseCloakCooldownBonus().getPercentBonus(this.getBuffId()).getValue());
+                    StatUtils.addMultBonusToTooltip(tooltip, "  Phase cloak cooldown: %s",
+                            fm.getStats().getPhaseCloakCooldownBonus().getMultBonus(this.getBuffId()).getValue());
                 }
             } else {
                 tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));

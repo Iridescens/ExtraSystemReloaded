@@ -95,7 +95,7 @@ public class SpooledFeedersDroneLib extends Augment {
                     this.getName(),
                     ROF_BUFF_SUBSYSTEM + "%",
                     Math.abs(FLUX_BUFF_SUBSYSTEM) + "%",
-                    Math.abs(ROF_DEBUFF_PERMANENT) + "%",
+                    Math.abs(ROF_DEBUFF_PERMANENT / 100f) + "x",
                     data.getOutTime() + " seconds",
                     data.getOutTime() + data.getCooldownTime() + " seconds");
         } else {
@@ -105,9 +105,9 @@ public class SpooledFeedersDroneLib extends Augment {
 
     @Override
     public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
-        stats.getBallisticRoFMult().modifyPercent(this.getBuffId(), ROF_DEBUFF_PERMANENT);
-        stats.getEnergyRoFMult().modifyPercent(this.getBuffId(), ROF_DEBUFF_PERMANENT);
-        stats.getMissileRoFMult().modifyPercent(this.getBuffId(), ROF_DEBUFF_PERMANENT);
+        stats.getBallisticRoFMult().modifyMult(this.getBuffId(), ROF_DEBUFF_PERMANENT / 100f);
+        stats.getEnergyRoFMult().modifyMult(this.getBuffId(), ROF_DEBUFF_PERMANENT / 100f);
+        stats.getMissileRoFMult().modifyMult(this.getBuffId(), ROF_DEBUFF_PERMANENT / 100f);
     }
 
     @Override

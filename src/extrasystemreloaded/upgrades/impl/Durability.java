@@ -80,8 +80,8 @@ public class Durability extends Upgrade {
                 StatUtils.addPercentBonusToTooltip(tooltip, "  Engines durability: +%s",
                         fm.getStats().getEngineHealthBonus().getPercentBonus(this.getBuffId()).getValue());
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  EMP damage taken: %s",
-                        fm.getStats().getEmpDamageTakenMult().getPercentStatMod(this.getBuffId()).getValue());
+                StatUtils.addMultBonusToTooltip(tooltip, "  EMP damage taken: %s",
+                        fm.getStats().getEmpDamageTakenMult().getMultStatMod(this.getBuffId()).getValue());
             } else {
                 tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));
             }

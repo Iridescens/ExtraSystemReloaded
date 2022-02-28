@@ -76,7 +76,7 @@ public class Mobility extends Upgrade {
                 StatUtils.addPercentBonusToTooltip(tooltip, "  Maximum turn rate and turn acceleration: +%s",
                         fm.getStats().getMaxTurnRate().getPercentStatMod(this.getBuffId()).getValue());
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Maximum burn level: +%s (%s)",
+                StatUtils.addPercentBonusToTooltipUnrounded(tooltip, "  Maximum burn level: +%s (%s)",
                         fm.getStats().getMaxBurnLevel().getPercentStatMod(this.getBuffId()).getValue(),
                         fm.getStats().getMaxBurnLevel().getBaseValue());
             } else {

@@ -217,27 +217,35 @@ public class ExtraSystemHM extends BaseHullMod {
         boolean expand = Keyboard.isKeyDown(Keyboard.getKeyIndex("F1"));
 
         boolean addedAugmentSection = false;
-        for (Augment augment : AugmentsHandler.AUGMENT_LIST) {
-            if (!extraSystems.hasAugment(augment.getKey())) continue;
+        try {
+            for (Augment augment : AugmentsHandler.AUGMENT_LIST) {
+                if (!extraSystems.hasAugment(augment.getKey())) continue;
 
-            if (!addedAugmentSection) {
-                addedAugmentSection = true;
-                tooltip.addSectionHeading("Augments", Alignment.MID, 6);
+                if (!addedAugmentSection) {
+                    addedAugmentSection = true;
+                    tooltip.addSectionHeading("Augments", Alignment.MID, 6);
+                }
+                augment.modifyToolTip(tooltip, fm, extraSystems, expand);
+                tooltip.setParaFontDefault();
+                tooltip.setParaFontColor(tooltipColor);
             }
-            augment.modifyToolTip(tooltip, fm, extraSystems, expand);
-            tooltip.setParaFontDefault();
-            tooltip.setParaFontColor(tooltipColor);
+        } catch (Throwable th) {
+            log.info("Caught augment description exception", th);
         }
 
         boolean addedUpgradeSection = false;
-        for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            if (!addedUpgradeSection) {
-                addedUpgradeSection = true;
-                tooltip.addSectionHeading("Upgrades", Alignment.MID, 6);
+        try {
+            for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+                if (!addedUpgradeSection) {
+                    addedUpgradeSection = true;
+                    tooltip.addSectionHeading("Upgrades", Alignment.MID, 6);
+                }
+                upgrade.modifyToolTip(tooltip, fm, extraSystems, expand);
+                tooltip.setParaFontDefault();
+                tooltip.setParaFontColor(tooltipColor);
             }
-            upgrade.modifyToolTip(tooltip, fm, extraSystems, expand);
-            tooltip.setParaFontDefault();
-            tooltip.setParaFontColor(tooltipColor);
+        } catch (Throwable th) {
+            log.info("Caught upgrade description exception", th);
         }
 
         if (expand) {
