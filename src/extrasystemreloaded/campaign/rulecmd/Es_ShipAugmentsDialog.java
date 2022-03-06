@@ -9,10 +9,10 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.Es_ModPlugin;
-import extrasystemreloaded.augments.Augment;
+import extrasystemreloaded.systems.augments.Augment;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
-import extrasystemreloaded.augments.AugmentsHandler;
+import extrasystemreloaded.systems.augments.AugmentsHandler;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 

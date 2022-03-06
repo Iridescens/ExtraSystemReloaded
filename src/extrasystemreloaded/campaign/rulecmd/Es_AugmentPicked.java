@@ -6,12 +6,12 @@ import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.util.Misc;
-import extrasystemreloaded.augments.Augment;
+import extrasystemreloaded.systems.augments.Augment;
 
 import java.util.List;
 import java.util.Map;
 
-import static extrasystemreloaded.augments.AugmentsHandler.AUGMENT_LIST;
+import static extrasystemreloaded.systems.augments.AugmentsHandler.AUGMENT_LIST;
 
 public class Es_AugmentPicked extends BaseCommandPlugin {
     public static final String MEM_KEY = "$augmentId";

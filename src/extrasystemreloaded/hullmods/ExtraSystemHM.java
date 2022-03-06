@@ -8,17 +8,18 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
+import extrasystemreloaded.systems.quality.QualityUtil;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.FleetMemberUtils;
-import extrasystemreloaded.util.Utilities;
-import extrasystemreloaded.augments.Augment;
-import extrasystemreloaded.augments.AugmentsHandler;
-import extrasystemreloaded.upgrades.Upgrade;
-import extrasystemreloaded.upgrades.UpgradesHandler;
+import extrasystemreloaded.systems.augments.Augment;
+import extrasystemreloaded.systems.augments.AugmentsHandler;
+import extrasystemreloaded.systems.upgrades.Upgrade;
+import extrasystemreloaded.systems.upgrades.UpgradesHandler;
 import org.apache.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +29,9 @@ import static extrasystemreloaded.util.StatUtils.formatFloat;
 public class ExtraSystemHM extends BaseHullMod {
     public static final Logger log = Logger.getLogger(ExtraSystemHM.class);
 
-    private static Color color = new Color(94, 206, 226);
-    private static Color tooltipColor = new Color(220, 220, 220, 255);
-    public static Color infoColor = new Color(236, 196, 0);
+    private static Color hullmodColor = new Color(94, 206, 226);
+    private static Color tooltipColor = Misc.getTextColor();
+    public static Color infoColor = Misc.getPositiveHighlightColor();
     private ExtraSystems extraSystems = null;
 
     public static void addToFleetMember(FleetMemberAPI fm) {
@@ -90,7 +91,7 @@ public class ExtraSystemHM extends BaseHullMod {
 
     @Override
     public Color getNameColor() {
-        return color;
+        return hullmodColor;
     }
 
     public ExtraSystems getExtraSystems(MutableShipStatsAPI stats) {
@@ -210,9 +211,9 @@ public class ExtraSystemHM extends BaseHullMod {
 
 
         float quality = extraSystems.getQuality(fm);
-        String qname = Utilities.getQualityName(quality);
+        String qname = QualityUtil.getQualityName(quality);
 
-        tooltip.addPara("The ship is of %s %s quality.", 0, Utilities.getQualityColor(quality), formatFloat(quality * 100) + "%", qname);
+        tooltip.addPara("The ship is of %s %s quality.", 0, QualityUtil.getQualityColor(quality), formatFloat(quality * 100) + "%", qname);
 
         boolean expand = Keyboard.isKeyDown(Keyboard.getKeyIndex("F1"));
 

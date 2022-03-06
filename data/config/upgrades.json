@@ -15,6 +15,15 @@
   #if a variable ends with Scalar, it is a flat multiplier multiplied with level.
   "Weapons": {
     "name": "Weapons",
+    "resourceRatios": {
+        "supplies": 1.0,
+        "volatiles": 2.0,
+        "organics": 0.0,
+        "hand_weapons": 1.5,
+        "metals": 2.0,
+        "rare_metals": 1.5,
+        "heavy_machinery": 1.5
+    },
     "damageUpgradeScalar": 3,
     "damageQualityMult": 1.33,
     "rangeUpgradeScalar": 1.25,
@@ -25,6 +34,15 @@
   },
   "Durability": {
     "name": "Durability",
+    "resourceRatios": {
+      "supplies": 1.0,
+      "volatiles": 0.75,
+      "organics": 2.0,
+      "hand_weapons": 0.0,
+      "metals": 3.5,
+      "rare_metals": 0.75,
+      "heavy_machinery": 3.0
+    },
     "hullUpgradeScalar": 2,
     "engineHealthScalar": 2,
     "empTakenScalar": -1.5,
@@ -33,6 +51,15 @@
   },
   "Logistics": {
     "name": "Logistics",
+    "resourceRatios": {
+      "supplies": 1.0,
+      "volatiles": 1.0,
+      "organics": 1.0,
+      "hand_weapons": 0.0,
+      "metals": 2.0,
+      "rare_metals": 3.0,
+      "heavy_machinery": 2.0
+    },
     "cargoScalar": 2,
     "crewScalar": 2,
     "fuelScalar": 2,
@@ -53,6 +80,15 @@
   },
   "Technology": {
     "name": "Technology",
+    "resourceRatios": {
+      "supplies": 1.0,
+      "volatiles": 2.0,
+      "organics": 2.0,
+      "hand_weapons": 0.0,
+      "metals": 2.0,
+      "rare_metals": 3.0,
+      "heavy_machinery": 1.0
+    },
     "sensorScalar": 1,
     "fluxUpgradeScalar": 3,
     "fluxQualityMult": 3.15,
@@ -69,6 +105,15 @@
   },
   "Mobility": {
     "name": "Mobility",
+    "resourceRatios": {
+      "supplies": 1.0,
+      "volatiles": 3.0,
+      "organics": 1.0,
+      "hand_weapons": 0.0,
+      "metals": 1.0,
+      "rare_metals": 2.0,
+      "heavy_machinery": 1.0
+    },
     "maxSpeedScalar": 1,
     "accelerationScalar": 3,
     "turnRateScalar": 3,
@@ -76,6 +121,15 @@
   },
   "Subsystems": {
     "name": "Subsystems",
+    "resourceRatios": {
+      "supplies": 3.0,
+      "volatiles": 0.0,
+      "organics": 2.0,
+      "hand_weapons": 0.0,
+      "metals": 0.0,
+      "rare_metals": 0.0,
+      "heavy_machinery": 1.5
+    },
     "peakCrScalar": 2,
     "crLossScalar": -0.25,
 
@@ -90,6 +144,15 @@
   },
   "Fighters": {
     "name": "Fighters",
+    "resourceRatios": {
+      "supplies": 2.0,
+      "volatiles": 1.0,
+      "organics": 0.0,
+      "hand_weapons": 1.0,
+      "metals": 2.0,
+      "rare_metals": 2.0,
+      "heavy_machinery": 5.0
+    },
     "refitTimeScalar": -1.33,
     "rangeScalar": 2,
     "replacementDecreaseScalar": -1.5,
@@ -97,6 +160,15 @@
   },
   "Magazines": {
     "name": "Magazines",
+    "resourceRatios": {
+      "supplies": 0.5,
+      "volatiles": 4.0,
+      "organics": 0.0,
+      "hand_weapons": 1.5,
+      "metals": 1.0,
+      "rare_metals": 0.5,
+      "heavy_machinery": 2.0
+    },
     "missileMagazineScalar": 3.33,
     "rateOfFireUpgradeScalar": 5,
     "rateOfFireQualityMult": 1.33

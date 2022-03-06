@@ -1,8 +1,8 @@
 package extrasystemreloaded.commands;
 
 import extrasystemreloaded.ESModSettings;
-import extrasystemreloaded.Es_ModPlugin;
-import extrasystemreloaded.upgrades.UpgradesHandler;
+import extrasystemreloaded.systems.augments.AugmentsHandler;
+import extrasystemreloaded.systems.upgrades.UpgradesHandler;
 import extrasystemreloaded.util.StatUtils;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
@@ -16,6 +16,7 @@ public class esr_reloadconfig implements BaseCommand {
             ESModSettings.loadModSettings();
             StatUtils.loadStatCurves();
             UpgradesHandler.loadConfigs();
+            AugmentsHandler.loadConfigs();
 
             return CommandResult.SUCCESS;
         } else {

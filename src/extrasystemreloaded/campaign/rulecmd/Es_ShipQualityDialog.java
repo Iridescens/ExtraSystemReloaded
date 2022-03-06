@@ -12,6 +12,7 @@ import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
+import extrasystemreloaded.systems.quality.QualityUtil;
 import extrasystemreloaded.util.ExtraSystems;
 
 import java.awt.*;
@@ -54,9 +55,9 @@ public class Es_ShipQualityDialog extends ESDialog {
                 if (selectedShip != null) {
                     float bonusQuality = baseQualityStep * upgradeQualityMult;
                     textPanel.addParagraph(TextTip.quality1);
-                    String shipQualityText = "" + Math.round(shipQuality * 1000f) / 1000f + getQualityName(shipQuality);
+                    String shipQualityText = "" + Math.round(shipQuality * 1000f) / 1000f + QualityUtil.getQualityName(shipQuality);
                     textPanel.appendToLastParagraph(" " + shipQualityText);
-                    textPanel.highlightLastInLastPara(shipQualityText, getQualityColor(shipQuality));
+                    textPanel.highlightLastInLastPara(shipQualityText, QualityUtil.getQualityColor(shipQuality));
                     shipQualityText = "Local industrial facilities are capable of improving overall quality rating of ships by " + bonusQuality;
                     textPanel.addParagraph(shipQualityText);
                     textPanel.highlightLastInLastPara("" + bonusQuality, Color.green);
@@ -94,7 +95,7 @@ public class Es_ShipQualityDialog extends ESDialog {
 
                     String text2 = "After some improvements here and there, your ship now has quality rating of " + newQuality;
                     textPanel.addParagraph(text2);
-                    textPanel.highlightLastInLastPara("" + newQuality, getQualityColor(newQuality));
+                    textPanel.highlightLastInLastPara("" + newQuality, QualityUtil.getQualityColor(newQuality));
 
                     if(buff.canUpgradeQuality(selectedShip)) {
                         estimatedOverhaulCost = getQualityUpgradePrice(selectedShip, newQuality, upgradeQualityMult);

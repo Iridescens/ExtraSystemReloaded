@@ -11,7 +11,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageEntityGeneratorOld;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageEntity;
 import com.fs.starfarer.api.util.Misc;
-import extrasystemreloaded.upgrades.ESUpgrades;
+import extrasystemreloaded.systems.upgrades.ESUpgrades;
 
 import java.util.ArrayList;
 import java.util.List;

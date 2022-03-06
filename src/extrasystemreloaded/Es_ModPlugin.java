@@ -6,11 +6,12 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import extrasystemreloaded.augments.AugmentsHandler;
+import extrasystemreloaded.integration.indevo.IndEvoUtil;
+import extrasystemreloaded.systems.augments.AugmentsHandler;
 import extrasystemreloaded.campaign.CampaignListener;
 import extrasystemreloaded.campaign.salvage.SalvageListener;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
-import extrasystemreloaded.upgrades.UpgradesHandler;
+import extrasystemreloaded.systems.upgrades.UpgradesHandler;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.FleetMemberUtils;
 import extrasystemreloaded.util.StatUtils;
@@ -32,7 +33,7 @@ public class Es_ModPlugin extends BaseModPlugin {
 	private static SalvageListener salvageListener = null;
 
 	@Override
-    public void onGameLoad(boolean newGame){
+    public void onGameLoad(boolean newGame) {
 		FleetMemberUtils.moduleMap.clear();
 
 		ESModSettings.loadModSettings();
@@ -40,6 +41,9 @@ public class Es_ModPlugin extends BaseModPlugin {
 		UpgradesHandler.populateUpgrades();
 		AugmentsHandler.populateAugments();
 
+		if(Global.getSettings().getModManager().isModEnabled("IndEvo")) {
+			IndEvoUtil.loadIntegration();
+		}
 
 		Global.getSector().getListenerManager().addListener(salvageListener = new SalvageListener(), true);
 		Global.getSector().addTransientScript(campaignListener = new CampaignListener(false));

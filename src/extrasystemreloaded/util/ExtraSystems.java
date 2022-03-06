@@ -6,17 +6,13 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.ESModSettings;
 import extrasystemreloaded.Es_ModPlugin;
-import extrasystemreloaded.augments.Augment;
-import extrasystemreloaded.augments.ESAugments;
-import extrasystemreloaded.upgrades.ESUpgrades;
-import extrasystemreloaded.upgrades.Upgrade;
-import extrasystemreloaded.upgrades.UpgradesHandler;
+import extrasystemreloaded.systems.augments.Augment;
+import extrasystemreloaded.systems.augments.ESAugments;
+import extrasystemreloaded.systems.upgrades.ESUpgrades;
+import extrasystemreloaded.systems.upgrades.Upgrade;
 
 import java.util.Random;
 import java.util.UUID;
-
-import static extrasystemreloaded.util.Utilities.RESOURCE_NAME;
-import static extrasystemreloaded.util.Utilities.getFleetCargoMap;
 
 public class ExtraSystems {
     public static ExtraSystems getForFleetMember(FleetMemberAPI fm) {
@@ -125,43 +121,7 @@ public class ExtraSystems {
         return this.upgrades.getHullSizeFactor(hullSize);
     }
 
-    public String getCanUpgradeWithImpossibleTooltip(FleetMemberAPI shipSelected) {
-        return getCanUpgradeWithImpossibleTooltip(shipSelected, null, null);
-    }
-
-    public String getCanUpgradeWithImpossibleTooltip(FleetMemberAPI shipSelected, Upgrade upgrade, MarketAPI market) {
-        String returnValue = null;
-        if(upgrade != null) {
-            if(this.getUpgrade(upgrade) >= upgrade.getMaxLevel(shipSelected.getHullSpec().getHullSize())) {
-                returnValue = "This ship cannot support any more upgrades of this type.";
-            }
-        }
-        return returnValue;
-    }
-
-    public String canUpgradeByResourceCosts(FleetMemberAPI shipSelected, MarketAPI market, Upgrade upgrade, float qualityFactor) {
-        if(Es_ModPlugin.isDebugUpgradeCosts()) {
-            return null;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        float[] resourceCosts = UpgradesHandler.getUpgradeCosts(shipSelected, upgrade, this.getUpgrade(upgrade), qualityFactor);
-        for (int i = 0; i < resourceCosts.length; ++i) {
-            String name = RESOURCE_NAME.get(i);
-
-            float fleetcargo = getFleetCargoMap(shipSelected.getFleetData().getFleet(), market)[i];
-            if (resourceCosts[i] > fleetcargo) {
-                sb.append("\n");
-                sb.append((int) (resourceCosts[i] - fleetcargo));
-                sb.append(" ");
-                sb.append(name);
-            }
-        }
-
-        if(sb.length() == 0) {
-            return null;
-        }
-
-        return sb.toString();
+    public boolean isMaxLevel(FleetMemberAPI shipSelected, Upgrade upgrade) {
+        return this.getUpgrade(upgrade) >= upgrade.getMaxLevel(shipSelected.getHullSpec().getHullSize());
     }
 }

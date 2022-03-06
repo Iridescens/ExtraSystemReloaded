@@ -10,7 +10,7 @@ import com.fs.starfarer.api.util.Misc;
 import java.util.List;
 import java.util.Map;
 
-import static extrasystemreloaded.upgrades.UpgradesHandler.UPGRADES;
+import static extrasystemreloaded.systems.upgrades.UpgradesHandler.UPGRADES;
 
 public class Es_UpgradePicked extends BaseCommandPlugin {
     public static final String MEM_KEY = "$upgradeId";

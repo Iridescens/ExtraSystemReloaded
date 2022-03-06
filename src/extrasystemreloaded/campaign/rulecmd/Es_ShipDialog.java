@@ -9,13 +9,13 @@ import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.Utilities;
-import extrasystemreloaded.upgrades.Upgrade;
-import extrasystemreloaded.upgrades.UpgradesHandler;
+import extrasystemreloaded.systems.upgrades.Upgrade;
+import extrasystemreloaded.systems.upgrades.UpgradesHandler;
 
 import java.awt.*;
 
-import static extrasystemreloaded.util.Utilities.getQualityColor;
-import static extrasystemreloaded.util.Utilities.getQualityName;
+import static extrasystemreloaded.systems.quality.QualityUtil.getQualityColor;
+import static extrasystemreloaded.systems.quality.QualityUtil.getQualityName;
 
 public class Es_ShipDialog extends ESDialog {
     public static final String RULE_MENUSTATE = "ESShipPicked";
@@ -36,16 +36,6 @@ public class Es_ShipDialog extends ESDialog {
             String shipQualityText = "" + Math.round(shipQuality * 1000f) / 1000f + getQualityName(shipQuality);
             textPanel.appendToLastParagraph(" " + shipQualityText);
             textPanel.highlightLastInLastPara(shipQualityText, getQualityColor(shipQuality));
-
-            for (Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-                ShipAPI.HullSize hullSize = selectedShip.getHullSpec().getHullSize();
-
-                int level = buff.getUpgrade(upgrade);
-                int max = upgrade.getMaxLevel(hullSize);
-
-                textPanel.addParagraph(upgrade.getName() + " (" + level + " / " + max + ")");
-            }
-
             textPanel.addParagraph("-----------------------", Color.gray);
             textPanel.addParagraph("Pick an operation");
 
@@ -55,12 +45,7 @@ public class Es_ShipDialog extends ESDialog {
                 options.setTooltip(Es_ShipQualityDialog.RULE_DIALOG_OPTION, "The quality of this ship has reached its peak.");
             }
 
-            String cantUpgrade = buff.getCanUpgradeWithImpossibleTooltip(selectedShip);
-            options.addOption("Upgrades", Es_ShipUpgradeDialog.RULE_DIALOG_OPTION, cantUpgrade);
-            if(cantUpgrade != null) {
-                options.setEnabled(Es_ShipUpgradeDialog.RULE_DIALOG_OPTION, false);
-            }
-
+            options.addOption("Upgrades", Es_ShipUpgradeDialog.RULE_DIALOG_OPTION, null);
             options.addOption("Augments", Es_ShipAugmentsDialog.RULE_DIALOG_OPTION, null);
         }
 

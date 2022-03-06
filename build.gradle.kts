@@ -4,7 +4,7 @@
 object Variables {
     // Note: On Linux, if you installed Starsector into ~/something, you have to write /home/<user>/ instead of ~/
     val starsectorDirectory = "C:/Games/Starsector"
-    val modVersion = "0.9.0"
+    val modVersion = "0.9.2"
     val jarFileName = "ExtraSystemCore.jar"
 
     val modId = "extra_system_reloaded"

@@ -5,21 +5,25 @@ import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
-import com.fs.starfarer.api.util.Misc;
 import extrasystemreloaded.ESModSettings;
-import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
-import extrasystemreloaded.upgrades.Upgrade;
-import extrasystemreloaded.upgrades.UpgradesHandler;
+import extrasystemreloaded.systems.quality.QualityUtil;
+import extrasystemreloaded.systems.upgrades.Upgrade;
+import extrasystemreloaded.systems.upgrades.UpgradesHandler;
+import extrasystemreloaded.systems.upgrades.methods.CreditsMethod;
+import extrasystemreloaded.systems.upgrades.methods.ResourcesMethod;
+import extrasystemreloaded.systems.upgrades.methods.UpgradeMethod;
 import extrasystemreloaded.util.ExtraSystems;
 
-import java.awt.*;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static extrasystemreloaded.util.Utilities.*;
-import static extrasystemreloaded.upgrades.UpgradesHandler.getUpgradeCosts;
 
 public class Es_ShipUpgradeDialog extends ESDialog {
     public static final String RULE_MENUSTATE = "ESUpgrades";
@@ -34,10 +38,6 @@ public class Es_ShipUpgradeDialog extends ESDialog {
     private static final String FUNCTIONTYPE_CONFIRM = "ConfirmExtraUpgrade";
 
     private static final String OPTION_APPLY_RESOURCES = "ESShipExtraUpgradeApplyResources";
-    private static final String OPTION_APPLY_CREDITS = "ESShipExtraUpgradeApplyCredits";
-
-    private static final String FUNCTIONTYPE_APPLY_RESOURCES = "ApplyExtraUpgradeResources";
-    private static final String FUNCTIONTYPE_APPLY_CREDITS = "ApplyExtraUpgradeCredits";
 
     @Override
     protected void process(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
@@ -58,8 +58,8 @@ public class Es_ShipUpgradeDialog extends ESDialog {
     private void showUpgradeOptions(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
 
         String functionType = context.getFunctionType();
-        FleetMemberAPI selectedShip = context.getSelectedShip();
-        Upgrade selectedUpgrade = context.getSelectedUpgrade();
+        FleetMemberAPI selectedShip = context.getSelectedShip(); //memkey set by rules.csv
+        Upgrade selectedUpgrade = context.getSelectedUpgrade(); //memkey set by rules.csv
 
         switch (functionType) {
             case FUNCTIONTYPE_UPGRADES:
@@ -74,25 +74,21 @@ public class Es_ShipUpgradeDialog extends ESDialog {
                     options.addOption("Back to upgrades", RULE_DIALOG_OPTION);
                 }
                 break;
-            case FUNCTIONTYPE_APPLY_RESOURCES:
-                if (selectedShip != null && selectedUpgrade != null) {
-                    takeUpgradeResources(context, textPanel, options, visual);
-                    doAbilityUpgrade(context, textPanel, options, visual);
-                    populateAbilityPurchasedOptions(context, textPanel, options, visual);
-                    options.addOption("Back to upgrades", RULE_DIALOG_OPTION);
-                }
-                break;
-            case FUNCTIONTYPE_APPLY_CREDITS:
-                if (selectedShip != null && selectedUpgrade != null) {
-                    takeUpgradeCredits(context, textPanel, options, visual);
-                    doAbilityUpgrade(context, textPanel, options, visual);
-                    populateAbilityPurchasedOptions(context, textPanel, options, visual);
-                    options.addOption("Back to upgrades", RULE_DIALOG_OPTION);
-                }
-                break;
             default:
-                break;
+                //must be upgrade method
+                if (selectedShip != null && selectedUpgrade != null) {
+                    for(UpgradeMethod method : UpgradesHandler.UPGRADE_METHODS) {
+                        String methodOption = method.getOptionId();
+                        if (functionType.equals(methodOption)) {
+                            doAbilityUpgrade(context, method, textPanel, options, visual);
+                            populateAbilityPurchaseConfirmationOptions(context, textPanel, options, visual);
+                            break;
+                        }
+                    }
+                }
 
+                //something broke. do nothing.
+                break;
         }
     }
 
@@ -103,6 +99,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         MarketAPI currMarket = context.getCurrMarket();
         CampaignFleetAPI playerFleet = context.getPlayerFleet();
         FleetMemberAPI selectedShip = context.getSelectedShip();
+        ShipAPI.HullSize hullSize = selectedShip.getHullSpec().getHullSize();
         ExtraSystems buff = context.getBuff();
 
         boolean newPage = functionType.equals(FUNCTIONTYPE_CHANGEDPAGE);
@@ -110,35 +107,28 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         visual.showFleetMemberInfo(selectedShip);
 
         if(!newPage) {
-            textPanel.addParagraph(TextTip.resourceHeader, Color.green);
-            textPanel.addParagraph("-----------------------", Color.gray);
-            for (int i = 0; i < 7; i++) {
-                String name = RESOURCE_NAME.get(i);
-                textPanel.addParagraph(name + ":" + (int) getFleetCargoMap(playerFleet, currMarket)[i]);
-            }
-            textPanel.addParagraph("-----------------------", Color.gray);
-
             textPanel.addParagraph(TextTip.quality1);
 
             float quality = buff.getQuality(selectedShip);
-            String text = Math.round(quality * 100f) / 100f + getQualityName(quality);
+            String text = Math.round(quality * 100f) / 100f + QualityUtil.getQualityName(quality);
             textPanel.appendToLastParagraph(text);
-            textPanel.highlightLastInLastPara(text, getQualityColor(quality));
+            textPanel.highlightLastInLastPara(text, QualityUtil.getQualityColor(quality));
             textPanel.addParagraph(TextTip.chooseUpgrade);
         }
 
-        for (int i = upgradePageIndex * 5; i < Math.min(upgradePageIndex * 5 + 5, UpgradesHandler.UPGRADES_LIST.size()); i++) {
-            Upgrade upgrade = UpgradesHandler.UPGRADES_LIST.get(i);
+        List<Upgrade> sortedUpgradeList = getSortedUpgradeList(selectedShip, buff, currMarket);
+
+        for (int i = upgradePageIndex * 5; i < Math.min(upgradePageIndex * 5 + 5, sortedUpgradeList.size()); i++) {
+            Upgrade upgrade = sortedUpgradeList.get(i);
             int level = buff.getUpgrade(upgrade.getKey());
-            ShipAPI.HullSize hullSize = selectedShip.getHullSpec().getHullSize();
             int max = upgrade.getMaxLevel(hullSize);
 
-            String tooltip = canUpgrade(selectedShip, buff, hullSize, upgrade, playerFleet, currMarket);
-            if(tooltip == null) {
-                options.addOption(upgrade.getName() + " (" + level + " / " + max + ")", upgrade.getKey(), upgrade.getDescription());
+            if (buff.isMaxLevel(selectedShip, upgrade)) {
+                options.addOption(upgrade.getName() + " (MAX)", upgrade.getKey(), new Color(173, 166, 94), upgrade.getDescription());
+            } else if (!canUseUpgradeMethods(selectedShip, buff, hullSize, upgrade, playerFleet, currMarket)) {
+                options.addOption(upgrade.getName() + " (" + level + " / " + max + ")", upgrade.getKey(), new Color(173, 94, 94), upgrade.getDescription());
             } else {
-                options.addOption(upgrade.getName() + " (" + level + " / " + max + ")", upgrade.getKey(), tooltip);
-                options.setEnabled(upgrade.getKey(), false);
+                options.addOption(upgrade.getName() + " (" + level + " / " + max + ")", upgrade.getKey(), upgrade.getDescription());
             }
         }
 
@@ -152,28 +142,15 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         }
     }
 
-    private String canUpgrade(FleetMemberAPI selectedShip, ExtraSystems buff, ShipAPI.HullSize hullSize, Upgrade upgrade, CampaignFleetAPI fleet, MarketAPI currMarket) {
-        String tooltip = buff.getCanUpgradeWithImpossibleTooltip(selectedShip, upgrade, currMarket);
-        if(tooltip != null) {
-            return tooltip;
+    private boolean canUseUpgradeMethods(FleetMemberAPI selectedShip, ExtraSystems buff, ShipAPI.HullSize hullSize, Upgrade upgrade, CampaignFleetAPI fleet, MarketAPI currMarket) {
+        for (UpgradeMethod method : UpgradesHandler.UPGRADE_METHODS) {
+            if (method.canShow(selectedShip, buff, upgrade, currMarket)
+                && method.canUse(selectedShip, buff, upgrade, currMarket)) {
+                return true;
+            }
         }
 
-        int level = buff.getUpgrade(upgrade);
-        int max = upgrade.getMaxLevel(hullSize);
-
-        float[] resourceCosts = getUpgradeCosts(selectedShip, upgrade, buff.getUpgrade(upgrade), buff.getQuality(selectedShip));
-        int creditCost = UpgradesHandler.getFinalCreditCost(currMarket, resourceCosts, level, max);
-
-        int remainingCredits = (int) (creditCost - fleet.getCargo().getCredits().get());
-        boolean byCredits = remainingCredits <= 0;
-        String resourceText = buff.canUpgradeByResourceCosts(selectedShip, currMarket, upgrade, buff.getQuality(selectedShip));
-        boolean byResources = resourceText == null;
-        if(!byCredits && !byResources) {
-            String credits = Misc.getFormat().format(remainingCredits);
-            return String.format("You cannot afford this upgrade. You need %s more credits or the following resources: %s", credits, resourceText);
-        }
-
-        return null;
+        return false;
     }
 
     private void populateAbilityPurchaseConfirmationOptions(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
@@ -188,41 +165,16 @@ public class Es_ShipUpgradeDialog extends ESDialog {
             int max = abilitySelected.getMaxLevel(hullSize);
             int level = buff.getUpgrade(abilitySelected);
 
-            options.addOption(
-                    String.format(OptionName.Confirm, level, max),
-                    OPTION_APPLY_RESOURCES,
-                    buff.getCanUpgradeWithImpossibleTooltip(selectedShip, abilitySelected, currMarket)
-            );
+            if(level >= max) {
+                textPanel.addParagraph("You have reached the max level for this upgrade.");
+                return;
+            }
 
-            float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, level, quality);
-            int creditCost = UpgradesHandler.getFinalCreditCost(currMarket, resourceCosts, level, max);
-            String credits = Misc.getFormat().format(creditCost);
-            options.addOption(
-                    String.format("Buy for %s credits (%s / %s)", credits, level, max),
-                    OPTION_APPLY_CREDITS,
-                    null
-            );
+            appendUpgradeSuccessChance(context, textPanel, options, visual, level, max);
 
-            if (level >= max) {
-                textPanel.addParagraph(TextTip.ability2 + "(" + level + ")", Color.yellow);
-                options.setEnabled(OPTION_APPLY_RESOURCES, false);
-                options.setEnabled(OPTION_APPLY_CREDITS, false);
-            } else {
-                boolean isCanLevelUp = appendUpgradeCostText(context, textPanel, options, visual, level, max);
-                if (!isCanLevelUp) {
-                    options.setEnabled(OPTION_APPLY_RESOURCES, false);
-
-                    String tooltip = "You need additional resources: " + buff.canUpgradeByResourceCosts(selectedShip, currMarket, abilitySelected, quality);
-                    options.setTooltip(OPTION_APPLY_RESOURCES, tooltip);
-                }
-
-                isCanLevelUp = context.getPlayerFleet().getCargo().getCredits().get() >= creditCost;
-                if (!isCanLevelUp) {
-                    options.setEnabled(OPTION_APPLY_CREDITS, false);
-
-                    String needCredits = Misc.getFormat().format(creditCost - context.getPlayerFleet().getCargo().getCredits().get());
-                    String tooltip = String.format("You need %s more credits.", needCredits);
-                    options.setTooltip(OPTION_APPLY_CREDITS, tooltip);
+            for(UpgradeMethod method : UpgradesHandler.UPGRADE_METHODS) {
+                if(method.canShow(selectedShip, buff, abilitySelected, currMarket)) {
+                    method.addOption(options, selectedShip, buff, abilitySelected, currMarket);
                 }
             }
         }
@@ -241,47 +193,23 @@ public class Es_ShipUpgradeDialog extends ESDialog {
             int level = buff.getUpgrade(abilitySelected.getKey());
             textPanel.addParagraph(abilitySelected.getName() + "(" + level + " / " + max + ")", Color.yellow);
 
-            options.addOption(OptionName.Repurchase  + " (" + level + " / " + max + ")", OPTION_APPLY_RESOURCES);
-
-            float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, level, quality);
-            int creditCost = UpgradesHandler.getFinalCreditCost(currMarket, resourceCosts, level, max);
-            String credits = Misc.getFormat().format(creditCost);
-
-            options.addOption(
-                    String.format("Purchase again for %s credits (%s / %s)", credits, level, max),
-                    OPTION_APPLY_CREDITS,
-                    null
-            );
-
             if (level >= max) {
                 textPanel.addParagraph(TextTip.ability2 + "(" + level + ")", Color.yellow);
-                options.setEnabled(OPTION_APPLY_RESOURCES, false);
-                options.setEnabled(OPTION_APPLY_CREDITS, false);
             } else {
-                boolean isCanLevelUp = appendUpgradeCostText(context, textPanel, options, visual, level, max);
-                if (!isCanLevelUp) {
-                    options.setEnabled(OPTION_APPLY_RESOURCES, false);
-
-                    String tooltip = "You need additional resources: " + buff.canUpgradeByResourceCosts(selectedShip, currMarket, abilitySelected, quality);
-                    options.setTooltip(OPTION_APPLY_RESOURCES, tooltip);
-                }
-
-                isCanLevelUp = context.getPlayerFleet().getCargo().getCredits().get() >= creditCost;
-                if (!isCanLevelUp) {
-                    options.setEnabled(OPTION_APPLY_CREDITS, false);
-
-                    String needCredits = Misc.getFormat().format(creditCost - context.getPlayerFleet().getCargo().getCredits().get());
-                    String tooltip = String.format("You need %s more credits.", needCredits);
-                    options.setTooltip(OPTION_APPLY_CREDITS, tooltip);
+                for(UpgradeMethod method : UpgradesHandler.UPGRADE_METHODS) {
+                    if(method.canShow(selectedShip, buff, abilitySelected, currMarket)) {
+                        method.addOption(options, selectedShip, buff, abilitySelected, currMarket);
+                    }
                 }
             }
         }
     }
 
-    private void doAbilityUpgrade(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
+    private void doAbilityUpgrade(ESDialogContext context, UpgradeMethod method, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
         FleetMemberAPI selectedShip = context.getSelectedShip();
         ExtraSystems buff = context.getBuff();
         Upgrade abilitySelected = context.getSelectedUpgrade();
+        MarketAPI currMarket = context.getCurrMarket();
 
         ShipAPI.HullSize hullSize = selectedShip.getHullSpec().getHullSize();
         int max = abilitySelected.getMaxLevel(hullSize);
@@ -297,7 +225,8 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         }
 
         if(success) {
-            buff.putUpgrade(abilitySelected);
+            method.apply(selectedShip, buff, abilitySelected, currMarket);
+
             buff.save(selectedShip);
             ExtraSystemHM.addToFleetMember(selectedShip);
 
@@ -308,118 +237,61 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         }
     }
 
-    private void takeUpgradeResources(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
+    private void appendUpgradeSuccessChance(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual, int level, int max) {
         MarketAPI currMarket = context.getCurrMarket();
         FleetMemberAPI selectedShip = context.getSelectedShip();
         ExtraSystems buff = context.getBuff();
         Upgrade abilitySelected = context.getSelectedUpgrade();
         CampaignFleetAPI playerFleet = context.getPlayerFleet();
 
-        int currentLevel = buff.getUpgrade(abilitySelected);
 
-        if (!Es_ModPlugin.isDebugUpgradeCosts()) {
-            float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, currentLevel, buff.getQuality(selectedShip));
-
-            if (currMarket != null
-                    && currMarket.getSubmarket(Submarkets.SUBMARKET_STORAGE) != null
-                    && currMarket.getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo() != null) {
-
-                CargoAPI storageCargo = currMarket.getSubmarket(Submarkets.SUBMARKET_STORAGE).getCargo();
-
-                resourceCosts[0] = removeCommodityAndReturnRemainingCost(storageCargo, "supplies", resourceCosts[0]);
-                resourceCosts[1] = removeCommodityAndReturnRemainingCost(storageCargo, "volatiles", resourceCosts[1]);
-                resourceCosts[2] = removeCommodityAndReturnRemainingCost(storageCargo, "organics", resourceCosts[2]);
-                resourceCosts[3] = removeCommodityAndReturnRemainingCost(storageCargo, "hand_weapons", resourceCosts[3]);
-                resourceCosts[4] = removeCommodityAndReturnRemainingCost(storageCargo, "metals", resourceCosts[4]);
-                resourceCosts[5] = removeCommodityAndReturnRemainingCost(storageCargo, "rare_metals", resourceCosts[5]);
-                resourceCosts[6] = removeCommodityAndReturnRemainingCost(storageCargo, "heavy_machinery", resourceCosts[6]);
+        if(!ESModSettings.getBoolean(ESModSettings.UPGRADE_ALWAYS_SUCCEED)) {
+            float possibility = 1f;
+            if (level != 0) {
+                float minChanceOfFailure = ESModSettings.getFloat(ESModSettings.UPGRADE_FAILURE_CHANCE);
+                possibility = (float) Math.cos(Math.PI * level * 0.5f / max)
+                        * (1f - minChanceOfFailure) + minChanceOfFailure;
             }
 
-            CargoAPI playerCargo = playerFleet.getCargo();
-            removeCommodity(playerCargo, "supplies", resourceCosts[0]);
-            removeCommodity(playerCargo, "volatiles", resourceCosts[1]);
-            removeCommodity(playerCargo, "organics", resourceCosts[2]);
-            removeCommodity(playerCargo, "hand_weapons", resourceCosts[3]);
-            removeCommodity(playerCargo, "metals", resourceCosts[4]);
-            removeCommodity(playerCargo, "rare_metals", resourceCosts[5]);
-            removeCommodity(playerCargo, "heavy_machinery", resourceCosts[6]);
+            textPanel.addParagraph(TextTip.ability3);
+            String text1 = Math.round(possibility * 1000f) / 10f + "%";
+            textPanel.appendToLastParagraph(text1);
+            textPanel.highlightLastInLastPara(text1, Color.green);
+            textPanel.appendToLastParagraph(TextTip.ability4);
         }
     }
 
+    private List<Upgrade> getSortedUpgradeList(FleetMemberAPI fm, ExtraSystems buff, MarketAPI market) {//sort upgrade list so that upgrades that we can't upgrade are put in last.
+        List<Upgrade> sortedUpgradeList = new ArrayList<>();
 
-    private void takeUpgradeCredits(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
-        MarketAPI currMarket = context.getCurrMarket();
-        FleetMemberAPI selectedShip = context.getSelectedShip();
-        ExtraSystems buff = context.getBuff();
-        Upgrade abilitySelected = context.getSelectedUpgrade();
-        CampaignFleetAPI playerFleet = context.getPlayerFleet();
+        //can afford an upgrade, and actually perform it.
+        for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+            boolean canUpgrade = !buff.isMaxLevel(fm, upgrade);
+            if (canUpgrade) {
+                canUpgrade = canUseUpgradeMethods(fm, buff, fm.getHullSpec().getHullSize(), upgrade, fm.getFleetData().getFleet(), market);
+            }
 
-        int currentLevel = buff.getUpgrade(abilitySelected);
-
-        if (!Es_ModPlugin.isDebugUpgradeCosts()) {
-            float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, currentLevel, buff.getQuality(selectedShip));
-            float creditCost = UpgradesHandler.getFinalCreditCost(currMarket, resourceCosts, currentLevel, abilitySelected.getMaxLevel(selectedShip.getHullSpec().getHullSize()));
-
-            playerFleet.getCargo().getCredits().subtract(creditCost);
+            if(canUpgrade) {
+                sortedUpgradeList.add(upgrade);
+            }
         }
-    }
 
-    private boolean appendUpgradeCostText(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual, int level, int max) {
-        MarketAPI currMarket = context.getCurrMarket();
-        FleetMemberAPI selectedShip = context.getSelectedShip();
-        ExtraSystems buff = context.getBuff();
-        Upgrade abilitySelected = context.getSelectedUpgrade();
-        CampaignFleetAPI playerFleet = context.getPlayerFleet();
-
-        boolean isCanLevelUp = true;
-        if (!Es_ModPlugin.isDebugUpgradeCosts()) {
-            float[] resourceCosts = getUpgradeCosts(selectedShip, abilitySelected, level, buff.getQuality(selectedShip));
-
-            int creditCost = UpgradesHandler.getFinalCreditCost(currMarket, resourceCosts, level, max);
-            String needCredits = Misc.getFormat().format(creditCost);
-            textPanel.addParagraph(TextTip.costHeader + needCredits + " credits OR resources listed", Color.green);
-            textPanel.addParagraph("-----------------------", Color.gray);
-
-            for (int i = 0; i < resourceCosts.length; ++i) {
-                String name = RESOURCE_NAME.get(i);
-                float fleetcargo = getFleetCargoMap(playerFleet, currMarket)[i];
-                if (resourceCosts[i] > fleetcargo) {
-                    isCanLevelUp = false;
-                    String suffix = TextTip.tooExpensivePrefix + (int) (resourceCosts[i] - fleetcargo) + TextTip.tooExpensiveSuffix;
-                    textPanel.addParagraph(name + ":" + (int) resourceCosts[i] + suffix, Color.red);
-                } else {
-                    textPanel.addParagraph(name + ":" + (int) resourceCosts[i]);
+        //can not afford an upgrade
+        for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+            if(!sortedUpgradeList.contains(upgrade)) {
+                if (!buff.isMaxLevel(fm, upgrade)) {
+                    sortedUpgradeList.add(upgrade);
                 }
             }
-            textPanel.addParagraph("-----------------------", Color.gray);
+        }
 
-            if(!ESModSettings.getBoolean(ESModSettings.UPGRADE_ALWAYS_SUCCEED)) {
-                float possibility = 1f;
-                if (level != 0) {
-                    float minChanceOfFailure = ESModSettings.getFloat(ESModSettings.UPGRADE_FAILURE_CHANCE);
-                    possibility = (float) Math.cos(Math.PI * level * 0.5f / max)
-                            * (1f - minChanceOfFailure) + minChanceOfFailure;
-                }
-
-                textPanel.addParagraph(TextTip.ability3);
-                String text1 = Math.round(possibility * 1000f) / 10f + "%";
-                textPanel.appendToLastParagraph(text1);
-                textPanel.highlightLastInLastPara(text1, Color.green);
-                textPanel.appendToLastParagraph(TextTip.ability4);
+        //cannot do an upgrade
+        for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+            if(!sortedUpgradeList.contains(upgrade)) {
+                sortedUpgradeList.add(upgrade);
             }
         }
 
-        return isCanLevelUp;
-    }
-
-    private void removeCommodity(CargoAPI cargo, String id, float cost) {
-        cargo.removeCommodity(id, cost);
-    }
-
-    private float removeCommodityAndReturnRemainingCost(CargoAPI cargo, String id, float cost) {
-        float current = cargo.getCommodityQuantity(id);
-        float taken = Math.min(current, cost);
-        cargo.removeCommodity(id, taken);
-        return cost - taken;
+        return sortedUpgradeList;
     }
 }

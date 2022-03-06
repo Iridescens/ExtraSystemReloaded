@@ -7,20 +7,19 @@ import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
-import com.fs.starfarer.campaign.BuffManager;
-import extrasystemreloaded.augments.Augment;
+import extrasystemreloaded.systems.augments.Augment;
 import extrasystemreloaded.campaign.rulecmd.Es_AugmentPicked;
 import extrasystemreloaded.campaign.rulecmd.Es_ShipPicked;
 import extrasystemreloaded.campaign.rulecmd.Es_UpgradePicked;
-import extrasystemreloaded.upgrades.Upgrade;
+import extrasystemreloaded.systems.upgrades.Upgrade;
 import extrasystemreloaded.util.ExtraSystems;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static extrasystemreloaded.augments.AugmentsHandler.AUGMENT_LIST;
-import static extrasystemreloaded.upgrades.UpgradesHandler.UPGRADES;
+import static extrasystemreloaded.systems.augments.AugmentsHandler.AUGMENT_LIST;
+import static extrasystemreloaded.systems.upgrades.UpgradesHandler.UPGRADES;
 
 public class ESDialogContext {
     private float prevTextWidth = -1;
