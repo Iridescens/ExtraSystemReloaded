@@ -66,7 +66,7 @@ public class PhasefieldEngine extends Augment {
     }
 
     @Override
-    public void loadConfig(JSONObject augmentSettings) throws JSONException {
+    public void loadConfig(String augmentKey, JSONObject augmentSettings) throws JSONException {
         NAME = augmentSettings.getString("name");
 
         PHASE_RESET_INTERVAL = (int) augmentSettings.getInt("phaseResetInterval");

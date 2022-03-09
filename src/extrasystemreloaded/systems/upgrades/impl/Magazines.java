@@ -12,18 +12,11 @@ import org.json.JSONObject;
 import java.awt.*;
 
 public class Magazines extends Upgrade {
-    public static final String UPGRADE_KEY = "Magazines";
-
     private static String NAME;
     private static float MISSILE_MAGAZINE_MULT;
 
     private static float ROF_SCALAR;
     private static float ROF_QUALITY_MULT;
-
-    @Override
-    public String getKey() {
-        return UPGRADE_KEY;
-    }
 
     @Override
     public String getName() {

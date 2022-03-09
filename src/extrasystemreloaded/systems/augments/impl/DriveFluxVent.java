@@ -61,7 +61,7 @@ public class DriveFluxVent extends Augment {
     }
 
     @Override
-    public void loadConfig(JSONObject augmentSettings) throws JSONException {
+    public void loadConfig(String augmentKey, JSONObject augmentSettings) throws JSONException {
         NAME = augmentSettings.getString("name");
 
         VENT_SPEED_INCREASE = (float) augmentSettings.getDouble("ventSpeedIncrease");

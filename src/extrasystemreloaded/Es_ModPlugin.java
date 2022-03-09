@@ -15,16 +15,15 @@ import extrasystemreloaded.systems.upgrades.UpgradesHandler;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.FleetMemberUtils;
 import extrasystemreloaded.util.StatUtils;
+import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.lazywizard.console.Console;
 
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Log4j
 public class Es_ModPlugin extends BaseModPlugin {
-	private static final Logger log = Logger.getLogger(Es_ModPlugin.class);
-
 	public static final String ES_PERSISTENTUPGRADEMAP = "ES_UPGRADEMAP";
 	private static Map<String, ExtraSystems> ShipUpgradeData;
 	private static boolean debugUpgradeCosts = false;

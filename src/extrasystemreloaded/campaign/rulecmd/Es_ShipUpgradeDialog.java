@@ -12,16 +12,12 @@ import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.systems.quality.QualityUtil;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import extrasystemreloaded.systems.upgrades.UpgradesHandler;
-import extrasystemreloaded.systems.upgrades.methods.CreditsMethod;
-import extrasystemreloaded.systems.upgrades.methods.ResourcesMethod;
 import extrasystemreloaded.systems.upgrades.methods.UpgradeMethod;
 import extrasystemreloaded.util.ExtraSystems;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static extrasystemreloaded.util.Utilities.*;
 
@@ -266,6 +262,10 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
         //can afford an upgrade, and actually perform it.
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+            if(!upgrade.shouldShow(buff)) {
+                continue;
+            }
+
             boolean canUpgrade = !buff.isMaxLevel(fm, upgrade);
             if (canUpgrade) {
                 canUpgrade = canUseUpgradeMethods(fm, buff, fm.getHullSpec().getHullSize(), upgrade, fm.getFleetData().getFleet(), market);
@@ -278,6 +278,10 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
         //can not afford an upgrade
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+            if(!upgrade.shouldShow(buff)) {
+                continue;
+            }
+
             if(!sortedUpgradeList.contains(upgrade)) {
                 if (!buff.isMaxLevel(fm, upgrade)) {
                     sortedUpgradeList.add(upgrade);
@@ -287,6 +291,10 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
         //cannot do an upgrade
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+            if(!upgrade.shouldShow(buff)) {
+                continue;
+            }
+
             if(!sortedUpgradeList.contains(upgrade)) {
                 sortedUpgradeList.add(upgrade);
             }

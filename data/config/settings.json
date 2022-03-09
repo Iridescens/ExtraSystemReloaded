@@ -28,9 +28,9 @@
 
 	#below settings determine max upgrades for upgrades that do not have a max defined.
 	"frigateMaxUpgrades": 10,
-	"destroyerMaxUpgrades": 15,
-	"cruiserMaxUpgrades": 20,
-	"capitalMaxUpgrades": 25,
+	"destroyerMaxUpgrades": 10,
+	"cruiserMaxUpgrades": 10,
+	"capitalMaxUpgrades": 10,
 	#the amount each upgrade contributes will scale to these values (so frigate at max level gets same buff as capital at max)
 
 	#quality scaling

@@ -12,19 +12,12 @@ import org.json.JSONObject;
 
 import java.awt.*;
 
-public class Fighters extends Upgrade {
-    public static final String UPGRADE_KEY = "Fighters";
-
-    private static String NAME = "Fighters";
+public class Hangars extends Upgrade {
+    private static String NAME;
     private static float REFIT_TIME_MULT;
     private static float RANGE_MULT;
     private static float REPLACEMENT_DECREASE_MULT;
     private static float REPLACEMENT_REGENERATE_MULT;
-
-    @Override
-    public String getKey() {
-        return UPGRADE_KEY;
-    }
 
     @Override
     public String getName() {

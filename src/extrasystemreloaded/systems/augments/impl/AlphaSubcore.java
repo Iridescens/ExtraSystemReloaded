@@ -1,5 +1,6 @@
 package extrasystemreloaded.systems.augments.impl;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -26,6 +27,16 @@ public class AlphaSubcore extends Augment {
     public static final int COST_REDUCTION_BOMBER = 2;
 
     private static String NAME = "Alpha Subcore";
+
+    //this mod already has an "alpha core" installation.
+    @Override
+    public boolean shouldLoad() {
+        if (Global.getSettings().getModManager().isModEnabled("mayu_specialupgrades")) {
+            return false;
+        }
+
+        return super.shouldLoad();
+    }
 
     @Override
     public String getKey() {
@@ -57,7 +68,7 @@ public class AlphaSubcore extends Augment {
     }
 
     @Override
-    public void loadConfig(JSONObject augmentSettings) throws JSONException {
+    public void loadConfig(String augmentKey, JSONObject augmentSettings) throws JSONException {
         NAME = augmentSettings.getString("name");
     }
 

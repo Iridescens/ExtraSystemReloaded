@@ -1,6 +1,5 @@
 package extrasystemreloaded.campaign.salvage;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
@@ -11,15 +10,14 @@ import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageEntityGeneratorOld;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageEntity;
 import com.fs.starfarer.api.util.Misc;
-import extrasystemreloaded.systems.upgrades.ESUpgrades;
+import lombok.extern.log4j.Log4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@Log4j
 public class SalvageListener implements ShowLootListener {
-    private static final org.apache.log4j.Logger log = Global.getLogger(ESUpgrades.class);
-
     @Override
     public void reportAboutToShowLootToPlayer(CargoAPI loot, InteractionDialogAPI dialog) {
         SectorEntityToken entity = dialog.getInteractionTarget();

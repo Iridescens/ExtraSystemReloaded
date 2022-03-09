@@ -13,8 +13,6 @@ import org.json.JSONObject;
 import java.awt.*;
 
 public class Technology extends Upgrade {
-    public static final String UPGRADE_KEY = "Technology";
-
     private static String NAME = "Technology";
     private static float SENSOR_MULT;
 
@@ -36,11 +34,6 @@ public class Technology extends Upgrade {
     private static float PHASE_ACTIVATE_FLUX_QUALITY_MULT;
 
     private static float PHASE_COOLDOWN_MULT;
-
-    @Override
-    public String getKey() {
-        return UPGRADE_KEY;
-    }
 
     @Override
     public String getName() {

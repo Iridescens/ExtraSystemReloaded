@@ -15,6 +15,7 @@
   #if a variable ends with Scalar, it is a flat multiplier multiplied with level.
   "Weapons": {
     "name": "Weapons",
+    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.Weapons",
     "resourceRatios": {
         "supplies": 1.0,
         "volatiles": 2.0,
@@ -34,6 +35,7 @@
   },
   "Durability": {
     "name": "Durability",
+    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.Durability",
     "resourceRatios": {
       "supplies": 1.0,
       "volatiles": 0.75,
@@ -51,6 +53,7 @@
   },
   "Logistics": {
     "name": "Logistics",
+    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.Logistics",
     "resourceRatios": {
       "supplies": 1.0,
       "volatiles": 1.0,
@@ -80,6 +83,7 @@
   },
   "Technology": {
     "name": "Technology",
+    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.Technology",
     "resourceRatios": {
       "supplies": 1.0,
       "volatiles": 2.0,
@@ -104,7 +108,8 @@
     "phaseCooldownScalar": -0.75
   },
   "Mobility": {
-    "name": "Mobility",
+    "name": "Engines",
+    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.Engines",
     "resourceRatios": {
       "supplies": 1.0,
       "volatiles": 3.0,
@@ -120,7 +125,8 @@
     "burnLevelScalar": 2
   },
   "Subsystems": {
-    "name": "Subsystems",
+    "name": "Conditioning",
+    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.Conditioning",
     "resourceRatios": {
       "supplies": 3.0,
       "volatiles": 0.0,
@@ -143,7 +149,8 @@
     "capitalMult": 1
   },
   "Fighters": {
-    "name": "Fighters",
+    "name": "Hangars",
+    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.Hangars",
     "resourceRatios": {
       "supplies": 2.0,
       "volatiles": 1.0,
@@ -160,6 +167,7 @@
   },
   "Magazines": {
     "name": "Magazines",
+    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.Magazines",
     "resourceRatios": {
       "supplies": 0.5,
       "volatiles": 4.0,
@@ -172,5 +180,22 @@
     "missileMagazineScalar": 3.33,
     "rateOfFireUpgradeScalar": 5,
     "rateOfFireQualityMult": 1.33
-  }
+  },
+  "Systems": {
+    "name": "Systems",
+    "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.Systems",
+    "resourceRatios": {
+      "supplies": 2.0,
+      "volatiles": 1.0,
+      "organics": 1.0,
+      "hand_weapons": 0.25,
+      "metals": 0.5,
+      "rare_metals": 3.0,
+      "heavy_machinery": 1.5
+    },
+    "systemUsesMult": 1.67,
+    "systemRechargeRateMult": 2.0,
+    "systemRangeMult": 3.33,
+    "systemCooldownMult": 2.0
+}
 }

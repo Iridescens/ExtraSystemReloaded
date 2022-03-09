@@ -1,5 +1,6 @@
 package extrasystemreloaded.hullmods;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BaseHullMod;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -7,6 +8,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.ui.Alignment;
+import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import extrasystemreloaded.systems.quality.QualityUtil;
@@ -16,7 +18,7 @@ import extrasystemreloaded.systems.augments.Augment;
 import extrasystemreloaded.systems.augments.AugmentsHandler;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import extrasystemreloaded.systems.upgrades.UpgradesHandler;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
@@ -26,13 +28,11 @@ import java.util.Map;
 
 import static extrasystemreloaded.util.StatUtils.formatFloat;
 
+@Log4j
 public class ExtraSystemHM extends BaseHullMod {
-    public static final Logger log = Logger.getLogger(ExtraSystemHM.class);
-
     private static Color hullmodColor = new Color(94, 206, 226);
     private static Color tooltipColor = Misc.getTextColor();
     public static Color infoColor = Misc.getPositiveHighlightColor();
-    private ExtraSystems extraSystems = null;
 
     public static void addToFleetMember(FleetMemberAPI fm) {
         if (fm.getVariant() == null) {
@@ -198,24 +198,25 @@ public class ExtraSystemHM extends BaseHullMod {
     }
 
     @Override
-    public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI.HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
+    public void addPostDescriptionSection(TooltipMakerAPI hullmodTooltip, ShipAPI.HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
         FleetMemberAPI fm = FleetMemberUtils.findMemberFromShip(ship);
         if(fm == null) return;
         if(fm.getShipName() == null) {
-            tooltip.addPara("Ship modules do not support tooltips.", 0);
+            hullmodTooltip.addPara("Ship modules do not support tooltips.", 0);
             return;
         }
 
         ExtraSystems extraSystems = this.getExtraSystems(fm);
         if (extraSystems == null) return;
-
-
         float quality = extraSystems.getQuality(fm);
         String qname = QualityUtil.getQualityName(quality);
 
-        tooltip.addPara("The ship is of %s %s quality.", 0, QualityUtil.getQualityColor(quality), formatFloat(quality * 100) + "%", qname);
+        hullmodTooltip.addPara("The ship is of %s %s quality.", 0, QualityUtil.getQualityColor(quality), formatFloat(quality * 100) + "%", qname);
 
         boolean expand = Keyboard.isKeyDown(Keyboard.getKeyIndex("F1"));
+
+        CustomPanelAPI customPanelAPI = Global.getSettings().createCustom(width, 500f, null);
+        TooltipMakerAPI scrollableTooltip = customPanelAPI.createUIElement(width, 500f, true);
 
         boolean addedAugmentSection = false;
         try {
@@ -224,15 +225,15 @@ public class ExtraSystemHM extends BaseHullMod {
 
                 if (!addedAugmentSection) {
                     addedAugmentSection = true;
-                    tooltip.addSectionHeading("Augments", Alignment.MID, 6);
+                    scrollableTooltip.addSectionHeading("Augments", Alignment.MID, 6);
                 }
-                augment.modifyToolTip(tooltip, fm, extraSystems, expand);
-                tooltip.setParaFontDefault();
-                tooltip.setParaFontColor(tooltipColor);
+                augment.modifyToolTip(scrollableTooltip, fm, extraSystems, expand);
+                scrollableTooltip.setParaFontDefault();
+                scrollableTooltip.setParaFontColor(tooltipColor);
             }
         } catch (Throwable th) {
             log.info("Caught augment description exception", th);
-            tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0);
+            scrollableTooltip.addPara("Caught an error! See starsector.log", Color.RED, 0);
         }
 
         boolean addedUpgradeSection = false;
@@ -242,21 +243,26 @@ public class ExtraSystemHM extends BaseHullMod {
 
                 if (!addedUpgradeSection) {
                     addedUpgradeSection = true;
-                    tooltip.addSectionHeading("Upgrades", Alignment.MID, 6);
+                    scrollableTooltip.addSectionHeading("Upgrades", Alignment.MID, 6);
                 }
-                upgrade.modifyToolTip(tooltip, fm, extraSystems, expand);
-                tooltip.setParaFontDefault();
-                tooltip.setParaFontColor(tooltipColor);
+                upgrade.modifyToolTip(scrollableTooltip, fm, extraSystems, expand);
+                scrollableTooltip.setParaFontDefault();
+                scrollableTooltip.setParaFontColor(tooltipColor);
             }
         } catch (Throwable th) {
             log.info("Caught upgrade description exception", th);
-            tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0);
+            scrollableTooltip.addPara("Caught an error! See starsector.log", Color.RED, 0);
         }
 
+
+        customPanelAPI.addUIElement(scrollableTooltip).inTL(-5f, 0);
+        hullmodTooltip.addCustom(customPanelAPI, 0f);
+        hullmodTooltip.setForceProcessInput(true);
+
         if (expand) {
-            tooltip.addPara("Press F1 to show less information.", 10, infoColor, "F1");
+            hullmodTooltip.addPara("Press F1 to show less information.", 10, infoColor, "F1");
         } else {
-            tooltip.addPara("Hold F1 to show more information.", 10, infoColor, "F1");
+            hullmodTooltip.addPara("Hold F1 to show more information.", 10, infoColor, "F1");
         }
     }
 

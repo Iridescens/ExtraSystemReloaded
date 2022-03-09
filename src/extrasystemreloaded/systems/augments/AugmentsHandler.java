@@ -19,13 +19,14 @@ public class AugmentsHandler {
 
             Iterator augIterator = settings.keys();
             while(augIterator.hasNext()) {
-                JSONObject augObj = (JSONObject) settings.getJSONObject((String) augIterator.next());
+                String augKey = (String) augIterator.next();
+                JSONObject augObj = (JSONObject) settings.getJSONObject(augKey);
 
                 Class<?> clzz = Global.getSettings().getScriptClassLoader().loadClass(augObj.getString("augmentClass"));
                 Augment augment = (Augment) clzz.newInstance();
 
                 if(augment.shouldLoad()) {
-                    augment.loadConfig(settings.getJSONObject(augment.getKey()));
+                    augment.loadConfig(augKey, augObj);
                     AugmentsHandler.addAugment(augment);
                 }
             }
@@ -43,7 +44,7 @@ public class AugmentsHandler {
                     continue;
                 }
 
-                augment.loadConfig(settings.getJSONObject(augment.getKey()));
+                augment.loadConfig(augment.getKey(), settings.getJSONObject(augment.getKey()));
             }
         } catch (JSONException | IOException ex) {
             throw new RuntimeException(ex);

@@ -15,16 +15,36 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Upgrade {
+    protected String key;
     protected JSONObject upgradeSettings;
     protected Map<String, Float> resourceRatios = new HashMap<>();
 
-    public abstract String getKey();
+    public String getKey() {
+        return this.key;
+    }
 
     public abstract String getName();
 
     public abstract String getDescription();
 
-    public void setConfig(JSONObject upgradeSettings) throws JSONException {
+    public boolean shouldLoad() {
+        return true;
+    }
+
+    public boolean shouldShow(ExtraSystems es) {
+        if (es.getUpgrade(this) > 0) {
+            return true;
+        }
+
+        return shouldShow();
+    }
+
+    public boolean shouldShow() {
+        return true;
+    }
+
+    public void setConfig(String upgradeKey, JSONObject upgradeSettings) throws JSONException {
+        this.key = upgradeKey;
         this.upgradeSettings = upgradeSettings;
         loadConfig(upgradeSettings);
 
@@ -34,7 +54,7 @@ public abstract class Upgrade {
             float ratio = 0f;
             if(settingRatios.has(resource)) {
                 //class cast exception indicates an improperly configured config
-                ratio = ((Number) settingRatios.get(resource)).floatValue();
+                ratio = ((Number) settingRatios.getDouble(resource)).floatValue();
             }
             resourceRatios.put(resource, ratio);
         }

@@ -46,6 +46,9 @@ repositories {
 dependencies {
     implementation(fileTree("libs") { include("*.jar") })
 
+    compileOnly("org.projectlombok:lombok:1.18.22")
+    annotationProcessor("org.projectlombok:lombok:1.18.22")
+
     compileOnly(fileTree("$starsectorModDirectory/LazyLib/jars") { include("*.jar") })
     compileOnly(fileTree("$starsectorModDirectory/Console Commands/jars") { include("*.jar") })
     compileOnly(fileTree("$starsectorModDirectory/DroneLib/jars") { include("*.jar") })

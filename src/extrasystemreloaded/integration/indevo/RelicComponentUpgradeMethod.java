@@ -15,13 +15,13 @@ public class RelicComponentUpgradeMethod implements UpgradeMethod {
 
     @Override
     public String getOptionId() {
-        return null;
+        return OPTION;
     }
 
     @Override
     public void addOption(OptionPanelAPI options, FleetMemberAPI fm, ExtraSystems es, Upgrade upgrade, MarketAPI market) {
         int level = es.getUpgrade(upgrade);
-        String tooltip = String.format("Upgrades using relic components are 37.5% more efficient than using other resources.\nYou have %s relic components.",
+        String tooltip = String.format("Upgrades using relic components are 37.5%% more efficient than using other resources.\nYou have %s relic components.",
                 getTotalComponents(fm.getFleetData().getFleet(), market));
 
         options.addOption(

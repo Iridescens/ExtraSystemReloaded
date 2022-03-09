@@ -12,8 +12,6 @@ import org.json.JSONObject;
 import java.awt.*;
 
 public class Weapons extends Upgrade {
-    public static final String UPGRADE_KEY = "Weapons";
-
     private static String NAME = "Weapons";
     private static float WEAPON_HEALTH_MULT;
 
@@ -25,12 +23,6 @@ public class Weapons extends Upgrade {
 
     private static float FLUX_COST_SCALAR;
     private static float FLUX_COST_QUALITY_MULT;
-
-
-    @Override
-    public String getKey() {
-        return UPGRADE_KEY;
-    }
 
     @Override
     public String getName() {

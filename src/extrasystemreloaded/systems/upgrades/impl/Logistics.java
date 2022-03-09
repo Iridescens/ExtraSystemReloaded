@@ -12,9 +12,7 @@ import org.json.JSONObject;
 import java.awt.*;
 
 public class Logistics extends Upgrade {
-    public static final String UPGRADE_KEY = "Logistics";
-
-    private static String NAME = "Logistics";
+    private static String NAME;
     private static float MAX_CARGO_MULT;
     private static float MAX_CREW_MULT;
     private static float MAX_FUEL_MULT;
@@ -34,11 +32,6 @@ public class Logistics extends Upgrade {
     private static float CR_RECOVERY_RATE_QUALITY_MULT;
     private static float REPAIR_RATE_SCALAR;
     private static float REPAIR_RATE_QUALITY_MULT;
-
-    @Override
-    public String getKey() {
-        return UPGRADE_KEY;
-    }
 
     @Override
     public String getName() {

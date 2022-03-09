@@ -20,14 +20,14 @@ public class IndEvoUtil {
         int creditCost = getCreditCostForResources(abilitySelected.getResourceCosts(shipSelected, level));
         float componentValue = Global.getSector().getEconomy().getCommoditySpec(SHIP_COMPONENT_ITEM_ID).getBasePrice();
 
-        return Math.round(creditCost / (componentValue * 1.125f));
+        return Math.max(1, Math.round(creditCost / (componentValue * 1.125f)));
     }
 
     public static int getUpgradeRelicComponentPrice(FleetMemberAPI shipSelected, Upgrade abilitySelected, int level) {
         int creditCost = getCreditCostForResources(abilitySelected.getResourceCosts(shipSelected, level));
         float componentValue = Global.getSector().getEconomy().getCommoditySpec(RELIC_COMPONENT_ITEM_ID).getBasePrice();
 
-        return Math.round(creditCost / (componentValue * 1.375f));
+        return Math.max(1, Math.round(creditCost / (componentValue * 1.375f)));
     }
 
     /**

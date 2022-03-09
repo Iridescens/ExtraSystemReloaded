@@ -26,7 +26,7 @@ public abstract class Augment {
         return getDescription() + "\n\n" + getTooltip();
     }
 
-    public abstract void loadConfig(JSONObject augmentSettings) throws JSONException;
+    public abstract void loadConfig(String augmentKey, JSONObject augmentSettings) throws JSONException;
 
     public String getBuffId() {
         return "ESR_" + getKey();

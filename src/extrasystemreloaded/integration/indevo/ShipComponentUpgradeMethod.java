@@ -15,13 +15,13 @@ public class ShipComponentUpgradeMethod implements UpgradeMethod {
 
     @Override
     public String getOptionId() {
-        return null;
+        return OPTION;
     }
 
     @Override
     public void addOption(OptionPanelAPI options, FleetMemberAPI fm, ExtraSystems es, Upgrade upgrade, MarketAPI market) {
         int level = es.getUpgrade(upgrade);
-        String tooltip = String.format("Upgrades using ship components are 12.5% more efficient than using other resources.\nYou have %s ship components.",
+        String tooltip = String.format("Upgrades using ship components are 12.5%% more efficient than using other resources.\nYou have %s ship components.",
                 getTotalComponents(fm.getFleetData().getFleet(), market));
 
         options.addOption(

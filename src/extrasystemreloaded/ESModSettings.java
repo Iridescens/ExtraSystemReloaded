@@ -33,9 +33,6 @@ public class ESModSettings {
 
     private static JSONObject modSettings = null;
 
-    private static final String ES_UPGRADECOST_MULTS_FILE = "data/config/upgrade_resource_ratio.csv";
-    private static JSONArray upgradeCostMultipliers = null;
-
     private static final Map<ShipAPI.HullSize, Integer> HULLSIZE_TO_MAXLEVEL = new HashMap<>();
     private static final Map<ShipAPI.HullSize, Float> HULLSIZE_FACTOR = new HashMap<>();
 
@@ -83,14 +80,6 @@ public class ESModSettings {
         return modSettings;
     }
 
-    public static JSONArray getUpgradeCostMultipliers() {
-        if (upgradeCostMultipliers == null) {
-            loadModSettings();
-        }
-
-        return upgradeCostMultipliers;
-    }
-
     public static Map<ShipAPI.HullSize, Integer> getHullSizeToMaxLevel() {
         if (HULLSIZE_TO_MAXLEVEL == null) {
             loadModSettings();
@@ -109,7 +98,6 @@ public class ESModSettings {
 
     public static void loadModSettings() {
         try {
-            upgradeCostMultipliers = Global.getSettings().loadCSV(ES_UPGRADECOST_MULTS_FILE);
             modSettings = Global.getSettings().loadJSON("data/config/settings.json", "extra_system_reloaded");
         } catch (JSONException | IOException ex) {
             throw new RuntimeException(ex);

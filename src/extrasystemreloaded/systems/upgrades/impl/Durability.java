@@ -12,9 +12,7 @@ import org.json.JSONObject;
 import java.awt.*;
 
 public class Durability extends Upgrade {
-    public static final String UPGRADE_KEY = "Durability";
-
-    private static String NAME = "Durability";
+    private static String NAME;
     private static float HULL_MULT;
     private static float ENGINE_HEALTH_MULT;
     private static float EMP_TAKEN_MULT;
@@ -25,11 +23,6 @@ public class Durability extends Upgrade {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getKey() {
-        return UPGRADE_KEY;
     }
 
     @Override

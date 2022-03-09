@@ -33,6 +33,11 @@ public class SpooledFeedersDroneLib extends Augment {
     private static final int COOLDOWN = DEBUFF_DURATION + 5;
 
     @Override
+    public boolean shouldLoad() {
+        return false;
+    }
+
+    @Override
     public String getKey() {
         return AUGMENT_KEY;
     }
@@ -62,7 +67,7 @@ public class SpooledFeedersDroneLib extends Augment {
     }
 
     @Override
-    public void loadConfig(JSONObject augmentSettings) throws JSONException {
+    public void loadConfig(String augmentKey, JSONObject augmentSettings) throws JSONException {
         NAME = augmentSettings.getString("name");
 
         ROF_DEBUFF_PERMANENT = (float) augmentSettings.getDouble("permanentFireRateDebuff");

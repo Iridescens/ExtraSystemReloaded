@@ -12,10 +12,8 @@ import org.json.JSONObject;
 
 import java.awt.*;
 
-public class Subsystems extends Upgrade {
-    public static final String UPGRADE_KEY = "Subsystems";
-
-    private static String NAME = "Subsystems";
+public class Conditioning extends Upgrade {
+    private static String NAME;
     private static float PEAK_CR_MULT;
     private static float CR_LOSS_MULT; //this value is a post-scaling of the other two factors.
     //if they are reduced, this will be reduced as well.
@@ -24,11 +22,6 @@ public class Subsystems extends Upgrade {
     private static float DESTROYER_MULT;
     private static float CRUISER_MULT;
     private static float CAPITAL_MULT;
-
-    @Override
-    public String getKey() {
-        return UPGRADE_KEY;
-    }
 
     @Override
     public String getName() {

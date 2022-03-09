@@ -11,19 +11,12 @@ import org.json.JSONObject;
 
 import java.awt.*;
 
-public class Mobility extends Upgrade {
-    public static final String UPGRADE_KEY = "Mobility";
-
-    private static String NAME = "Mobility";
+public class Engines extends Upgrade {
+    private static String NAME;
     private static float SPEED_MULT;
     private static float ACCELERATION_MULT;
     private static float TURN_RATE_MULT;
     private static float BURN_LEVEL_MULT;
-
-    @Override
-    public String getKey() {
-        return UPGRADE_KEY;
-    }
 
     @Override
     public String getName() {
