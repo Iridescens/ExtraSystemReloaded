@@ -20,13 +20,13 @@ import java.awt.*;
 public class HangarForgeMissiles extends Augment {
     public static final String AUGMENT_KEY = "HangarForgeMissiles";
     private static final String ITEM = "esr_hangarforge";
-    private static final Color[] tooltipColors = {Color.GREEN, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
+    private static final Color[] tooltipColors = {Color.GREEN.darker(), ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
 
     private static float COST_CREDITS = 150000;
     private static int SECONDS_PER_RELOAD = 90;
     private static float PERCENT_RELOADED = 50f;
 
-    @Getter private final Color mainColor = Color.GREEN;
+    @Getter private final Color mainColor = Color.GREEN.darker();
 
     @Override
     public void loadConfig() throws JSONException {
@@ -37,7 +37,7 @@ public class HangarForgeMissiles extends Augment {
     @Override
     public boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm) {
         return Utilities.playerHasSpecialItem(ITEM)
-                && fleet.getCargo().getCredits().get() < COST_CREDITS;
+                && fleet.getCargo().getCredits().get() >= COST_CREDITS;
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import extrasystemreloaded.systems.upgrades.methods.UpgradeMethod;
 import extrasystemreloaded.util.ExtraSystems;
+import extrasystemreloaded.util.StringUtils;
 
 public class ShipComponentUpgradeMethod implements UpgradeMethod {
     private static final String OPTION = "ESShipExtraUpgradeApplyIndEvoComponents";
@@ -21,11 +22,17 @@ public class ShipComponentUpgradeMethod implements UpgradeMethod {
     @Override
     public void addOption(OptionPanelAPI options, FleetMemberAPI fm, ExtraSystems es, Upgrade upgrade, MarketAPI market) {
         int level = es.getUpgrade(upgrade);
-        String tooltip = String.format("Upgrades using ship components are 12.5%% more efficient than using other resources.\nYou have %s ship components.",
-                getTotalComponents(fm.getFleetData().getFleet(), market));
+
+        String option = StringUtils.getTranslation("UpgradeMethods", "IndEvoComponentsOption")
+                .format("components", IndEvoUtil.getUpgradeShipComponentPrice(fm, upgrade, level))
+                .toString();
+
+        String tooltip = StringUtils.getTranslation("UpgradeMethods", "IndEvoComponentsTooltip")
+                .format("components", getTotalComponents(fm.getFleetData().getFleet(), market))
+                .toString();
 
         options.addOption(
-                String.format("Craft with %s ship components", IndEvoUtil.getUpgradeShipComponentPrice(fm, upgrade, level)),
+                option,
                 getOptionId(),
                 tooltip
         );

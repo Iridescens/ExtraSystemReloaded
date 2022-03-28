@@ -208,48 +208,52 @@ public class Es_ShipAugmentsDialog extends ESDialog {
         textPanel.addParagraph(StringUtils.getString("AugmentsDialog", "AugmentDestroyedSuccessfully"));
     }
 
-    private List<Augment> getSortedAugmentList(FleetMemberAPI fm, ExtraSystems buff, MarketAPI market) {//sort upgrade list so that upgrades that we can't upgrade are put in last.
-        List<Augment> sortedUpgradeList = new ArrayList<>();
+    private List<Augment> getSortedAugmentList(FleetMemberAPI fm, ExtraSystems buff, MarketAPI market) {
+        //sort augment list so that augmnets that we can't install are put in last.
+        List<Augment> sortedAugmentList = new ArrayList<>();
 
         //can afford an upgrade, and actually perform it.
-        for(Augment upgrade : AugmentsHandler.AUGMENT_LIST) {
-            if(!upgrade.shouldShow(fm, buff)) {
+        for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
+            if(!augment.shouldShow(fm, buff)) {
                 continue;
             }
 
-            boolean canUpgrade = upgrade.canApply(fm.getFleetData().getFleet(), fm);
-            if(canUpgrade) {
-                if (!buff.hasAugment(upgrade)) {
-                    sortedUpgradeList.add(upgrade);
-                }
+            if (buff.hasAugment(augment)) {
+                continue;
+            }
+
+            if(augment.canApply(fm.getFleetData().getFleet(), fm)) {
+                sortedAugmentList.add(augment);
             }
         }
 
         //can not afford an upgrade
-        for(Augment upgrade : AugmentsHandler.AUGMENT_LIST) {
-            if(!upgrade.shouldShow(fm, buff)) {
+        for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
+            if(!augment.shouldShow(fm, buff)) {
                 continue;
             }
 
-            if(!sortedUpgradeList.contains(upgrade)) {
-                if (!buff.hasAugment(upgrade)) {
-                    sortedUpgradeList.add(upgrade);
-                }
+            if (buff.hasAugment(augment)) {
+                continue;
+            }
+
+            if(!sortedAugmentList.contains(augment)) {
+                sortedAugmentList.add(augment);
             }
         }
 
         //cannot do an upgrade
-        for(Augment upgrade : AugmentsHandler.AUGMENT_LIST) {
-            if(!upgrade.shouldShow(fm, buff)) {
+        for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
+            if(!augment.shouldShow(fm, buff)) {
                 continue;
             }
 
-            if(!sortedUpgradeList.contains(upgrade)) {
-                sortedUpgradeList.add(upgrade);
+            if(!sortedAugmentList.contains(augment)) {
+                sortedAugmentList.add(augment);
             }
         }
 
-        return sortedUpgradeList;
+        return sortedAugmentList;
     }
 
     public static class AugmentOption extends Es_ShipDialog.ShipOption {

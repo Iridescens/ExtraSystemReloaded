@@ -9,6 +9,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import extrasystemreloaded.systems.upgrades.methods.UpgradeMethod;
 import extrasystemreloaded.util.ExtraSystems;
+import extrasystemreloaded.util.StringUtils;
 
 public class RelicComponentUpgradeMethod implements UpgradeMethod {
     private static final String OPTION = "ESShipExtraUpgradeApplyIndEvoRelics";
@@ -21,11 +22,17 @@ public class RelicComponentUpgradeMethod implements UpgradeMethod {
     @Override
     public void addOption(OptionPanelAPI options, FleetMemberAPI fm, ExtraSystems es, Upgrade upgrade, MarketAPI market) {
         int level = es.getUpgrade(upgrade);
-        String tooltip = String.format("Upgrades using relic components are 37.5%% more efficient than using other resources.\nYou have %s relic components.",
-                getTotalComponents(fm.getFleetData().getFleet(), market));
+
+        String option = StringUtils.getTranslation("UpgradeMethods", "IndEvoRelicsOption")
+                .format("relics", IndEvoUtil.getUpgradeRelicComponentPrice(fm, upgrade, level))
+                .toString();
+
+        String tooltip = StringUtils.getTranslation("UpgradeMethods", "IndEvoRelicsTooltip")
+                .format("relics", getTotalComponents(fm.getFleetData().getFleet(), market))
+                .toString();
 
         options.addOption(
-                String.format("Craft with %s relic components", IndEvoUtil.getUpgradeRelicComponentPrice(fm, upgrade, level)),
+                option,
                 getOptionId(),
                 tooltip
         );
