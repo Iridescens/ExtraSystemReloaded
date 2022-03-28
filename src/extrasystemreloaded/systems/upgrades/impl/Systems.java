@@ -1,14 +1,14 @@
 package extrasystemreloaded.systems.upgrades.impl;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipSystemSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.impl.campaign.skills.SystemsExpertise;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
 
@@ -21,30 +21,39 @@ public class Systems extends Upgrade {
     private static float SYSTEM_COOLDOWN_MULT;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    protected void loadConfig(JSONObject upgradeSettings) throws JSONException {
-        NAME = upgradeSettings.getString("name");
+    protected void loadConfig() throws JSONException {
         SYSTEM_USES_MULT = (float) upgradeSettings.getDouble("systemUsesMult");
         SYSTEM_RECHARGE_MULT = (float) upgradeSettings.getDouble("systemRechargeRateMult");
         SYSTEM_RANGE_MULT = (float) upgradeSettings.getDouble("systemRangeMult");
         SYSTEM_COOLDOWN_MULT = (float) upgradeSettings.getDouble("systemCooldownMult");
     }
 
-    @Override
-    public String getDescription() {
-        return "Increases ship system charge capacity, recharge rate, range, and cooldown.";
+    private static boolean doesShipHaveSystemUses(FleetMemberAPI fm, MutableShipStatsAPI stats) {
+        String shipSystemId = fm.getHullSpec().getShipSystemId();
+        if(shipSystemId == null) {
+            return false;
+        }
+
+        ShipSystemSpecAPI systemSpec = Global.getSettings().getShipSystemSpec(shipSystemId);
+        if(systemSpec == null) {
+            return false;
+        }
+
+        int usesBase = systemSpec.getMaxUses(null);
+        return usesBase < Integer.MAX_VALUE;
     }
 
     @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float hullSizeFactor, int level, float quality) {
-        StatUtils.setStatPercentBonus(stats.getSystemUsesBonus(), this.getBuffId(), level, quality, SYSTEM_USES_MULT, hullSizeFactor);
-        StatUtils.setStatPercentBonus(stats.getSystemRegenBonus(), this.getBuffId(), level, quality, SYSTEM_RECHARGE_MULT, hullSizeFactor);
         StatUtils.setStatPercentBonus(stats.getSystemRangeBonus(), this.getBuffId(), level, quality, SYSTEM_RANGE_MULT, hullSizeFactor);
-        StatUtils.setStatPercentBonus(stats.getSystemCooldownBonus(), this.getBuffId(), level, quality, -SYSTEM_COOLDOWN_MULT, hullSizeFactor);
+
+        if(doesShipHaveSystemUses(fm, stats)) {
+            StatUtils.setStatPercentBonus(stats.getSystemUsesBonus(), this.getBuffId(), level, quality, SYSTEM_USES_MULT, hullSizeFactor);
+            StatUtils.setStatPercentBonus(stats.getSystemRegenBonus(), this.getBuffId(), level, quality, SYSTEM_RECHARGE_MULT, hullSizeFactor);
+            StatUtils.setStatPercentBonus(stats.getSystemCooldownBonus(), this.getBuffId(), level, quality, -SYSTEM_COOLDOWN_MULT, hullSizeFactor);
+        } else {
+            StatUtils.setStatPercentBonus(stats.getSystemCooldownBonus(), this.getBuffId(), level, quality, -SYSTEM_COOLDOWN_MULT * 1.5f, hullSizeFactor);
+        }
     }
 
     @Override
@@ -56,17 +65,23 @@ public class Systems extends Upgrade {
             if(expand) {
                 tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Bonus system charges: +%s",
-                        fm.getStats().getSystemUsesBonus().getPercentBonus(this.getBuffId()).getValue());
+                if(doesShipHaveSystemUses(fm, fm.getStats())) {
+                    this.addIncreaseToTooltip(tooltip,
+                            "systemChargesIncrease",
+                            fm.getStats().getSystemUsesBonus().getPercentBonus(this.getBuffId()).getValue());
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  System reload speed: +%s",
-                        fm.getStats().getSystemRegenBonus().getPercentBonus(this.getBuffId()).getValue());
+                    this.addIncreaseToTooltip(tooltip,
+                            "systemRechargeIncrease",
+                            fm.getStats().getSystemRegenBonus().getPercentBonus(this.getBuffId()).getValue());
+                }
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  System range: +%s",
+                this.addIncreaseToTooltip(tooltip,
+                        "systemCooldownRateIncrease",
+                        fm.getStats().getSystemCooldownBonus().getMultBonus(this.getBuffId()).getValue());
+
+                this.addIncreaseToTooltip(tooltip,
+                        "systemRangeIncrease",
                         fm.getStats().getSystemRangeBonus().getPercentBonus(this.getBuffId()).getValue());
-
-                StatUtils.addPercentBonusToTooltip(tooltip, "  System cooldown speed: +%s",
-                        fm.getStats().getSystemCooldownBonus().getPercentBonus(this.getBuffId()).getValue());
             } else {
                 tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));
             }

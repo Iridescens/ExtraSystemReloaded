@@ -6,27 +6,32 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.util.ExtraSystems;
+import lombok.Getter;
+import lombok.Setter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.awt.Color;
 
 public abstract class Augment {
-    public abstract String getKey();
-
-    public abstract String getName();
+    @Getter @Setter protected String key;
+    @Getter @Setter protected String name;
+    @Getter @Setter protected String description;
+    @Getter @Setter protected String tooltip;
+    @Getter protected JSONObject augmentSettings;
 
     public abstract Color getMainColor();
-
-    public abstract String getDescription();
-
-    public abstract String getTooltip();
 
     public String getTextDescription() {
         return getDescription() + "\n\n" + getTooltip();
     }
 
-    public abstract void loadConfig(String augmentKey, JSONObject augmentSettings) throws JSONException;
+    public void setConfig(JSONObject augmentSettings) throws JSONException {
+        this.augmentSettings = augmentSettings;
+        loadConfig();
+    }
+
+    protected void loadConfig() throws JSONException {};
 
     public String getBuffId() {
         return "ESR_" + getKey();
@@ -42,8 +47,8 @@ public abstract class Augment {
         return true;
     }
 
-    public boolean shouldHide() {
-        return false;
+    public boolean shouldShow(FleetMemberAPI fm, ExtraSystems es) {
+        return true;
     }
 
     public void initialize() {

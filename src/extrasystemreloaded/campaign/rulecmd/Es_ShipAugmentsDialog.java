@@ -9,23 +9,26 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.Es_ModPlugin;
+import extrasystemreloaded.campaign.ESRuleUtils;
 import extrasystemreloaded.systems.augments.Augment;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
 import extrasystemreloaded.systems.augments.AugmentsHandler;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
+import extrasystemreloaded.util.StringUtils;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
-
-import static extrasystemreloaded.util.Utilities.TextTip;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Es_ShipAugmentsDialog extends ESDialog {
     public static final String RULE_MENUSTATE = "Augments";
     public static final String RULE_DIALOG_OPTION = "ESShipAugmentsPicked";
     private static final int NumUpgradesPerPage = 5;
 
-    private static final String FUNCTIONTYPE_MODULES = "AugmentsSelected";
+    private static final String FUNCTIONTYPE_AUGMENTS = "AugmentsSelected";
     private static final String FUNCTIONTYPE_CHANGEDPAGE = "ChangedPage";
     private static final String OPTION_NEXTPAGE = "ESShipAugmentsNEXT";
     private static final String OPTION_PREVPAGE = "ESShipAugmentsPREV";
@@ -40,18 +43,15 @@ public class Es_ShipAugmentsDialog extends ESDialog {
 
     @Override
     protected void process(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
-        options.clearOptions();
-
         FleetMemberAPI selectedShip = context.getSelectedShip();
 
         if (selectedShip != null) {
-            showOptions(context, textPanel, options, visual);
-
-            options.addOption("Back to ship", Es_ShipDialog.RULE_DIALOG_OPTION);
+            showOptions(context, textPanel, options, visual);;
         }
 
-        options.addOption("Back to ship list", Es_ShipListDialog.RULE_DIALOG_OPTION);
-        options.addOption("Back to main menu", ESDialog.RULE_DIALOG_OPTION);
+        //use shortcuts only if on paginated list
+        ESRuleUtils.addReturnOptions(options, selectedShip,
+                !(context.getFunctionType().equals(FUNCTIONTYPE_AUGMENTS) || context.getFunctionType().equals(FUNCTIONTYPE_CHANGEDPAGE)));
     }
 
     private void showOptions(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
@@ -61,7 +61,7 @@ public class Es_ShipAugmentsDialog extends ESDialog {
         Augment selectedUpgrade = context.getSelectedCore();
 
         switch (functionType) {
-            case FUNCTIONTYPE_MODULES:
+            case FUNCTIONTYPE_AUGMENTS:
             case FUNCTIONTYPE_CHANGEDPAGE:
                 if (selectedShip != null) {
                     populateAbilityOptions(context, textPanel, options, visual);
@@ -70,19 +70,25 @@ public class Es_ShipAugmentsDialog extends ESDialog {
             case FUNCTIONTYPE_CONFIRM:
                 if (selectedShip != null && selectedUpgrade != null) {
                     populateAbilityPurchaseConfirmationOptions(context, textPanel, options, visual);
-                    options.addOption("Back to augments", RULE_DIALOG_OPTION);
+
+                    options.addOption(StringUtils.getString("AugmentsDialog", "ReturnToAugmentsList"), RULE_DIALOG_OPTION);
+                    options.setShortcut(RULE_DIALOG_OPTION, Keyboard.KEY_ESCAPE, false, false, false, true);
                 }
                 break;
             case FUNCTIONTYPE_APPLY:
                 if (selectedShip != null && selectedUpgrade != null) {
-                    doAbilityPurchase(context, textPanel, options, visual);
-                    options.addOption("Back to augments", RULE_DIALOG_OPTION);
+                    doAugmentInstall(context, textPanel, options, visual);
+
+                    options.addOption(StringUtils.getString("AugmentsDialog", "ReturnToAugmentsList"), RULE_DIALOG_OPTION);
+                    options.setShortcut(RULE_DIALOG_OPTION, Keyboard.KEY_ESCAPE, false, false, false, true);
                 }
                 break;
             case FUNCTIONTYPE_DESTROY:
                 if (selectedShip != null && selectedUpgrade != null) {
-                    doAbilityDestroy(context, textPanel, options, visual);
-                    options.addOption("Back to augments", RULE_DIALOG_OPTION);
+                    doAugmentDestroy(context, textPanel, options, visual);
+
+                    options.addOption(StringUtils.getString("AugmentsDialog", "ReturnToAugmentsList"), RULE_DIALOG_OPTION);
+                    options.setShortcut(RULE_DIALOG_OPTION, Keyboard.KEY_ESCAPE, false, false, false, true);
                 }
                 break;
             default:
@@ -105,17 +111,25 @@ public class Es_ShipAugmentsDialog extends ESDialog {
         visual.showFleetMemberInfo(shipSelected);
 
         if(!newPage) {
-            textPanel.addParagraph(TextTip.chooseUpgrade);
+            textPanel.addParagraph(StringUtils.getString("AugmentsDialog", "AugmentsListOpened"));
         }
 
+        List<Augment> sortedAugmentsList = getSortedAugmentList(shipSelected, buff, currMarket);
         int addedAugments = 0;
-        for (int i = upgradePageIndex * 5; i < Math.min(upgradePageIndex * 5 + 5, AugmentsHandler.AUGMENT_LIST.size()); i++) {
-            Augment augment = AugmentsHandler.AUGMENT_LIST.get(i);
-            options.addOption(augment.getName(), augment.getKey(), augment.getTooltip());
+        for (int i = upgradePageIndex * 5; i < Math.min(upgradePageIndex * 5 + 5, sortedAugmentsList.size()); i++) {
+            Augment augment = sortedAugmentsList.get(i);
+
+            if(buff.hasAugment(augment)) {
+                options.addOption(augment.getName(), augment.getKey(), new Color(173, 166, 94), augment.getTooltip());
+            } else if (!augment.canApply(playerFleet, shipSelected)) {
+                options.addOption(augment.getName(), augment.getKey(), new Color(173, 94, 94), augment.getTooltip());
+            } else {
+                options.addOption(augment.getName(), augment.getKey(), augment.getTooltip());
+            }
         }
 
-        options.addOption("Previous page", OPTION_PREVPAGE);
-        options.addOption("Next page", OPTION_NEXTPAGE);
+        options.addOption(StringUtils.getString("CommonOptions", "PreviousPage"), OPTION_PREVPAGE);
+        options.addOption(StringUtils.getString("CommonOptions", "NextPage"), OPTION_NEXTPAGE);
         if (upgradePageIndex == 0) {
             options.setEnabled(OPTION_PREVPAGE, false);
         }
@@ -134,7 +148,7 @@ public class Es_ShipAugmentsDialog extends ESDialog {
 
             if(buff.hasAugment(abilitySelected)) {
                 options.addOption(
-                        "Destroy augment",
+                        StringUtils.getString("AugmentsDialog", "DestroyAugmentOption"),
                         OPTION_DESTROY,
                         null
                 );
@@ -142,7 +156,7 @@ public class Es_ShipAugmentsDialog extends ESDialog {
                 boolean canInstall = abilitySelected.canApply(context.getPlayerFleet(), shipSelected);
 
                 options.addOption(
-                        "Install augment",
+                        StringUtils.getString("AugmentsDialog", "InstallAugmentOption"),
                         OPTION_APPLY,
                         null
                 );
@@ -157,7 +171,7 @@ public class Es_ShipAugmentsDialog extends ESDialog {
         }
     }
 
-    private void doAbilityPurchase(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
+    private void doAugmentInstall(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
         MarketAPI currMarket = context.getCurrMarket();
         FleetMemberAPI selectedShip = context.getSelectedShip();
         ExtraSystems buff = context.getBuff();
@@ -175,11 +189,10 @@ public class Es_ShipAugmentsDialog extends ESDialog {
         ExtraSystemHM.addToFleetMember(selectedShip);
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);
-        textPanel.addParagraph(TextTip.Congratulation, Color.yellow);
-
+        textPanel.addParagraph(StringUtils.getString("AugmentsDialog", "AugmentInstalledSuccessfully"));
     }
 
-    private void doAbilityDestroy(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
+    private void doAugmentDestroy(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
         MarketAPI currMarket = context.getCurrMarket();
         FleetMemberAPI selectedShip = context.getSelectedShip();
         ExtraSystems buff = context.getBuff();
@@ -192,7 +205,61 @@ public class Es_ShipAugmentsDialog extends ESDialog {
         ExtraSystemHM.addToFleetMember(selectedShip);
 
         Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);
-        textPanel.addParagraph(TextTip.Congratulation, Color.yellow);
+        textPanel.addParagraph(StringUtils.getString("AugmentsDialog", "AugmentDestroyedSuccessfully"));
+    }
 
+    private List<Augment> getSortedAugmentList(FleetMemberAPI fm, ExtraSystems buff, MarketAPI market) {//sort upgrade list so that upgrades that we can't upgrade are put in last.
+        List<Augment> sortedUpgradeList = new ArrayList<>();
+
+        //can afford an upgrade, and actually perform it.
+        for(Augment upgrade : AugmentsHandler.AUGMENT_LIST) {
+            if(!upgrade.shouldShow(fm, buff)) {
+                continue;
+            }
+
+            boolean canUpgrade = upgrade.canApply(fm.getFleetData().getFleet(), fm);
+            if(canUpgrade) {
+                sortedUpgradeList.add(upgrade);
+            }
+        }
+
+        //can not afford an upgrade
+        for(Augment upgrade : AugmentsHandler.AUGMENT_LIST) {
+            if(!upgrade.shouldShow(fm, buff)) {
+                continue;
+            }
+
+            if(!sortedUpgradeList.contains(upgrade)) {
+                if (!buff.hasAugment(upgrade)) {
+                    sortedUpgradeList.add(upgrade);
+                }
+            }
+        }
+
+        //cannot do an upgrade
+        for(Augment upgrade : AugmentsHandler.AUGMENT_LIST) {
+            if(!upgrade.shouldShow(fm, buff)) {
+                continue;
+            }
+
+            if(!sortedUpgradeList.contains(upgrade)) {
+                sortedUpgradeList.add(upgrade);
+            }
+        }
+
+        return sortedUpgradeList;
+    }
+
+    public static class AugmentOption extends Es_ShipDialog.ShipOption {
+        public AugmentOption(int order) {
+            super(order);
+        }
+
+        @Override
+        public Object addOption(OptionPanelAPI options, FleetMemberAPI fm, ExtraSystems es, MarketAPI market) {
+            options.addOption(StringUtils.getString("AugmentsDialog", "OpenAugmentOptions"), RULE_DIALOG_OPTION, null);
+
+            return RULE_DIALOG_OPTION;
+        }
     }
 }

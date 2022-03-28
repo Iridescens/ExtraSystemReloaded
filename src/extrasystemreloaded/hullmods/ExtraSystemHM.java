@@ -215,8 +215,13 @@ public class ExtraSystemHM extends BaseHullMod {
 
         boolean expand = Keyboard.isKeyDown(Keyboard.getKeyIndex("F1"));
 
-        CustomPanelAPI customPanelAPI = Global.getSettings().createCustom(width, 500f, null);
-        TooltipMakerAPI scrollableTooltip = customPanelAPI.createUIElement(width, 500f, true);
+        CustomPanelAPI customPanelAPI = null;
+        TooltipMakerAPI tooltip = hullmodTooltip;
+
+        if(expand) {
+            customPanelAPI = Global.getSettings().createCustom(width, 500f, null);
+            tooltip = customPanelAPI.createUIElement(width, 500f, true);
+        }
 
         boolean addedAugmentSection = false;
         try {
@@ -225,15 +230,15 @@ public class ExtraSystemHM extends BaseHullMod {
 
                 if (!addedAugmentSection) {
                     addedAugmentSection = true;
-                    scrollableTooltip.addSectionHeading("Augments", Alignment.MID, 6);
+                    tooltip.addSectionHeading("Augments", Alignment.MID, 6);
                 }
-                augment.modifyToolTip(scrollableTooltip, fm, extraSystems, expand);
-                scrollableTooltip.setParaFontDefault();
-                scrollableTooltip.setParaFontColor(tooltipColor);
+                augment.modifyToolTip(tooltip, fm, extraSystems, expand);
+                tooltip.setParaFontDefault();
+                tooltip.setParaFontColor(tooltipColor);
             }
         } catch (Throwable th) {
             log.info("Caught augment description exception", th);
-            scrollableTooltip.addPara("Caught an error! See starsector.log", Color.RED, 0);
+            tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0);
         }
 
         boolean addedUpgradeSection = false;
@@ -243,21 +248,22 @@ public class ExtraSystemHM extends BaseHullMod {
 
                 if (!addedUpgradeSection) {
                     addedUpgradeSection = true;
-                    scrollableTooltip.addSectionHeading("Upgrades", Alignment.MID, 6);
+                    tooltip.addSectionHeading("Upgrades", Alignment.MID, 6);
                 }
-                upgrade.modifyToolTip(scrollableTooltip, fm, extraSystems, expand);
-                scrollableTooltip.setParaFontDefault();
-                scrollableTooltip.setParaFontColor(tooltipColor);
+                upgrade.modifyToolTip(tooltip, fm, extraSystems, expand);
+                tooltip.setParaFontDefault();
+                tooltip.setParaFontColor(tooltipColor);
             }
         } catch (Throwable th) {
             log.info("Caught upgrade description exception", th);
-            scrollableTooltip.addPara("Caught an error! See starsector.log", Color.RED, 0);
+            tooltip.addPara("Caught an error! See starsector.log", Color.RED, 0);
         }
 
-
-        customPanelAPI.addUIElement(scrollableTooltip).inTL(-5f, 0);
-        hullmodTooltip.addCustom(customPanelAPI, 0f);
-        hullmodTooltip.setForceProcessInput(true);
+        if(expand) {
+            customPanelAPI.addUIElement(tooltip).inTL(-5f, 0);
+            hullmodTooltip.addCustom(customPanelAPI, 0f);
+            hullmodTooltip.setForceProcessInput(true);
+        }
 
         if (expand) {
             hullmodTooltip.addPara("Press F1 to show less information.", 10, infoColor, "F1");

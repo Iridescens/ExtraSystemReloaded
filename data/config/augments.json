@@ -4,7 +4,6 @@
     #beyond just making the game easier/harder.
 
   "SpooledFeeders": {
-      "name": "Spooled Feeders",
       "augmentClass": "extrasystemreloaded.systems.augments.impl.SpooledFeeders",
       #the below settings are percentages, so 100 means doubled
       "weaponFireRateBuff": 100.0, #after shooting
@@ -14,11 +13,9 @@
       "debuffActiveTime": 4,
   },
   "PlasmaCatalyst": {
-    "name": "Plasma Flux Catalyst",
     "augmentClass": "extrasystemreloaded.systems.augments.impl.PlasmaFluxCatalyst"
   },
   "DriveFluxVent": {
-    "name": "Drive Flux Vent",
     "augmentClass": "extrasystemreloaded.systems.augments.impl.DriveFluxVent",
 
     "ventSpeedIncrease": 30.0, #buff to flux dissipation while venting
@@ -27,7 +24,6 @@
     "buffDuration": 4.0 #amount of time buff is active after venting
   },
   "EqualizerCore": {
-    "name": "Equalizer Core",
     "augmentClass": "extrasystemreloaded.systems.augments.impl.EqualizerCore",
 
     "recoilReduction": -25.0,
@@ -40,21 +36,18 @@
     "rangeTopBuff": -150 #receive a flat bonus of this.
   },
   "HangarForge": {
-    "name": "Hangar Forge",
     "augmentClass": "extrasystemreloaded.systems.augments.impl.HangarForge",
 
     "fighterReplacementBuff": -15.0, #decreases the time to replace a fighter
     "replacementRateDecreaseSpeed": -35.0 #this decreases the rate at which it degrades
   },
   "HangarForgeMissiles": {
-    "name": "Hacked Missile Forge",
     "augmentClass": "extrasystemreloaded.systems.augments.impl.HangarForgeMissiles",
 
     "secondsBetweenReloads": 90,
     "percentReloaded": 50.0
   },
   "PhasefieldEngine": {
-    "name": "Phasefield Engine",
     "augmentClass": "extrasystemreloaded.systems.augments.impl.PhasefieldEngine",
 
     "phaseResetInterval": 8, #amount of time unphased before the cost to phase resets
@@ -68,7 +61,6 @@
     #this reduction applies after the other mods here.
   },
   "AlphaSubcore": {
-    "name": "Alpha Subcore",
     "augmentClass": "extrasystemreloaded.systems.augments.impl.AlphaSubcore"
   }
 }

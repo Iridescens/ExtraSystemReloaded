@@ -14,7 +14,6 @@
 
   #if a variable ends with Scalar, it is a flat multiplier multiplied with level.
   "Weapons": {
-    "name": "Weapons",
     "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.Weapons",
     "resourceRatios": {
         "supplies": 1.0,
@@ -34,7 +33,6 @@
     "weaponHealthScalar": 2
   },
   "Durability": {
-    "name": "Durability",
     "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.Durability",
     "resourceRatios": {
       "supplies": 1.0,
@@ -52,7 +50,6 @@
     "armorQualityMult": 0.55
   },
   "Logistics": {
-    "name": "Logistics",
     "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.Logistics",
     "resourceRatios": {
       "supplies": 1.0,
@@ -66,12 +63,7 @@
     "cargoScalar": 2,
     "crewScalar": 2,
     "fuelScalar": 2,
-    "crDeployedUpgradeScalar": -10.2,
-    "crDeployedQualityMult": 0.9,
-    "crRecoveryUpgradeScalar": 7.5,
-    "crRecoveryQualityMult": 1.5,
-    "repairRateUpgradeScalar": 7.5,
-    "repairRateQualityMult": 1.5,
+    "repairRateScalar": 1.3,
     "suppliesToDeployUpgradeScalar": -8.5,
     "suppliesToDeployQualityMult": 2,
     "suppliesPerMonthUpgradeScalar": -4.65,
@@ -82,7 +74,6 @@
     "fuelUseQualityMult": 3
   },
   "Technology": {
-    "name": "Technology",
     "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.Technology",
     "resourceRatios": {
       "supplies": 1.0,
@@ -93,9 +84,9 @@
       "rare_metals": 3.0,
       "heavy_machinery": 1.0
     },
-    "sensorScalar": 1,
-    "fluxUpgradeScalar": 3,
-    "fluxQualityMult": 3.15,
+    "sensorScalar": 3,
+    "fluxUpgradeScalar": 3.67,
+    "fluxQualityMult": 3.25,
     "shieldFluxPerSecUpgradeScalar": -5,
     "shieldFluxPerSecQualityMult": 2.25,
     "shieldFluxPerDamUpgradeScalar": -2,
@@ -107,8 +98,7 @@
     "phaseActivateFluxQualityMult": 1.5,
     "phaseCooldownScalar": -0.75
   },
-  "Mobility": {
-    "name": "Engines",
+  "Engines": {
     "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.Engines",
     "resourceRatios": {
       "supplies": 1.0,
@@ -124,8 +114,7 @@
     "turnRateScalar": 3,
     "burnLevelScalar": 2
   },
-  "Subsystems": {
-    "name": "Conditioning",
+  "Conditioning": {
     "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.Conditioning",
     "resourceRatios": {
       "supplies": 3.0,
@@ -136,6 +125,9 @@
       "rare_metals": 0.0,
       "heavy_machinery": 1.5
     },
+    "crDeployedScalar": -1.3,
+    "crRecoveryScalar": 7.5,
+
     "peakCrScalar": 2,
     "crLossScalar": -0.25,
 
@@ -148,7 +140,7 @@
     "cruiserMult": 1.5,
     "capitalMult": 1
   },
-  "Fighters": {
+  "Hangars": {
     "name": "Hangars",
     "upgradeClass": "extrasystemreloaded.systems.upgrades.impl.Hangars",
     "resourceRatios": {

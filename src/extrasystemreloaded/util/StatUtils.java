@@ -81,6 +81,23 @@ public class StatUtils {
         }
     }
 
+    public static void setStatMultBonus(StatBonus stat, String buffId, float mult) {
+        stat.modifyMult(buffId, mult);
+    }
+
+    public static void setStatMultBonus(MutableStat stat, String buffId, float mult) {
+        stat.modifyMult(buffId, mult);
+    }
+
+    public static void setStatMultBonus(StatBonus stat, String buffId, int level, float quality, float mult, float hullSizeFactor) {
+        stat.modifyMult(buffId, 1f + mult / 100f * level * quality * hullSizeFactor);
+    }
+
+    public static void setStatMultBonus(MutableStat stat, String buffId, int level, float quality, float mult, float hullSizeFactor) {
+        stat.modifyMult(buffId, 1f + mult / 100f * level * quality * hullSizeFactor);
+    }
+
+
     public static float getDiminishingReturnsTotal(int level, int maxLevel, float quality, float levelFactor, float qualityMult, float hullSizeFactor) {
         FloatHolder finalVal = new FloatHolder(0f);
         FloatHolder levelAsFloat = new FloatHolder(level);

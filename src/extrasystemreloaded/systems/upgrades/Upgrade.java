@@ -3,11 +3,15 @@ package extrasystemreloaded.systems.upgrades;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.ESModSettings;
 import extrasystemreloaded.util.ExtraSystems;
+import extrasystemreloaded.util.StringUtils;
 import extrasystemreloaded.util.Utilities;
+import lombok.Getter;
+import lombok.Setter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,17 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Upgrade {
-    protected String key;
-    protected JSONObject upgradeSettings;
-    protected Map<String, Float> resourceRatios = new HashMap<>();
-
-    public String getKey() {
-        return this.key;
-    }
-
-    public abstract String getName();
-
-    public abstract String getDescription();
+    @Getter @Setter protected String key;
+    @Getter @Setter protected String name;
+    @Getter @Setter protected String description;
+    @Getter @Setter protected String tooltip;
+    @Getter protected JSONObject upgradeSettings;
+    @Getter protected Map<String, Float> resourceRatios = new HashMap<>();
 
     public boolean shouldLoad() {
         return true;
@@ -43,10 +42,9 @@ public abstract class Upgrade {
         return true;
     }
 
-    public void setConfig(String upgradeKey, JSONObject upgradeSettings) throws JSONException {
-        this.key = upgradeKey;
+    public void setConfig(JSONObject upgradeSettings) throws JSONException {
         this.upgradeSettings = upgradeSettings;
-        loadConfig(upgradeSettings);
+        loadConfig();
 
         resourceRatios.clear();
         JSONObject settingRatios = upgradeSettings.getJSONObject("resourceRatios");
@@ -60,11 +58,7 @@ public abstract class Upgrade {
         }
     }
 
-    protected abstract void loadConfig(JSONObject upgradeSettings) throws JSONException;
-
-    protected Map<String, Float> getResourceRatios() {
-        return resourceRatios;
-    }
+    protected void loadConfig() throws JSONException {};
 
     public String getBuffId() {
         return "ESR_" + getName();
@@ -91,6 +85,33 @@ public abstract class Upgrade {
     }
 
     public abstract void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand);
+
+    protected void addIncreaseWithFinalToTooltip(TooltipMakerAPI tooltip, String translation, Float increase, Float base) {
+        StringUtils.getTranslation(this.getKey(), translation)
+                .formatWithOneDecimal("percentIncrease", increase)
+                .formatWithOneDecimal("finalValue", base * increase / 100f)
+                .addToTooltip(tooltip, 2f);
+    }
+
+    protected void addDecreaseWithFinalToTooltip(TooltipMakerAPI tooltip, String translation, Float decrease, Float base) {
+        float finalMult = -(1f - decrease);
+        StringUtils.getTranslation(this.getKey(), translation)
+                .formatWithOneDecimal("percentDecrease", finalMult * 100f)
+                .formatWithOneDecimal("finalValue", base * finalMult)
+                .addToTooltip(tooltip, 2f);
+    }
+
+    protected void addIncreaseToTooltip(TooltipMakerAPI tooltip, String translation, Float increase) {
+        StringUtils.getTranslation(this.getKey(), translation)
+                .formatWithOneDecimal("percentIncrease", increase)
+                .addToTooltip(tooltip, 2f);
+    }
+
+    protected void addDecreaseToTooltip(TooltipMakerAPI tooltip, String translation, Float decrease) {
+        StringUtils.getTranslation(this.getKey(), translation)
+                .formatWithOneDecimal("percentDecrease", -(1f - decrease) * 100f)
+                .addToTooltip(tooltip, 2f);
+    }
 
     public Map<String, Integer> getResourceCosts(FleetMemberAPI shipSelected, int level) {
         int max = getMaxLevel(shipSelected.getHullSpec().getHullSize());

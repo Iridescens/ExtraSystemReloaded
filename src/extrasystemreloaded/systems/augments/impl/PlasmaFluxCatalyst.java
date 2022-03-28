@@ -1,5 +1,6 @@
 package extrasystemreloaded.systems.augments.impl;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -8,7 +9,9 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.systems.augments.Augment;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
+import extrasystemreloaded.util.StringUtils;
 import extrasystemreloaded.util.Utilities;
+import lombok.Getter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,10 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlasmaFluxCatalyst extends Augment {
-    public static final String AUGMENT_KEY = "PlasmaCatalyst";
-    public static final Color MAIN_COLOR = Color.blue;
     private static final String ITEM = "esr_plasmacatalyst";
-    private static final Color[] tooltipColors = {MAIN_COLOR, ExtraSystemHM.infoColor};
+    private static final Color[] tooltipColors = {Color.blue, ExtraSystemHM.infoColor};
 
     private static Map<ShipAPI.HullSize, Integer> MAX_FLUX_EQUIPMENT = new HashMap() {{
         put(ShipAPI.HullSize.FIGHTER, 10);
@@ -30,40 +31,7 @@ public class PlasmaFluxCatalyst extends Augment {
         put(ShipAPI.HullSize.CAPITAL_SHIP, 50);
     }};
 
-    private static String NAME = "Plasma Flux Catalyst";
-
-    @Override
-    public String getKey() {
-        return AUGMENT_KEY;
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    public Color getMainColor() {
-        return MAIN_COLOR;
-    }
-
-    @Override
-    public String getDescription() {
-        return "A Plasma Flux Catalyst can be used to vastly decrease the amount of equipment needed to provide " +
-                "power to a ship thanks to its ability to extract that energy from any number of capacitors in " +
-                "parallel. The space saved allows for more complicated weaponry to be installed, although the " +
-                "resulting heat from such a system is dreadful if too many capacitors or flux vents are installed.";
-    }
-
-    @Override
-    public String getTooltip() {
-        return "Improve flux capacitors and vents. Reduce CR if too many are installed.";
-    }
-
-    @Override
-    public void loadConfig(String augmentKey, JSONObject augmentSettings) throws JSONException {
-        NAME = augmentSettings.getString("name");
-    }
+    @Getter private final Color mainColor = Color.blue;
 
     @Override
     public boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm) {
@@ -71,7 +39,9 @@ public class PlasmaFluxCatalyst extends Augment {
     }
 
     public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return "You need a Plasma Flux Catalyst to install this.";
+        return StringUtils.getTranslation(this.getKey(), "needItem")
+                .format("itemName", Global.getSettings().getSpecialItemSpec(ITEM).getName())
+                .toString();
     }
 
     @Override
@@ -88,9 +58,12 @@ public class PlasmaFluxCatalyst extends Augment {
                 int maxCaps = (int) fm.getFleetCommander().getStats().getMaxCapacitorsBonus().computeEffective(MAX_FLUX_EQUIPMENT.get(fm.getHullSpec().getHullSize()));
                 int maxVents = (int) fm.getFleetCommander().getStats().getMaxVentsBonus().computeEffective(MAX_FLUX_EQUIPMENT.get(fm.getHullSpec().getHullSize()));
 
-                tooltip.addPara("%s: %s the effectiveness of flux capacitors and vents. Installing more than %s capacitors or %s vents will reduce combat readiness by %s for every one installed over that amount. " +
-                                            "Note that this decrease doesn't appear immediately inside the refit dialog.", 5, tooltipColors,
-                                                        this.getName(), "Doubles", String.valueOf(maxCaps / 2), String.valueOf(maxVents / 2), "1");
+                StringUtils.getTranslation(this.getKey(), "longDescription")
+                        .format("augmentName", this.getName())
+                        .format("capacitorLimit", maxCaps / 2)
+                        .format("ventLimit", maxVents / 2)
+                        .format("crDecrease", 1)
+                        .addToTooltip(tooltip, tooltipColors);
             } else {
                 tooltip.addPara(this.getName(), tooltipColors[0], 5);
             }

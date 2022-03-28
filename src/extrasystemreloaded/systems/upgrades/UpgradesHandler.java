@@ -4,9 +4,12 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.ESModSettings;
+import extrasystemreloaded.campaign.rulecmd.Es_ShipDialog;
+import extrasystemreloaded.campaign.rulecmd.Es_ShipUpgradeDialog;
 import extrasystemreloaded.systems.upgrades.methods.CreditsMethod;
 import extrasystemreloaded.systems.upgrades.methods.ResourcesMethod;
 import extrasystemreloaded.systems.upgrades.methods.UpgradeMethod;
+import extrasystemreloaded.util.StringUtils;
 import lombok.extern.log4j.Log4j;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,16 +19,23 @@ import java.util.*;
 
 @Log4j
 public class UpgradesHandler {
+    private static int UPGRADE_OPTION_ORDER = 1;
     public static final Map<String, Upgrade> UPGRADES = new HashMap<>();
     public static final List<Upgrade> UPGRADES_LIST = new ArrayList<>();
 
-    public static List<UpgradeMethod> UPGRADE_METHODS = new ArrayList<UpgradeMethod>() {{
-        add(new CreditsMethod());
-        add(new ResourcesMethod());
-    }};
+    public static List<UpgradeMethod> UPGRADE_METHODS = new ArrayList<UpgradeMethod>();
 
     public static void addUpgradeMethod(UpgradeMethod method) {
         UPGRADE_METHODS.add(method);
+    }
+
+    public static void initialize() {
+        UPGRADE_METHODS.clear();
+        UPGRADE_METHODS.add(new CreditsMethod());
+        UPGRADE_METHODS.add(new ResourcesMethod());
+
+        Es_ShipDialog.addShipOption(new Es_ShipUpgradeDialog.UpgradeOption(UPGRADE_OPTION_ORDER));
+        UpgradesHandler.populateUpgrades();
     }
 
     public static void populateUpgrades() {
@@ -35,13 +45,21 @@ public class UpgradesHandler {
             Iterator upgIterator = settings.keys();
             while(upgIterator.hasNext()) {
                 String upgKey = (String) upgIterator.next();
+
+                if(UPGRADES.containsKey(upgKey)) continue;
+
                 JSONObject upgObj = (JSONObject) settings.getJSONObject(upgKey);
 
                 Class<?> clzz = Global.getSettings().getScriptClassLoader().loadClass(upgObj.getString("upgradeClass"));
                 Upgrade upgrade = (Upgrade) clzz.newInstance();
 
                 if(upgrade.shouldLoad()) {
-                    upgrade.setConfig(upgKey, upgObj);
+                    upgrade.setKey(upgKey);
+                    upgrade.setName(StringUtils.getString(upgKey, "name"));
+                    upgrade.setDescription(StringUtils.getString(upgKey, "description"));
+                    upgrade.setTooltip(StringUtils.getString(upgKey, "tooltip"));
+                    upgrade.setConfig(upgObj);
+
                     UpgradesHandler.addUpgrade(upgrade);
                 }
             }
@@ -59,7 +77,7 @@ public class UpgradesHandler {
                     continue;
                 }
 
-                upgrade.setConfig(upgrade.getKey(), settings.getJSONObject(upgrade.getKey()));
+                upgrade.setConfig(settings.getJSONObject(upgrade.getKey()));
             }
         } catch (JSONException | IOException ex) {
             throw new RuntimeException(ex);
@@ -71,7 +89,6 @@ public class UpgradesHandler {
 
         UPGRADES.put(upgrade.getKey(),upgrade);
         UPGRADES_LIST.add(upgrade);
-        log.info(String.format("initialized upgrade [%s]", upgrade.getName()));
     }
 
     public static ESUpgrades generateRandomStats(FleetMemberAPI fleetMember, int fp) {

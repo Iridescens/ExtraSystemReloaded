@@ -13,13 +13,12 @@ import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.Utilities;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
 
 public class SpooledFeedersDroneLib extends Augment {
     public static final String AUGMENT_KEY = "SpooledFeeders";
-    public static final Color MAIN_COLOR = SpooledFeeders.MAIN_COLOR;
+    public static final Color MAIN_COLOR = Color.lightGray;
     private static final String ITEM = "esr_ammospool";
     private static final Color[] tooltipColors = {MAIN_COLOR, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
 
@@ -67,9 +66,7 @@ public class SpooledFeedersDroneLib extends Augment {
     }
 
     @Override
-    public void loadConfig(String augmentKey, JSONObject augmentSettings) throws JSONException {
-        NAME = augmentSettings.getString("name");
-
+    public void loadConfig() throws JSONException {
         ROF_DEBUFF_PERMANENT = (float) augmentSettings.getDouble("permanentFireRateDebuff");
         ROF_BUFF_SUBSYSTEM = (float) augmentSettings.getDouble("subsystemFireRateBuff");
         FLUX_BUFF_SUBSYSTEM = (float) augmentSettings.getDouble("subsystemWeaponFluxBuff");

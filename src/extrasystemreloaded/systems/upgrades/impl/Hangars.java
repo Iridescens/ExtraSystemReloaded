@@ -8,7 +8,6 @@ import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
 
@@ -20,13 +19,7 @@ public class Hangars extends Upgrade {
     private static float REPLACEMENT_REGENERATE_MULT;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    protected void loadConfig(JSONObject upgradeSettings) throws JSONException {
-        NAME = upgradeSettings.getString("name");
+    protected void loadConfig() throws JSONException {
         REFIT_TIME_MULT = (float) upgradeSettings.getDouble("refitTimeScalar");
         RANGE_MULT = (float) upgradeSettings.getDouble("rangeScalar");
         REPLACEMENT_DECREASE_MULT = (float) upgradeSettings.getDouble("replacementDecreaseScalar");
@@ -34,16 +27,11 @@ public class Hangars extends Upgrade {
     }
 
     @Override
-    public String getDescription() {
-        return "Improve fighter refit time, range and replacement speed reduction rate.";
-    }
-
-    @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float hullSizeFactor, int level, float quality) {
 
-        StatUtils.setStatPercentBonus(stats.getFighterRefitTimeMult(), this.getBuffId(), level, quality, REFIT_TIME_MULT, hullSizeFactor);
+        StatUtils.setStatMultBonus(stats.getFighterRefitTimeMult(), this.getBuffId(), level, quality, REFIT_TIME_MULT, hullSizeFactor);
         StatUtils.setStatPercentBonus(stats.getFighterWingRange(), this.getBuffId(), level, quality, RANGE_MULT, hullSizeFactor);
-        StatUtils.setStatPercentBonus(stats.getDynamic().getStat(Stats.REPLACEMENT_RATE_DECREASE_MULT), this.getBuffId(), level, quality, REPLACEMENT_DECREASE_MULT, hullSizeFactor);
+        StatUtils.setStatMultBonus(stats.getDynamic().getStat(Stats.REPLACEMENT_RATE_DECREASE_MULT), this.getBuffId(), level, quality, REPLACEMENT_DECREASE_MULT, hullSizeFactor);
         StatUtils.setStatPercentBonus(stats.getDynamic().getStat(Stats.REPLACEMENT_RATE_INCREASE_MULT), this.getBuffId(), level, quality, REPLACEMENT_REGENERATE_MULT, hullSizeFactor);
     }
 
@@ -55,14 +43,21 @@ public class Hangars extends Upgrade {
             if(expand) {
                 tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-                StatUtils.addMultBonusToTooltip(tooltip, "  Fighter refit time: %s",
+                this.addDecreaseToTooltip(tooltip,
+                        "refitTimeDecrease",
                         fm.getStats().getFighterRefitTimeMult().getMultStatMod(this.getBuffId()).getValue());
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Fighter range: +%s",
-                        fm.getStats().getFighterWingRange().getPercentBonus(this.getBuffId()).getValue());
-                StatUtils.addMultBonusToTooltip(tooltip, "  Replacement rate decrease multiplier: %s",
+
+                this.addDecreaseToTooltip(tooltip,
+                        "replacementRateDecrease",
                         fm.getStats().getDynamic().getStat(Stats.REPLACEMENT_RATE_DECREASE_MULT).getMultStatMod(this.getBuffId()).getValue());
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Replacement rate increase multiplier: +%s",
+
+                this.addIncreaseToTooltip(tooltip,
+                        "replacementRateIncrease",
                         fm.getStats().getDynamic().getStat(Stats.REPLACEMENT_RATE_INCREASE_MULT).getPercentStatMod(this.getBuffId()).getValue());
+
+                this.addIncreaseToTooltip(tooltip,
+                        "fighterRangeIncrease",
+                        fm.getStats().getFighterWingRange().getPercentBonus(this.getBuffId()).getValue());
             } else {
                 tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));
             }

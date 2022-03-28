@@ -8,6 +8,6 @@ import extrasystemreloaded.systems.augments.impl.PlasmaFluxCatalyst;
 public class PlasmaCatalystItem extends AugmentSpecialItem {
     @Override
     public Augment getAugment() {
-        return AugmentsHandler.AUGMENTS.get(PlasmaFluxCatalyst.AUGMENT_KEY);
+        return AugmentsHandler.AUGMENTS.get("PlasmaCatalyst");
     }
 }

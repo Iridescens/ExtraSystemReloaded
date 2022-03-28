@@ -8,18 +8,18 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.ESModSettings;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
+import extrasystemreloaded.campaign.ESRuleUtils;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
-import extrasystemreloaded.systems.quality.QualityUtil;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import extrasystemreloaded.systems.upgrades.UpgradesHandler;
 import extrasystemreloaded.systems.upgrades.methods.UpgradeMethod;
 import extrasystemreloaded.util.ExtraSystems;
+import extrasystemreloaded.util.StringUtils;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-
-import static extrasystemreloaded.util.Utilities.*;
 
 public class Es_ShipUpgradeDialog extends ESDialog {
     public static final String RULE_MENUSTATE = "ESUpgrades";
@@ -33,8 +33,6 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
     private static final String FUNCTIONTYPE_CONFIRM = "ConfirmExtraUpgrade";
 
-    private static final String OPTION_APPLY_RESOURCES = "ESShipExtraUpgradeApplyResources";
-
     @Override
     protected void process(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
         options.clearOptions();
@@ -43,12 +41,11 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
         if (selectedShip != null) {
             showUpgradeOptions(context, textPanel, options, visual);
-
-            options.addOption("Back to ship", Es_ShipDialog.RULE_DIALOG_OPTION);
         }
 
-        options.addOption("Back to ship list", Es_ShipListDialog.RULE_DIALOG_OPTION);
-        options.addOption("Back to main menu", ESDialog.RULE_DIALOG_OPTION);
+        //use shortcuts only if on paginated list
+        ESRuleUtils.addReturnOptions(options, selectedShip,
+                !(context.getFunctionType().equals(FUNCTIONTYPE_UPGRADES) || context.getFunctionType().equals(FUNCTIONTYPE_CHANGEDPAGE)));
     }
 
     private void showUpgradeOptions(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
@@ -67,7 +64,8 @@ public class Es_ShipUpgradeDialog extends ESDialog {
             case FUNCTIONTYPE_CONFIRM:
                 if (selectedShip != null && selectedUpgrade != null) {
                     populateAbilityPurchaseConfirmationOptions(context, textPanel, options, visual);
-                    options.addOption("Back to upgrades", RULE_DIALOG_OPTION);
+                    options.addOption(StringUtils.getString("UpgradesDialog", "ReturnToUpgradesList"), RULE_DIALOG_OPTION);
+                    options.setShortcut(RULE_DIALOG_OPTION, Keyboard.KEY_ESCAPE, false, false, false, true);
                 }
                 break;
             default:
@@ -78,12 +76,20 @@ public class Es_ShipUpgradeDialog extends ESDialog {
                         if (functionType.equals(methodOption)) {
                             doAbilityUpgrade(context, method, textPanel, options, visual);
                             populateAbilityPurchaseConfirmationOptions(context, textPanel, options, visual);
-                            break;
+
+
+                            options.addOption(StringUtils.getString("UpgradesDialog", "ReturnToUpgradesList"), RULE_DIALOG_OPTION);
+                            options.setShortcut(RULE_DIALOG_OPTION, Keyboard.KEY_ESCAPE, false, false, false, true);
+                            return;
                         }
                     }
                 }
 
-                //something broke. do nothing.
+                log("Invalid upgrade dialog option ID [%s]", functionType);
+                textPanel.addParagraph(String.format("Invalid upgrade dialog option ID [%s]", functionType));
+
+                options.addOption(StringUtils.getString("UpgradesDialog", "ReturnToUpgradesList"), RULE_DIALOG_OPTION);
+                options.setShortcut(RULE_DIALOG_OPTION, Keyboard.KEY_ESCAPE, false, false, false, true);
                 break;
         }
     }
@@ -103,13 +109,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         visual.showFleetMemberInfo(selectedShip);
 
         if(!newPage) {
-            textPanel.addParagraph(TextTip.quality1);
-
-            float quality = buff.getQuality(selectedShip);
-            String text = Math.round(quality * 100f) / 100f + QualityUtil.getQualityName(quality);
-            textPanel.appendToLastParagraph(text);
-            textPanel.highlightLastInLastPara(text, QualityUtil.getQualityColor(quality));
-            textPanel.addParagraph(TextTip.chooseUpgrade);
+            textPanel.addParagraph(StringUtils.getString("UpgradesDialog", "UpgradesListOpened"));
         }
 
         List<Upgrade> sortedUpgradeList = getSortedUpgradeList(selectedShip, buff, currMarket);
@@ -120,16 +120,32 @@ public class Es_ShipUpgradeDialog extends ESDialog {
             int max = upgrade.getMaxLevel(hullSize);
 
             if (buff.isMaxLevel(selectedShip, upgrade)) {
-                options.addOption(upgrade.getName() + " (MAX)", upgrade.getKey(), new Color(173, 166, 94), upgrade.getDescription());
+                options.addOption(
+                        StringUtils.getTranslation("UpgradesDialog", "UpgradeNameMaxed")
+                                .format("upgradeName", upgrade.getName())
+                                .toString(),
+                        upgrade.getKey(), new Color(173, 166, 94), upgrade.getDescription());
             } else if (!canUseUpgradeMethods(selectedShip, buff, hullSize, upgrade, playerFleet, currMarket)) {
-                options.addOption(upgrade.getName() + " (" + level + " / " + max + ")", upgrade.getKey(), new Color(173, 94, 94), upgrade.getDescription());
+                options.addOption(
+                        StringUtils.getTranslation("UpgradesDialog", "UpgradeNameWithLevelAndMax")
+                                .format("upgradeName", upgrade.getName())
+                                .format("level", level)
+                                .format("max", max)
+                                .toString(),
+                        upgrade.getKey(), new Color(173, 94, 94), upgrade.getDescription());
             } else {
-                options.addOption(upgrade.getName() + " (" + level + " / " + max + ")", upgrade.getKey(), upgrade.getDescription());
+                options.addOption(
+                        StringUtils.getTranslation("UpgradesDialog", "UpgradeNameWithLevelAndMax")
+                                .format("upgradeName", upgrade.getName())
+                                .format("level", level)
+                                .format("max", max)
+                                .toString(),
+                        upgrade.getKey(), upgrade.getDescription());
             }
         }
 
-        options.addOption("Previous page", OPTION_PREVPAGE);
-        options.addOption("Next page", OPTION_NEXTPAGE);
+        options.addOption(StringUtils.getString("CommonOptions", "PreviousPage"), OPTION_PREVPAGE);
+        options.addOption(StringUtils.getString("CommonOptions", "NextPage"), OPTION_NEXTPAGE);
         if (upgradePageIndex == 0) {
             options.setEnabled(OPTION_PREVPAGE, false);
         }
@@ -162,7 +178,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
             int level = buff.getUpgrade(abilitySelected);
 
             if(level >= max) {
-                textPanel.addParagraph("You have reached the max level for this upgrade.");
+                textPanel.addParagraph(StringUtils.getString("UpgradesDialog", "CannotPerformUpgradeMaxLevel"));
                 return;
             }
 
@@ -177,24 +193,29 @@ public class Es_ShipUpgradeDialog extends ESDialog {
     }
 
     private void populateAbilityPurchasedOptions(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
-        FleetMemberAPI selectedShip = context.getSelectedShip();
-        MarketAPI currMarket = context.getCurrMarket();
-        ExtraSystems buff = context.getBuff();
-        Upgrade abilitySelected = context.getSelectedUpgrade();
-        float quality = buff.getQuality(selectedShip);
+        FleetMemberAPI fm = context.getSelectedShip();
+        MarketAPI market = context.getCurrMarket();
+        ExtraSystems es = context.getBuff();
+        Upgrade upgrade = context.getSelectedUpgrade();
+        float quality = es.getQuality(fm);
 
-        if (selectedShip != null && abilitySelected != null) {
-            ShipAPI.HullSize hullSize = selectedShip.getHullSpec().getHullSize();
-            int max = abilitySelected.getMaxLevel(hullSize);
-            int level = buff.getUpgrade(abilitySelected.getKey());
-            textPanel.addParagraph(abilitySelected.getName() + "(" + level + " / " + max + ")", Color.yellow);
+        if (fm != null && upgrade != null) {
+            ShipAPI.HullSize hullSize = fm.getHullSpec().getHullSize();
+            int max = upgrade.getMaxLevel(hullSize);
+            int level = es.getUpgrade(upgrade.getKey());
+
+            textPanel.addParagraph(StringUtils.getTranslation("UpgradesDialog", "UpgradeNameWithLevelAndMax")
+                    .format("upgradeName", upgrade.getName())
+                    .format("level", level)
+                    .format("max", max)
+                    .toString());
 
             if (level >= max) {
-                textPanel.addParagraph(TextTip.ability2 + "(" + level + ")", Color.yellow);
+                textPanel.addParagraph(StringUtils.getString("UpgradesDialog", "CannotPerformUpgradeMaxLevel"));
             } else {
                 for(UpgradeMethod method : UpgradesHandler.UPGRADE_METHODS) {
-                    if(method.canShow(selectedShip, buff, abilitySelected, currMarket)) {
-                        method.addOption(options, selectedShip, buff, abilitySelected, currMarket);
+                    if(method.canShow(fm, es, upgrade, market)) {
+                        method.addOption(options, fm, es, upgrade, market);
                     }
                 }
             }
@@ -227,9 +248,9 @@ public class Es_ShipUpgradeDialog extends ESDialog {
             ExtraSystemHM.addToFleetMember(selectedShip);
 
             Global.getSoundPlayer().playUISound("ui_char_increase_skill_new", 1f, 1f);
-            textPanel.addParagraph(TextTip.Congratulation, Color.yellow);
+            textPanel.addParagraph(StringUtils.getString("UpgradesDialog", "UpgradePerformedSuccessfully"));
         } else {
-            textPanel.addParagraph(TextTip.Failure, Color.red);
+            textPanel.addParagraph(StringUtils.getString("UpgradesDialog", "UpgradePerformedFailure"));
         }
     }
 
@@ -249,11 +270,12 @@ public class Es_ShipUpgradeDialog extends ESDialog {
                         * (1f - minChanceOfFailure) + minChanceOfFailure;
             }
 
-            textPanel.addParagraph(TextTip.ability3);
-            String text1 = Math.round(possibility * 1000f) / 10f + "%";
-            textPanel.appendToLastParagraph(text1);
-            textPanel.highlightLastInLastPara(text1, Color.green);
-            textPanel.appendToLastParagraph(TextTip.ability4);
+            String successChance = Math.round(possibility * 1000f) / 10f + "%";
+            textPanel.addParagraph(
+                    StringUtils.getTranslation("UpgradesDialog", "UpgradeSuccessChance")
+                            .format("successChance", successChance)
+                            .toString());
+            textPanel.highlightInLastPara(successChance);
         }
     }
 
@@ -301,5 +323,18 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         }
 
         return sortedUpgradeList;
+    }
+
+    public static class UpgradeOption extends Es_ShipDialog.ShipOption {
+        public UpgradeOption(int order) {
+            super(order);
+        }
+
+        @Override
+        public Object addOption(OptionPanelAPI options, FleetMemberAPI fm, ExtraSystems es, MarketAPI market) {
+            options.addOption(StringUtils.getString("UpgradesDialog", "OpenUpgradeOptions"), RULE_DIALOG_OPTION, null);
+
+            return RULE_DIALOG_OPTION;
+        }
     }
 }

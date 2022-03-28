@@ -3,53 +3,105 @@ package extrasystemreloaded.campaign.rulecmd;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.campaign.VisualPanelAPI;
-import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
+import extrasystemreloaded.campaign.ESRuleUtils;
 import extrasystemreloaded.util.ExtraSystems;
-import extrasystemreloaded.util.Utilities;
-import extrasystemreloaded.systems.upgrades.Upgrade;
-import extrasystemreloaded.systems.upgrades.UpgradesHandler;
+import extrasystemreloaded.util.StringUtils;
+import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
-
-import static extrasystemreloaded.systems.quality.QualityUtil.getQualityColor;
-import static extrasystemreloaded.systems.quality.QualityUtil.getQualityName;
+import java.awt.Color;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Es_ShipDialog extends ESDialog {
     public static final String RULE_MENUSTATE = "ESShipPicked";
     public static final String RULE_DIALOG_OPTION = "ESShipPicked";
+    public static final List<ShipOption> SHIP_OPTIONS = new ArrayList<>();
+
+    public static void addShipOption(ShipOption option) {
+        SHIP_OPTIONS.add(option.getOrder(), option);
+    }
+
+    public static Object addReturnOption(OptionPanelAPI options) {
+        options.addOption(StringUtils.getString("ShipDialog", "BackToShip"), RULE_DIALOG_OPTION);
+        return RULE_DIALOG_OPTION;
+    }
+
+    public static Object addReturnOptionWithShortcut(OptionPanelAPI options) {
+        Object option = addReturnOption(options);
+        options.setShortcut(option, Keyboard.KEY_ESCAPE, false, false, false, true);
+        return RULE_DIALOG_OPTION;
+    }
 
     @Override
     protected void process(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
-        options.clearOptions();
-
         FleetMemberAPI selectedShip = context.getSelectedShip();
         if (selectedShip != null) {
             ExtraSystems buff = context.getBuff();
-            float shipQuality = context.getShipQuality();
+            MarketAPI market = context.getCurrMarket();
 
             visual.showFleetMemberInfo(selectedShip);
 
-            textPanel.addParagraph(Utilities.TextTip.quality1);
-            String shipQualityText = "" + Math.round(shipQuality * 1000f) / 1000f + getQualityName(shipQuality);
-            textPanel.appendToLastParagraph(" " + shipQualityText);
-            textPanel.highlightLastInLastPara(shipQualityText, getQualityColor(shipQuality));
-            textPanel.addParagraph("-----------------------", Color.gray);
-            textPanel.addParagraph("Pick an operation");
-
-            options.addOption("Quality", Es_ShipQualityDialog.RULE_DIALOG_OPTION, null);
-            if(!buff.canUpgradeQuality(selectedShip)) {
-                options.setEnabled(Es_ShipQualityDialog.RULE_DIALOG_OPTION, false);
-                options.setTooltip(Es_ShipQualityDialog.RULE_DIALOG_OPTION, "The quality of this ship has reached its peak.");
+            for(ShipOption option : SHIP_OPTIONS) {
+                if(option.shouldShow(selectedShip, buff, market)) {
+                    option.modifyTextPanel(textPanel, selectedShip, buff, market);
+                }
             }
 
-            options.addOption("Upgrades", Es_ShipUpgradeDialog.RULE_DIALOG_OPTION, null);
-            options.addOption("Augments", Es_ShipAugmentsDialog.RULE_DIALOG_OPTION, null);
+            textPanel.addParagraph("-----------------------", Color.gray);
+            textPanel.addParagraph(StringUtils.getString("ShipDialog", "OpenedDialog"));
+
+            for(ShipOption option : SHIP_OPTIONS) {
+                if(option.shouldShow(selectedShip, buff, market)) {
+                    option.addOption(options, selectedShip, buff, market);
+                }
+            }
         }
 
-        options.addOption("Back to ship list", Es_ShipListDialog.RULE_DIALOG_OPTION);
-        options.addOption("Back to main menu", ESDialog.RULE_DIALOG_OPTION);
+        ESRuleUtils.addReturnOptions(options, null, false);
+    }
+
+    public static abstract class ShipOption {
+        protected final int order;
+
+        public ShipOption(int order) {
+            this.order = order;
+        }
+
+        /**
+         * order of the option in dialog. lower comes first
+         * @return order
+         */
+        protected int getOrder() {
+            return order;
+        }
+
+        protected boolean shouldShow(FleetMemberAPI fm, ExtraSystems es, MarketAPI market) {
+            return true;
+        }
+
+        /**
+         * adds option to ship dialog option list
+         * @param options options panel
+         * @param fm fleet member to upgrade
+         * @param es the upgrades object
+         * @param market the market
+         * @return the object used to make the option
+         */
+        protected abstract Object addOption(OptionPanelAPI options, FleetMemberAPI fm, ExtraSystems es, MarketAPI market);
+
+        /**
+         * modifies the text panel to include some text
+         * @param textPanel
+         * @param fm
+         * @param es
+         * @param market
+         */
+        protected void modifyTextPanel(TextPanelAPI textPanel, FleetMemberAPI fm, ExtraSystems es, MarketAPI market) {
+            //donothing
+        }
     }
 }

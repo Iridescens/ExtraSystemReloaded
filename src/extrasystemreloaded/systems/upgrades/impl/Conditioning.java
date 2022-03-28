@@ -7,13 +7,15 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.systems.upgrades.Upgrade;
+import extrasystemreloaded.util.StringUtils;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
 
 public class Conditioning extends Upgrade {
-    private static String NAME;
+    private static float CR_TO_DEPLOY_SCALAR;
+    private static float CR_RECOVERY_RATE_SCALAR;
+
     private static float PEAK_CR_MULT;
     private static float CR_LOSS_MULT; //this value is a post-scaling of the other two factors.
     //if they are reduced, this will be reduced as well.
@@ -24,24 +26,16 @@ public class Conditioning extends Upgrade {
     private static float CAPITAL_MULT;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    protected void loadConfig(JSONObject upgradeSettings) throws JSONException {
-        NAME = upgradeSettings.getString("name");
+    protected void loadConfig() throws JSONException {
         PEAK_CR_MULT = (float) upgradeSettings.getDouble("peakCrScalar");
         CR_LOSS_MULT = (float) upgradeSettings.getDouble("crLossScalar");
         FRIGATE_MULT = (float) upgradeSettings.getDouble("frigateMult");
         DESTROYER_MULT = (float) upgradeSettings.getDouble("destroyerMult");
         CRUISER_MULT = (float) upgradeSettings.getDouble("cruiserMult");
         CAPITAL_MULT = (float) upgradeSettings.getDouble("capitalMult");
-    }
 
-    @Override
-    public String getDescription() {
-        return "Improve peak performance time and the rate at which CR decays.";
+        CR_RECOVERY_RATE_SCALAR = (float) upgradeSettings.getDouble("crRecoveryScalar");
+        CR_TO_DEPLOY_SCALAR = (float) upgradeSettings.getDouble("crDeployedScalar");
     }
 
     @Override
@@ -59,7 +53,10 @@ public class Conditioning extends Upgrade {
         }
 
         stats.getPeakCRDuration().modifyPercent(this.getBuffId(), (float) v);
-        stats.getCRLossPerSecondPercent().modifyPercent(this.getBuffId(), (float) Math.max(CR_LOSS_MULT * v, -90f));
+        stats.getCRLossPerSecondPercent().modifyMult(this.getBuffId(), 1f + ((float) Math.max(CR_LOSS_MULT * v, -90f)) / 100f);
+
+        StatUtils.setStatPercentBonus(stats.getBaseCRRecoveryRatePercentPerDay(), this.getBuffId(), level, quality, CR_RECOVERY_RATE_SCALAR, hullSizeFactor);
+        StatUtils.setStatMultBonus(stats.getCRPerDeploymentPercent(), this.getBuffId(), level, quality, CR_TO_DEPLOY_SCALAR, hullSizeFactor);
     }
 
     @Override
@@ -70,13 +67,24 @@ public class Conditioning extends Upgrade {
             if(expand) {
                 tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Peak performance time: +%s",
+                this.addIncreaseWithFinalToTooltip(tooltip,
+                        "peakPerformanceTimeIncrease",
                         fm.getStats().getPeakCRDuration().getPercentBonus(this.getBuffId()).getValue(),
                         fm.getVariant().getHullSpec().getNoCRLossTime());
 
-                StatUtils.addMultBonusToTooltip(tooltip, "  CR degradation after peak performance time: %s",
-                        fm.getStats().getCRLossPerSecondPercent().getPercentBonus(this.getBuffId()).getValue(),
-                        fm.getVariant().getHullSpec().getCRLossPerSecond());
+                this.addDecreaseToTooltip(tooltip,
+                        "crDegradationDecrease",
+                        fm.getStats().getCRLossPerSecondPercent().getMultBonus(this.getBuffId()).getValue());
+
+                this.addDecreaseWithFinalToTooltip(tooltip,
+                        "crPerDeploymentDecrease",
+                        fm.getStats().getCRPerDeploymentPercent().getMultBonus(this.getBuffId()).getValue(),
+                        fm.getHullSpec().getCRToDeploy());
+
+                this.addIncreaseWithFinalToTooltip(tooltip,
+                        "crRecoveryIncrease",
+                        fm.getStats().getBaseCRRecoveryRatePercentPerDay().getPercentStatMod(this.getBuffId()).getValue(),
+                        fm.getStats().getBaseCRRecoveryRatePercentPerDay().getBaseValue());
             } else {
                 tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));
             }

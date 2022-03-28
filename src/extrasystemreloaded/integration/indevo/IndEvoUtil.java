@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import extrasystemreloaded.systems.upgrades.UpgradesHandler;
+import extrasystemreloaded.systems.upgrades.methods.UpgradeMethod;
 
 import java.util.Map;
 
@@ -12,6 +13,14 @@ public class IndEvoUtil {
     public static final String RELIC_COMPONENT_ITEM_ID = "IndEvo_rare_parts";
 
     public static void loadIntegration() {
+
+        //already loaded?
+        for(UpgradeMethod method : UpgradesHandler.UPGRADE_METHODS) {
+            if(method instanceof ShipComponentUpgradeMethod) {
+                return;
+            }
+        }
+
         UpgradesHandler.UPGRADE_METHODS.add(new ShipComponentUpgradeMethod());
         UpgradesHandler.UPGRADE_METHODS.add(new RelicComponentUpgradeMethod());
     }

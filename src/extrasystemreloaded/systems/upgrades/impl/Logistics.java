@@ -7,7 +7,6 @@ import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
 
@@ -18,8 +17,6 @@ public class Logistics extends Upgrade {
     private static float MAX_FUEL_MULT;
 
 
-    private static float CR_TO_DEPLOY_SCALAR;
-    private static float CR_TO_DEPLOY_QUALITY_MULT;
     private static float MIN_CREW_SCALAR;
     private static float MIN_CREW_QUALITY_MULT;
     private static float FUEL_USE_SCALAR;
@@ -28,24 +25,13 @@ public class Logistics extends Upgrade {
     private static float SUPPLIES_MONTH_QUALITY_MULT;
     private static float SUPPLIES_RECOVERY_SCALAR;
     private static float SUPPLIES_RECOVERY_QUALITY_MULT;
-    private static float CR_RECOVERY_RATE_SCALAR;
-    private static float CR_RECOVERY_RATE_QUALITY_MULT;
     private static float REPAIR_RATE_SCALAR;
-    private static float REPAIR_RATE_QUALITY_MULT;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    protected void loadConfig(JSONObject upgradeSettings) throws JSONException {
-        NAME = upgradeSettings.getString("name");
+    protected void loadConfig() throws JSONException {
         MAX_CARGO_MULT = (float) upgradeSettings.getDouble("cargoScalar");
         MAX_CREW_MULT = (float) upgradeSettings.getDouble("crewScalar");
         MAX_FUEL_MULT = (float) upgradeSettings.getDouble("fuelScalar");
-        CR_TO_DEPLOY_SCALAR = (float) upgradeSettings.getDouble("crDeployedUpgradeScalar");
-        CR_TO_DEPLOY_QUALITY_MULT = (float) upgradeSettings.getDouble("crDeployedQualityMult");
         MIN_CREW_SCALAR = (float) upgradeSettings.getDouble("minCrewUpgradeScalar");
         MIN_CREW_QUALITY_MULT = (float) upgradeSettings.getDouble("minCrewQualityMult");
         FUEL_USE_SCALAR = (float) upgradeSettings.getDouble("fuelUseUpgradeScalar");
@@ -54,15 +40,7 @@ public class Logistics extends Upgrade {
         SUPPLIES_MONTH_QUALITY_MULT = (float) upgradeSettings.getDouble("suppliesPerMonthQualityMult");
         SUPPLIES_RECOVERY_SCALAR = (float) upgradeSettings.getDouble("suppliesToDeployUpgradeScalar");
         SUPPLIES_RECOVERY_QUALITY_MULT = (float) upgradeSettings.getDouble("suppliesToDeployQualityMult");
-        CR_RECOVERY_RATE_SCALAR = (float) upgradeSettings.getDouble("crRecoveryUpgradeScalar");
-        CR_RECOVERY_RATE_QUALITY_MULT = (float) upgradeSettings.getDouble("crRecoveryQualityMult");
-        REPAIR_RATE_SCALAR = (float) upgradeSettings.getDouble("repairRateUpgradeScalar");
-        REPAIR_RATE_QUALITY_MULT = (float) upgradeSettings.getDouble("repairRateQualityMult");
-    }
-
-    @Override
-    public String getDescription() {
-        return "Improve CR per deployment, crew, ship repair rate, CR recovery, fuel and supply use.";
+        REPAIR_RATE_SCALAR = (float) upgradeSettings.getDouble("repairRateScalar");
     }
 
     @Override
@@ -81,19 +59,10 @@ public class Logistics extends Upgrade {
         StatUtils.setStatPercentBonus(stats.getSuppliesPerMonth(), this.getBuffId(),
                 StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, SUPPLIES_MONTH_SCALAR, SUPPLIES_MONTH_QUALITY_MULT, hullSizeFactor));
 
-
-        StatUtils.setStatPercentBonus(stats.getCRPerDeploymentPercent(), this.getBuffId(),
-                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, CR_TO_DEPLOY_SCALAR, CR_TO_DEPLOY_QUALITY_MULT, hullSizeFactor));
-
         StatUtils.setStatPercentBonus(stats.getSuppliesToRecover(), this.getBuffId(),
                 StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, SUPPLIES_RECOVERY_SCALAR, SUPPLIES_RECOVERY_QUALITY_MULT, hullSizeFactor));
 
-        StatUtils.setStatPercentBonus(stats.getBaseCRRecoveryRatePercentPerDay(), this.getBuffId(),
-                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, CR_RECOVERY_RATE_SCALAR, CR_RECOVERY_RATE_QUALITY_MULT, hullSizeFactor));
-
-        StatUtils.setStatPercentBonus(stats.getRepairRatePercentPerDay(), this.getBuffId(),
-                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, REPAIR_RATE_SCALAR, REPAIR_RATE_QUALITY_MULT, hullSizeFactor));
-
+        StatUtils.setStatPercentBonus(stats.getRepairRatePercentPerDay(), this.getBuffId(), level, quality, REPAIR_RATE_SCALAR, hullSizeFactor);
     }
 
     @Override
@@ -104,37 +73,46 @@ public class Logistics extends Upgrade {
             if(expand) {
                 tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-
-                StatUtils.addMultBonusToTooltip(tooltip, "  CR per deployment: %s (%s)",
-                        fm.getStats().getCRPerDeploymentPercent().getMultBonus(this.getBuffId()).getValue(),
-                        fm.getVariant().getHullSpec().getCRToDeploy());
-
-                StatUtils.addMultBonusToTooltip(tooltip, "  Less required crew: %s (%s)",
-                        fm.getStats().getMinCrewMod().getMultBonus(this.getBuffId()).getValue(),
-                        fm.getVariant().getHullSpec().getMinCrew());
-
-                StatUtils.addPercentBonusToTooltip(tooltip, "  More crew space: +%s (%s)",
-                        fm.getStats().getMaxCrewMod().getPercentBonus(this.getBuffId()).getValue(),
-                        fm.getVariant().getHullSpec().getMaxCrew());
-                StatUtils.addPercentBonusToTooltip(tooltip, "  More cargo space: +%s (%s)",
+                this.addIncreaseWithFinalToTooltip(tooltip,
+                        "cargoSpaceIncrease",
                         fm.getStats().getCargoMod().getPercentBonus(this.getBuffId()).getValue(),
-                        fm.getVariant().getHullSpec().getCargo());
-                StatUtils.addPercentBonusToTooltip(tooltip, "  More fuel space: +%s (%s)",
-                        fm.getStats().getFuelMod().getPercentBonus(this.getBuffId()).getValue(),
-                        fm.getVariant().getHullSpec().getFuel());
+                        fm.getHullSpec().getCargo());
 
-
-                StatUtils.addPercentBonusToTooltipUnrounded(tooltip, "  Repairs and recovery rates: +%s (%s)",
-                        fm.getStats().getBaseCRRecoveryRatePercentPerDay().getPercentStatMod(this.getBuffId()).getValue(),
-                        fm.getStats().getBaseCRRecoveryRatePercentPerDay().getBaseValue());
-
-                StatUtils.addMultBonusToTooltip(tooltip, "  Fuel consumption: %s (%s)",
-                        fm.getStats().getFuelUseMod().getMultBonus(this.getBuffId()).getValue(),
-                        fm.getVariant().getHullSpec().getFuelPerLY());
-
-                StatUtils.addMultBonusToTooltip(tooltip, "  Overall supplies consumption rates: %s (%s)",
+                this.addDecreaseWithFinalToTooltip(tooltip,
+                        "supplyConsumptionDecrease",
                         fm.getStats().getSuppliesPerMonth().getMultStatMod(this.getBuffId()).getValue(),
-                        fm.getStats().getSuppliesPerMonth().getBaseValue());
+                        fm.getHullSpec().getSuppliesPerMonth());
+
+                this.addDecreaseWithFinalToTooltip(tooltip,
+                        "suppliesToRecoverDecrease",
+                        fm.getStats().getSuppliesToRecover().getMultStatMod(this.getBuffId()).getValue(),
+                        fm.getHullSpec().getSuppliesToRecover());
+
+                this.addIncreaseWithFinalToTooltip(tooltip,
+                        "fuelSpaceIncrease",
+                        fm.getStats().getFuelMod().getPercentBonus(this.getBuffId()).getValue(),
+                        fm.getHullSpec().getCargo());
+
+                this.addDecreaseWithFinalToTooltip(tooltip,
+                        "fuelConsumptionDecrease",
+                        fm.getStats().getFuelUseMod().getMultBonus(this.getBuffId()).getValue(),
+                        fm.getHullSpec().getFuelPerLY());
+
+                this.addIncreaseWithFinalToTooltip(tooltip,
+                        "crewSpaceIncrease",
+                        fm.getStats().getMaxCrewMod().getPercentBonus(this.getBuffId()).getValue(),
+                        fm.getHullSpec().getCargo());
+
+                this.addDecreaseWithFinalToTooltip(tooltip,
+                        "requiredCrewDecrease",
+                        fm.getStats().getMinCrewMod().getMultBonus(this.getBuffId()).getValue(),
+                        fm.getHullSpec().getMinCrew());
+
+                this.addIncreaseWithFinalToTooltip(tooltip,
+                        "hullRepairIncrease",
+                        fm.getStats().getRepairRatePercentPerDay().getPercentStatMod(this.getBuffId()).getValue(),
+                        fm.getStats().getRepairRatePercentPerDay().getBaseValue());
+
             } else {
                 tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));
             }

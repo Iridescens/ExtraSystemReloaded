@@ -9,20 +9,17 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
+import extrasystemreloaded.util.StringUtils;
 import extrasystemreloaded.util.Utilities;
 import extrasystemreloaded.systems.augments.Augment;
+import lombok.Getter;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
 
 public class EqualizerCore extends Augment {
-    public static final String AUGMENT_KEY = "EqualizerCore";
-    public static final Color MAIN_COLOR = Color.red;
     private static final String ITEM = "esr_equalizercore";
-    private static final Color[] tooltipColors = {MAIN_COLOR, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
-
-    private static String NAME = "Equalizer Core";
+    private static final Color[] tooltipColors = {Color.orange.darker(), ExtraSystemHM.infoColor};
 
     private static float RECOIL_REDUCTION = -25f;
     private static float TURN_RATE_BUFF = 50f;
@@ -32,38 +29,10 @@ public class EqualizerCore extends Augment {
     private static int RANGE_LIMIT_TOP = 800;
     private static int RANGE_TOP_BUFF = -150;
 
-    @Override
-    public String getKey() {
-        return AUGMENT_KEY;
-    }
+    @Getter private final Color mainColor = Color.orange.darker();
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    public Color getMainColor() {
-        return MAIN_COLOR;
-    }
-
-    @Override
-    public String getDescription() {
-        return "This core is dedicated to managing weaponry to an degree that rivals even Alpha Cores given control " +
-                "of weapon arrays, with one unique quirk: effective ordnance ranges of non-missile weapons are " +
-                "equalized to a certain degree. The core, in its Terms of Use, swears by its Stronger than an Alpha " +
-                "trademark, and it can't be used for anything but weapons.. supposedly.";
-    }
-
-    @Override
-    public String getTooltip() {
-        return "Improve recoil control and weapon turn rate. Equalizes weapon ranges to a middle-ground range.";
-    }
-
-    @Override
-    public void loadConfig(String augmentKey, JSONObject augmentSettings) throws JSONException {
-        NAME = augmentSettings.getString("name");
-
+    public void loadConfig() throws JSONException {
         RECOIL_REDUCTION = (float) augmentSettings.getDouble("recoilReduction");
         TURN_RATE_BUFF = (float) augmentSettings.getDouble("weaponTurnRateIncrease");
 
@@ -93,12 +62,15 @@ public class EqualizerCore extends Augment {
     public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         if (systems.hasAugment(this.getKey())) {
             if(expand) {
-                tooltip.addPara("%s: Reduces recoil by %s. Increases weapon turn rate by %s. Autofire leading is %s. " +
-                        "Weapons with at most %s have range increased by %s. Weapons with at least %s have range reduced by %s.", 5,
-                        tooltipColors,
-                        this.getName(),
-                        RECOIL_REDUCTION + "%", TURN_RATE_BUFF + "%", "nearly perfected",
-                        RANGE_LIMIT_BOTTOM + " range", RANGE_BOTTOM_BUFF + "", RANGE_LIMIT_TOP + " range", RANGE_TOP_BUFF + "");
+                StringUtils.getTranslation(this.getKey(), "longDescription")
+                        .format("augmentName", this.getName())
+                        .format("recoilReduction", RECOIL_REDUCTION)
+                        .format("weaponTurnBonus", TURN_RATE_BUFF)
+                        .format("lowRangeThreshold", RANGE_LIMIT_BOTTOM)
+                        .format("rangeBonus", RANGE_BOTTOM_BUFF)
+                        .format("highRangeThreshold", RANGE_LIMIT_TOP)
+                        .format("rangeMalus", RANGE_TOP_BUFF)
+                        .addToTooltip(tooltip, tooltipColors);
             } else {
                 tooltip.addPara(this.getName(), tooltipColors[0], 5);
             }

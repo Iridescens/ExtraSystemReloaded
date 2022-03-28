@@ -9,6 +9,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import extrasystemreloaded.util.ExtraSystems;
+import extrasystemreloaded.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class ResourcesMethod implements UpgradeMethod {
         String tooltip = getTooltip(fm, market, upgrade.getResourceCosts(fm, es.getUpgrade(upgrade)));
 
         options.addOption(
-                "Craft with resources (see tooltip)",
+                StringUtils.getString("UpgradeMethods","ResourcesOption"),
                 getOptionId(),
                 tooltip
         );
@@ -94,7 +95,7 @@ public class ResourcesMethod implements UpgradeMethod {
 
     private String getTooltip(FleetMemberAPI fm, MarketAPI market, Map<String, Integer> resourceCosts) {
         StringBuilder sb = new StringBuilder();
-        sb.append("This upgrade requires:");
+        sb.append(StringUtils.getString("UpgradeMethods","ResourcesUpgradeRequirement"));
 
         Map<String, Integer> totalResources = getTotalResources(fm.getFleetData().getFleet(), market, resourceCosts.keySet());
         for (Map.Entry<String, Integer> resource : resourceCosts.entrySet()) {
@@ -107,7 +108,7 @@ public class ResourcesMethod implements UpgradeMethod {
             sb.append(totalResources.get(resource.getKey()));
             sb.append(")");
         }
-        sb.append("\nThe amount you have is displayed after the name of each resource. This includes market storage!");
+        sb.append("\n" + StringUtils.getString("UpgradeMethods","ResourcesUpgradeRequirement"));
 
         return sb.toString();
     }

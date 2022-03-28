@@ -7,7 +7,6 @@ import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
 
@@ -19,22 +18,11 @@ public class Engines extends Upgrade {
     private static float BURN_LEVEL_MULT;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    protected void loadConfig(JSONObject upgradeSettings) throws JSONException {
-        NAME = upgradeSettings.getString("name");
+    protected void loadConfig() throws JSONException {
         SPEED_MULT = (float) upgradeSettings.getDouble("maxSpeedScalar");
         ACCELERATION_MULT = (float) upgradeSettings.getDouble("accelerationScalar");
         TURN_RATE_MULT = (float) upgradeSettings.getDouble("turnRateScalar");
         BURN_LEVEL_MULT = (float) upgradeSettings.getDouble("burnLevelScalar");
-    }
-
-    @Override
-    public String getDescription() {
-        return "Improve max speed, burn level, acceleration, deceleration, max turn rate, turn acceleration.";
     }
 
     @Override
@@ -59,17 +47,21 @@ public class Engines extends Upgrade {
             if(expand) {
                 tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Maximum speed: +%s (%s)",
+                this.addIncreaseWithFinalToTooltip(tooltip,
+                        "speedIncrease",
                         fm.getStats().getMaxSpeed().getPercentStatMod(this.getBuffId()).getValue(),
                         fm.getStats().getMaxSpeed().getBaseValue());
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Acceleration and deceleration: +%s",
+                this.addIncreaseToTooltip(tooltip,
+                        "accelerationIncrease",
                         fm.getStats().getAcceleration().getPercentStatMod(this.getBuffId()).getValue());
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Maximum turn rate and turn acceleration: +%s",
+                this.addIncreaseToTooltip(tooltip,
+                        "turnrateIncrease",
                         fm.getStats().getMaxTurnRate().getPercentStatMod(this.getBuffId()).getValue());
 
-                StatUtils.addPercentBonusToTooltipUnrounded(tooltip, "  Maximum burn level: +%s (%s)",
+                this.addIncreaseWithFinalToTooltip(tooltip,
+                        "burnLevelIncrease",
                         fm.getStats().getMaxBurnLevel().getPercentStatMod(this.getBuffId()).getValue(),
                         fm.getStats().getMaxBurnLevel().getBaseValue());
             } else {

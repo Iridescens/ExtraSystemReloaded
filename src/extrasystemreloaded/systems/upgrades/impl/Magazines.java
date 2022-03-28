@@ -7,7 +7,6 @@ import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
 
@@ -19,21 +18,10 @@ public class Magazines extends Upgrade {
     private static float ROF_QUALITY_MULT;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    protected void loadConfig(JSONObject upgradeSettings) throws JSONException {
-        NAME = upgradeSettings.getString("name");
+    protected void loadConfig() throws JSONException {
         MISSILE_MAGAZINE_MULT = (float) upgradeSettings.getDouble("missileMagazineScalar");
         ROF_SCALAR = (float) upgradeSettings.getDouble("rateOfFireUpgradeScalar");
         ROF_QUALITY_MULT = (float) upgradeSettings.getDouble("rateOfFireQualityMult");
-    }
-
-    @Override
-    public String getDescription() {
-        return "Increases missile ammo capacity and the rate at which all weapons fire and reload magazines.";
     }
 
     @Override
@@ -68,10 +56,12 @@ public class Magazines extends Upgrade {
             if(expand) {
                 tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Bonus missile ammunition: +%s",
+                this.addIncreaseToTooltip(tooltip,
+                        "missileAmmoIncrease",
                         fm.getStats().getMissileAmmoBonus().getPercentBonus(this.getBuffId()).getValue());
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Weapons rate of fire and reload speed: +%s",
+                this.addIncreaseToTooltip(tooltip,
+                        "firerateIncrease",
                         fm.getStats().getBallisticRoFMult().getPercentStatMod(this.getBuffId()).getValue());
             } else {
                 tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));

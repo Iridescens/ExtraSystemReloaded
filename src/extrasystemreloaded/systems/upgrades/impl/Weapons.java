@@ -7,12 +7,10 @@ import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
 
 public class Weapons extends Upgrade {
-    private static String NAME = "Weapons";
     private static float WEAPON_HEALTH_MULT;
 
     private static float RANGE_SCALAR;
@@ -25,13 +23,7 @@ public class Weapons extends Upgrade {
     private static float FLUX_COST_QUALITY_MULT;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    protected void loadConfig(JSONObject upgradeSettings) throws JSONException {
-        NAME = upgradeSettings.getString("name");
+    protected void loadConfig() throws JSONException {
         WEAPON_HEALTH_MULT = (float) upgradeSettings.getDouble("weaponHealthScalar");
         RANGE_SCALAR = (float) upgradeSettings.getDouble("rangeUpgradeScalar");
         RANGE_QUALITY_MULT = (float) upgradeSettings.getDouble("rangeQualityMult");
@@ -42,36 +34,26 @@ public class Weapons extends Upgrade {
     }
 
     @Override
-    public String getDescription() {
-        return "Improve weapon range, damage, flux costs, and health.";
-    }
-
-    @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float hullSizeFactor, int level, float quality) {
         StatUtils.setStatPercentBonus(stats.getWeaponHealthBonus(), this.getBuffId(), level, quality, WEAPON_HEALTH_MULT, hullSizeFactor);
 
-        StatUtils.setStatPercentBonus(stats.getBallisticWeaponRangeBonus(), this.getBuffId(),
-                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, RANGE_SCALAR, RANGE_QUALITY_MULT, hullSizeFactor));
-        StatUtils.setStatPercentBonus(stats.getEnergyWeaponRangeBonus(), this.getBuffId(),
-                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, RANGE_SCALAR, RANGE_QUALITY_MULT, hullSizeFactor));
-        StatUtils.setStatPercentBonus(stats.getMissileWeaponRangeBonus(), this.getBuffId(),
-                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, RANGE_SCALAR, RANGE_QUALITY_MULT, hullSizeFactor));
+        float rangeBonus = StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, RANGE_SCALAR, RANGE_QUALITY_MULT, hullSizeFactor);
+        StatUtils.setStatPercentBonus(stats.getBallisticWeaponRangeBonus(), this.getBuffId(), rangeBonus);
+        StatUtils.setStatPercentBonus(stats.getEnergyWeaponRangeBonus(), this.getBuffId(), rangeBonus);
+        StatUtils.setStatPercentBonus(stats.getMissileWeaponRangeBonus(), this.getBuffId(), rangeBonus);
 
-        StatUtils.setStatPercentBonus(stats.getBallisticWeaponDamageMult(), this.getBuffId(),
-                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, DAMAGE_SCALAR, DAMAGE_QUALITY_MULT, hullSizeFactor));
+        float damageBonus = StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, DAMAGE_SCALAR, DAMAGE_QUALITY_MULT, hullSizeFactor);
+        StatUtils.setStatPercentBonus(stats.getBallisticWeaponDamageMult(), this.getBuffId(), damageBonus);
+        StatUtils.setStatPercentBonus(stats.getEnergyWeaponDamageMult(), this.getBuffId(), damageBonus);
+        StatUtils.setStatPercentBonus(stats.getMissileWeaponDamageMult(), this.getBuffId(), damageBonus);
 
-        StatUtils.setStatPercentBonus(stats.getEnergyWeaponDamageMult(), this.getBuffId(),
-                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, DAMAGE_SCALAR, DAMAGE_QUALITY_MULT, hullSizeFactor));
-
-        StatUtils.setStatPercentBonus(stats.getMissileWeaponDamageMult(), this.getBuffId(),
-                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, DAMAGE_SCALAR, DAMAGE_QUALITY_MULT, hullSizeFactor));
-
-        StatUtils.setStatPercentBonus(stats.getBallisticWeaponFluxCostMod(), this.getBuffId(),
-                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, FLUX_COST_SCALAR, FLUX_COST_QUALITY_MULT, hullSizeFactor));
-        StatUtils.setStatPercentBonus(stats.getEnergyWeaponFluxCostMod(), this.getBuffId(),
-                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, FLUX_COST_SCALAR, FLUX_COST_QUALITY_MULT, hullSizeFactor));
-        StatUtils.setStatPercentBonus(stats.getMissileWeaponFluxCostMod(), this.getBuffId(),
-                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, FLUX_COST_SCALAR, FLUX_COST_QUALITY_MULT, hullSizeFactor));
+        float fluxReduction = StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, FLUX_COST_SCALAR, FLUX_COST_QUALITY_MULT, hullSizeFactor);
+        StatUtils.setStatMultBonus(stats.getBallisticWeaponFluxCostMod(), this.getBuffId(),
+                1f + (fluxReduction / 100f));
+        StatUtils.setStatMultBonus(stats.getEnergyWeaponFluxCostMod(), this.getBuffId(),
+                1f + (fluxReduction / 100f));
+        StatUtils.setStatMultBonus(stats.getMissileWeaponFluxCostMod(), this.getBuffId(),
+                1f + (fluxReduction / 100f));
     }
 
     @Override
@@ -82,16 +64,20 @@ public class Weapons extends Upgrade {
             if(expand) {
                 tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Weapons range: +%s",
-                        fm.getStats().getBallisticWeaponRangeBonus().getPercentBonus(this.getBuffId()).getValue());
-
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Weapons damage: +%s",
+                this.addIncreaseToTooltip(tooltip,
+                        "weaponDamageIncrease",
                         fm.getStats().getBallisticWeaponDamageMult().getPercentStatMod(this.getBuffId()).getValue());
 
-                StatUtils.addMultBonusToTooltip(tooltip, "  Weapons flux cost: %s",
+                this.addIncreaseToTooltip(tooltip,
+                        "weaponRangeIncrease",
+                        fm.getStats().getBallisticWeaponRangeBonus().getPercentBonus(this.getBuffId()).getValue());
+
+                this.addDecreaseToTooltip(tooltip,
+                        "weaponFluxDecrease",
                         fm.getStats().getBallisticWeaponFluxCostMod().getMultBonus(this.getBuffId()).getValue());
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Weapon mounts durability: +%s",
+                this.addIncreaseToTooltip(tooltip,
+                        "weaponDurabilityIncrease",
                         fm.getStats().getWeaponHealthBonus().getPercentBonus(this.getBuffId()).getValue());
             } else {
                 tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));

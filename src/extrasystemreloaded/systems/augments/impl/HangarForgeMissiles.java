@@ -10,52 +10,26 @@ import com.fs.starfarer.api.util.IntervalUtil;
 import extrasystemreloaded.systems.augments.Augment;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
+import extrasystemreloaded.util.StringUtils;
 import extrasystemreloaded.util.Utilities;
+import lombok.Getter;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
 
 public class HangarForgeMissiles extends Augment {
     public static final String AUGMENT_KEY = "HangarForgeMissiles";
-    public static final Color MAIN_COLOR = Color.GREEN;
     private static final String ITEM = "esr_hangarforge";
-    private static final Color[] tooltipColors = {MAIN_COLOR, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
+    private static final Color[] tooltipColors = {Color.GREEN, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
 
-    private static String NAME = "Hacked Missile Forge";
+    private static float COST_CREDITS = 150000;
     private static int SECONDS_PER_RELOAD = 90;
     private static float PERCENT_RELOADED = 50f;
 
-    @Override
-    public String getKey() {
-        return AUGMENT_KEY;
-    }
+    @Getter private final Color mainColor = Color.GREEN;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    public Color getMainColor() {
-        return MAIN_COLOR;
-    }
-
-    @Override
-    public String getDescription() {
-        return "Corrupting a hangar microforge to fabricate the most delicate components of missiles is " +
-                "possible, given a few engineers skilled with Domain technology. Their services don't come cheap, " +
-                "however.";
-    }
-
-    @Override
-    public String getTooltip() {
-        return "Reloads some of all limited missile's ammunition capacity periodically.";
-    }
-
-    @Override
-    public void loadConfig(String augmentKey, JSONObject augmentSettings) throws JSONException {
-        NAME = augmentSettings.getString("name");
+    public void loadConfig() throws JSONException {
         SECONDS_PER_RELOAD = (int) augmentSettings.getInt("secondsBetweenReloads");
         PERCENT_RELOADED = (float) augmentSettings.getDouble("percentReloaded");
     }
@@ -67,10 +41,15 @@ public class HangarForgeMissiles extends Augment {
 
     @Override
     public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        if (fleet.getCargo().getCredits().get() < 150000) {
-            return "You need 150,000 credits to install this.";
+        if (fleet.getCargo().getCredits().get() < COST_CREDITS) {
+            return StringUtils.getTranslation(this.getKey(), "needCredits")
+                    .format("needCredits", COST_CREDITS)
+                    .toString();
         }
-        return "You need a Hangar Forge to install this.";
+
+        return StringUtils.getTranslation(this.getKey(), "needItem")
+                .format("itemName", Global.getSettings().getSpecialItemSpec(ITEM).getName())
+                .toString();
     }
 
     @Override
@@ -84,9 +63,11 @@ public class HangarForgeMissiles extends Augment {
     public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         if (systems.hasAugment(this.getKey())) {
             if (expand) {
-                tooltip.addPara("%s: Reloads %s of limited missile's ammunition capacity every %s.", 5,
-                        tooltipColors,
-                        this.getName(), PERCENT_RELOADED + "%", SECONDS_PER_RELOAD + " seconds");
+                StringUtils.getTranslation(this.getKey(), "longDescription")
+                        .format("augmentName", this.getName())
+                        .format("reloadSize", PERCENT_RELOADED)
+                        .format("reloadTime", SECONDS_PER_RELOAD)
+                        .addToTooltip(tooltip, tooltipColors);
             } else {
                 tooltip.addPara(this.getName(), tooltipColors[0], 5);
             }
@@ -124,7 +105,7 @@ public class HangarForgeMissiles extends Augment {
 
             boolean addedAmmo = false;
             for(WeaponAPI weapon : ship.getAllWeapons()) {
-                if(weapon.getAmmoTracker() != null && weapon.getAmmoTracker().usesAmmo() && weapon.getAmmoTracker().getAmmoPerSecond() == 0) {
+                if(weapon.getAmmoTracker() != null && weapon.getAmmoTracker().usesAmmo() && weapon.getAmmoTracker().getAmmoPerSecond() == 0f) {
 
                     int ammo = weapon.getAmmoTracker().getAmmo();
                     int maxAmmo = weapon.getAmmoTracker().getMaxAmmo();
@@ -141,7 +122,7 @@ public class HangarForgeMissiles extends Augment {
 
                 Global.getCombatEngine().addFloatingText(
                         ship.getLocation(),
-                        "Reloaded missiles!",
+                        StringUtils.getString(this.getKey(), "statusReloaded"),
                         8,
                         Color.WHITE,
                         ship,

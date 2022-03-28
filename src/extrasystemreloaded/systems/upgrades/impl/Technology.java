@@ -7,8 +7,8 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.systems.upgrades.Upgrade;
+import extrasystemreloaded.util.StringUtils;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
 
@@ -36,13 +36,7 @@ public class Technology extends Upgrade {
     private static float PHASE_COOLDOWN_MULT;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    protected void loadConfig(JSONObject upgradeSettings) throws JSONException {
-        NAME = upgradeSettings.getString("name");
+    protected void loadConfig() throws JSONException {
         SENSOR_MULT = (float) upgradeSettings.getDouble("sensorScalar");
 
         FLUX_SCALAR = (float) upgradeSettings.getDouble("fluxUpgradeScalar");
@@ -62,20 +56,17 @@ public class Technology extends Upgrade {
     }
 
     @Override
-    public String getDescription() {
-        return "Improve flux capacity and dissipation, weapon flux cost, shield/phase efficiency.";
-    }
-
-    @Override
     public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float hullSizeFactor, int level, float quality) {
-        StatUtils.setStatPercentBonus(stats.getSensorProfile(), this.getBuffId(), level, quality, -SENSOR_MULT, hullSizeFactor);
+        StatUtils.setStatMultBonus(stats.getSensorProfile(), this.getBuffId(), level, quality, -SENSOR_MULT, hullSizeFactor);
         StatUtils.setStatPercentBonus(stats.getSensorStrength(), this.getBuffId(), level, quality, SENSOR_MULT, hullSizeFactor);
 
-        StatUtils.setStatPercentBonus(stats.getFluxCapacity(), this.getBuffId(),
-                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, FLUX_SCALAR, FLUX_QUALITY_MULT, hullSizeFactor)
+        StatUtils.setStatMultBonus(stats.getFluxCapacity(), this.getBuffId(),
+                1f +
+                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, FLUX_SCALAR, FLUX_QUALITY_MULT, hullSizeFactor) / 100f
         );
-        StatUtils.setStatPercentBonus(stats.getFluxDissipation(), this.getBuffId(),
-                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, FLUX_SCALAR, FLUX_QUALITY_MULT, hullSizeFactor)
+        StatUtils.setStatMultBonus(stats.getFluxDissipation(), this.getBuffId(),
+                1f +
+                StatUtils.getDiminishingReturnsTotal(level, getMaxLevel(fm.getHullSpec().getHullSize()), quality, FLUX_SCALAR, FLUX_QUALITY_MULT, hullSizeFactor) / 100f
         );
 
         if (fm.getHullSpec() != null &&
@@ -119,41 +110,49 @@ public class Technology extends Upgrade {
             if(expand) {
                 tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-                StatUtils.addDoublePercentBonusToTooltip(tooltip, "  Flux capacity and dissipation: +%s (%s, %s)",
-                        fm.getStats().getFluxCapacity().getPercentStatMod(this.getBuffId()).getValue(),
-                        fm.getStats().getFluxCapacity().getBaseValue(), fm.getStats().getFluxDissipation().getBaseValue());
+                this.addIncreaseToTooltip(tooltip,
+                        "fluxStatsIncrease",
+                        (fm.getStats().getFluxCapacity().getMultStatMod(this.getBuffId()).getValue() - 1f) * 100f);
 
-                StatUtils.addDoublePercentBonusToTooltip(tooltip, "  Sensor strength and profile: +/- %s (%s, %s)",
-                        fm.getStats().getSensorStrength().getPercentStatMod(this.getBuffId()).getValue(),
-                        fm.getStats().getSensorStrength().getBaseValue(), fm.getStats().getSensorProfile().getBaseValue());
+                StringUtils.getTranslation(this.getKey(),"sensorStatsIncrease")
+                        .format("percentIncrease", fm.getStats().getSensorStrength().getPercentStatMod(this.getBuffId()).getValue())
+                        .format("strengthFinal", fm.getStats().getSensorStrength().getBaseValue() * fm.getStats().getSensorStrength().getPercentStatMod(this.getBuffId()).getValue() / 100f)
+                        .format("profileFinal", fm.getStats().getSensorProfile().getBaseValue() * -(1f - fm.getStats().getSensorProfile().getMultStatMod(this.getBuffId()).getValue()))
+                        .addToTooltip(tooltip, 2f);
 
                 if (fm.getHullSpec() != null &&
                         (fm.getHullSpec().getShieldType() == ShieldAPI.ShieldType.FRONT ||
                                 fm.getHullSpec().getShieldType() == ShieldAPI.ShieldType.OMNI)) {
 
-                    StatUtils.addMultBonusToTooltipUnrounded(tooltip, "  Shield damage taken: %s (%s)",
+                    this.addDecreaseWithFinalToTooltip(tooltip,
+                            "shieldDamageDecrease",
                             fm.getStats().getShieldDamageTakenMult().getMultStatMod(this.getBuffId()).getValue(),
                             fm.getStats().getShieldDamageTakenMult().getBaseValue());
 
-                    StatUtils.addMultBonusToTooltip(tooltip, "  Shield upkeep: %s (%s)",
+                    this.addDecreaseWithFinalToTooltip(tooltip,
+                            "shieldUpkeepDecrease",
                             fm.getStats().getShieldUpkeepMult().getMultStatMod(this.getBuffId()).getValue(),
-                            fm.getStats().getShieldUpkeepMult().getBaseValue() * fm.getStats().getFluxDissipation().getBaseValue());
+                            fm.getStats().getShieldUpkeepMult().getBaseValue());
 
-                    StatUtils.addPercentBonusToTooltip(tooltip, "  Shield unfold rate: +%s",
+                    this.addIncreaseToTooltip(tooltip,
+                            "shieldOpenSpeedIncrease",
                             fm.getStats().getShieldUnfoldRateMult().getPercentStatMod(this.getBuffId()).getValue());
 
                 } else if (fm.getHullSpec() != null &&
                         fm.getHullSpec().getShieldType() == ShieldAPI.ShieldType.PHASE) {
 
-                    StatUtils.addMultBonusToTooltip(tooltip, "  Phase cloak activation cost: %s (%s)",
+                    this.addDecreaseWithFinalToTooltip(tooltip,
+                            "phaseActivationDecrease",
                             fm.getStats().getPhaseCloakActivationCostBonus().getMultBonus(this.getBuffId()).getValue(),
                             fm.getVariant().getHullSpec().getShieldSpec().getPhaseCost());
 
-                    StatUtils.addMultBonusToTooltip(tooltip, "  Phase cloak upkeep cost: %s (%s)",
+                    this.addDecreaseWithFinalToTooltip(tooltip,
+                            "phaseUpkeepDecrease",
                             fm.getStats().getPhaseCloakUpkeepCostBonus().getMultBonus(this.getBuffId()).getValue(),
                             fm.getVariant().getHullSpec().getShieldSpec().getPhaseUpkeep());
 
-                    StatUtils.addMultBonusToTooltip(tooltip, "  Phase cloak cooldown: %s",
+                    this.addDecreaseToTooltip(tooltip,
+                            "phaseCooldownDecrease",
                             fm.getStats().getPhaseCloakCooldownBonus().getMultBonus(this.getBuffId()).getValue());
                 }
             } else {

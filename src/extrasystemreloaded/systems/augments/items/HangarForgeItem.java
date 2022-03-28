@@ -8,6 +8,6 @@ import extrasystemreloaded.systems.augments.impl.HangarForge;
 public class HangarForgeItem extends AugmentSpecialItem {
     @Override
     public Augment getAugment() {
-        return AugmentsHandler.AUGMENTS.get(HangarForge.AUGMENT_KEY);
+        return AugmentsHandler.AUGMENTS.get("HangarForge");
     }
 }

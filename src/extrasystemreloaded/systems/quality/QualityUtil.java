@@ -1,6 +1,7 @@
 package extrasystemreloaded.systems.quality;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.util.Misc;
 import extrasystemreloaded.util.Utilities;
 
 import java.awt.*;
@@ -33,9 +34,9 @@ public class QualityUtil {
     public static Color getQualityColor(float arg){
         Color color;
         if (Utilities.isInside(arg, 0.5f, 0.65f)) {
-            color = Color.gray.darker();
+            color = Color.red.darker();
         }else if (Utilities.isInside(arg, 0.65f, 0.8f)) {
-            color = Color.gray;
+            color = Color.orange.darker();
         }else if (Utilities.isInside(arg, 0.8f, 0.95f)) {
             color = Color.lightGray;
         }else if (Utilities.isInside(arg, 0.95f, 1.1f)) {
@@ -50,5 +51,13 @@ public class QualityUtil {
             color = Color.CYAN;
         }
         return color;
+    }
+
+    public static String getQualityString(float shipQuality) {
+        return getRoundedQuality(shipQuality) + " " + getQualityName(shipQuality);
+    }
+
+    public static String getRoundedQuality(float shipQuality) {
+        return String.valueOf(Math.round(shipQuality * 1000f) / 10f) + "%";
     }
 }

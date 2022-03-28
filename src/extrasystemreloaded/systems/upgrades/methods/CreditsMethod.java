@@ -7,6 +7,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import extrasystemreloaded.util.ExtraSystems;
+import extrasystemreloaded.util.StringUtils;
 
 import java.util.Map;
 
@@ -29,11 +30,12 @@ public class CreditsMethod implements UpgradeMethod {
         String creditCostFormatted = Misc.getFormat().format(creditCost);
         String convenienceFeeFormatted = Misc.getFormat().format(convenienceFee);
         options.addOption(
-                String.format("Buy for %s credits (included fee of %s)", creditCostFormatted, convenienceFeeFormatted),
+                StringUtils.getTranslation("UpgradeMethods","CreditsOption")
+                        .format("credits", creditCostFormatted)
+                        .format("extraTax", convenienceFeeFormatted)
+                        .toString(),
                 getOptionId(),
-
-                //todo: add player credits
-                "The credit cost of an upgrade increases exponentially as level goes up. It can be reduced somewhat through faction relations."
+                StringUtils.getString("UpgradeMethods","CreditsUpgradeTooltip")
         );
 
         if(!canUse(fm, es, upgrade, market)) {

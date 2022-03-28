@@ -11,13 +11,15 @@ import extrasystemreloaded.ESModSettings;
 import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
+import extrasystemreloaded.campaign.ESRuleUtils;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.systems.quality.QualityUtil;
 import extrasystemreloaded.util.ExtraSystems;
+import extrasystemreloaded.util.StringUtils;
 
 import java.awt.*;
 
-import static extrasystemreloaded.util.Utilities.*;
+import static extrasystemreloaded.systems.quality.QualityUtil.getQualityColor;
 
 public class Es_ShipQualityDialog extends ESDialog {
     public static final String RULE_MENUSTATE = "ESQuality";
@@ -26,22 +28,16 @@ public class Es_ShipQualityDialog extends ESDialog {
 
     @Override
     protected void process(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
-        options.clearOptions();
-
         FleetMemberAPI selectedShip = context.getSelectedShip();
 
         if (selectedShip != null) {
             showQualityOptions(context, textPanel, options, visual);
-
-            options.addOption("Back to ship", Es_ShipDialog.RULE_DIALOG_OPTION);
         }
 
-        options.addOption("Back to ship list", Es_ShipListDialog.RULE_DIALOG_OPTION);
-        options.addOption("Back to main menu", ESDialog.RULE_DIALOG_OPTION);
+        ESRuleUtils.addReturnOptions(options, selectedShip, false);
     }
 
-    private void showQualityOptions(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
-
+    private static void showQualityOptions(ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
         String functionType = context.getFunctionType();
         CampaignFleetAPI playerFleet = context.getPlayerFleet();
         FleetMemberAPI selectedShip = context.getSelectedShip();
@@ -53,29 +49,41 @@ public class Es_ShipQualityDialog extends ESDialog {
         switch (functionType) {
             case "QualityUpgradeSelected":
                 if (selectedShip != null) {
-                    float bonusQuality = baseQualityStep * upgradeQualityMult;
-                    textPanel.addParagraph(TextTip.quality1);
-                    String shipQualityText = "" + Math.round(shipQuality * 1000f) / 1000f + QualityUtil.getQualityName(shipQuality);
-                    textPanel.appendToLastParagraph(" " + shipQualityText);
+
+                    String shipQualityText = QualityUtil.getQualityString(shipQuality);
+                    textPanel.addParagraph(
+                            StringUtils.getTranslation("QualityDialog","QualityForShip")
+                                    .format("quality", shipQualityText)
+                                    .toString()
+                    );
                     textPanel.highlightLastInLastPara(shipQualityText, QualityUtil.getQualityColor(shipQuality));
-                    shipQualityText = "Local industrial facilities are capable of improving overall quality rating of ships by " + bonusQuality;
-                    textPanel.addParagraph(shipQualityText);
-                    textPanel.highlightLastInLastPara("" + bonusQuality, Color.green);
+
+                    String bonusQuality = QualityUtil.getRoundedQuality(baseQualityStep * upgradeQualityMult);
+                    textPanel.addParagraph(
+                            StringUtils.getTranslation("QualityDialog","QualityUpgradeForShip")
+                                    .format("bonusQuality", bonusQuality)
+                                    .toString()
+                    );
+                    textPanel.highlightLastInLastPara(bonusQuality, Color.green);
 
                     String needCredits = Misc.getFormat().format(estimatedOverhaulCost);
-                    shipQualityText = "On-site team estimates ship's overhaul to cost " + needCredits + " credits";
-                    textPanel.addParagraph(shipQualityText);
-                    textPanel.highlightLastInLastPara(needCredits, Color.green);
+                    textPanel.addParagraph(
+                            StringUtils.getTranslation("QualityDialog","CostCreditsToUpgrade")
+                                    .format("credits", needCredits)
+                                    .toString()
+                    );
+                    textPanel.highlightLastInLastPara(needCredits, Color.yellow);
 
-                    options.addOption("Agree to conditions", "ESShipQualityApply", null);
-                    options.setTooltip("ESShipQualityApply", "Proceed with overhaul");
+                    options.addOption(
+                            StringUtils.getString("QualityDialog","ConfirmPurchaseUpgrade"),
+                            "ESShipQualityApply", null);
 
                     if (!isAbleToPayForQualityUpgrade(context.getPlayerFleet(), estimatedOverhaulCost)) {
+                        options.setTooltip("ESShipQualityApply", StringUtils.getString("QualityDialog","ConfirmInsufficientCredits"));
                         options.setEnabled("ESShipQualityApply", false);
-                        options.setTooltip("ESShipQualityApply", "Insufficient credits");
                     } else if (!canUpgrade(buff, selectedShip)) {
+                        options.setTooltip("ESShipQualityApply", StringUtils.getString("QualityDialog","ConfirmQualityTooHigh"));
                         options.setEnabled("ESShipQualityApply", false);
-                        options.setTooltip("ESShipQualityApply", "The quality of this ship has reached its peak.");
                     }
                 }
                 break;
@@ -93,28 +101,43 @@ public class Es_ShipQualityDialog extends ESDialog {
                         playerFleet.getCargo().getCredits().subtract(estimatedOverhaulCost);
                     }
 
-                    String text2 = "After some improvements here and there, your ship now has quality rating of " + newQuality;
-                    textPanel.addParagraph(text2);
-                    textPanel.highlightLastInLastPara("" + newQuality, QualityUtil.getQualityColor(newQuality));
+                    String newQualityString = QualityUtil.getQualityString(newQuality);
+                    textPanel.addParagraph(
+                            StringUtils.getTranslation("QualityDialog","UpgradedQualityForShip")
+                                    .format("quality", newQualityString)
+                                    .toString()
+                    );
+                    textPanel.highlightLastInLastPara(newQualityString, QualityUtil.getQualityColor(newQuality));
 
                     if(buff.canUpgradeQuality(selectedShip)) {
-                        estimatedOverhaulCost = getQualityUpgradePrice(selectedShip, newQuality, upgradeQualityMult);
-                        String shipQualityText = "On-site team estimates that another overhaul would cost %s credits for a quality increase of %s.";
-                        String needCredits = Misc.getFormat().format(estimatedOverhaulCost);
-                        textPanel.addParagraph(String.format(shipQualityText, estimatedOverhaulCost, bonusQuality));
-                        textPanel.highlightLastInLastPara(needCredits, Color.yellow);
-                        textPanel.highlightLastInLastPara(String.valueOf(bonusQuality), Color.green);
 
-                        options.addOption(OptionName.Repurchase, "ESShipQualityApply");
-                        if (isAbleToPayForQualityUpgrade(context.getPlayerFleet(), estimatedOverhaulCost)) {
-                            options.setTooltip("ESShipQualityApply", "Proceed with overhaul");
-                        } else {
+                        bonusQuality = Math.min(bonusQuality, ESModSettings.getFloat(ESModSettings.MAX_QUALITY) - newQuality);
+                        estimatedOverhaulCost = getQualityUpgradePrice(selectedShip, newQuality, upgradeQualityMult);
+
+                        String needCredits = Misc.getFormat().format(estimatedOverhaulCost);
+                        String bonusQualityString = QualityUtil.getRoundedQuality(bonusQuality);
+
+                        textPanel.addParagraph(
+                                StringUtils.getTranslation("QualityDialog","AnotherQualityUpgradeForShip")
+                                        .format("credits", needCredits)
+                                        .format("bonusQuality", bonusQualityString)
+                                        .toString()
+                        );
+                        textPanel.highlightInLastPara(Color.yellow, bonusQualityString, needCredits);
+
+                        options.addOption(StringUtils.getString("QualityDialog","ConfirmPurchaseUpgrade"), "ESShipQualityApply");
+                        if (!isAbleToPayForQualityUpgrade(context.getPlayerFleet(), estimatedOverhaulCost)) {
                             options.setEnabled("ESShipQualityApply", false);
-                            options.setTooltip("ESShipQualityApply", "Insufficient credits");
+                            options.setTooltip("ESShipQualityApply", StringUtils.getString("QualityDialog","ConfirmInsufficientCredits"));
                         }
                     } else {
-                        textPanel.addParagraph("The quality of this ship has reached its peak.");
-                        options.addOption("The quality of this ship has reached its peak.", "DoNothing");
+                        textPanel.addParagraph(
+                                StringUtils.getString("QualityDialog","UpgradedToMaxQualityShip"));
+
+                        options.addOption(
+                                StringUtils.getString("QualityDialog","ConfirmPurchaseUpgrade"),
+                                "DoNothing",
+                                StringUtils.getString("QualityDialog","ConfirmQualityTooHigh"));
                         options.setEnabled("DoNothing", false);
                     }
                 }
@@ -124,15 +147,15 @@ public class Es_ShipQualityDialog extends ESDialog {
         }
     }
 
-    private boolean canUpgrade(ExtraSystems buff, FleetMemberAPI selectedShip) {
+    private static boolean canUpgrade(ExtraSystems buff, FleetMemberAPI selectedShip) {
         return buff == null || buff.canUpgradeQuality(selectedShip);
     }
 
-    private boolean isAbleToPayForQualityUpgrade(CampaignFleetAPI fleet, float cost) {
+    private static boolean isAbleToPayForQualityUpgrade(CampaignFleetAPI fleet, float cost) {
         return cost <= fleet.getCargo().getCredits().get() || Es_ModPlugin.isDebugUpgradeCosts();
     }
 
-    private float getMarketQualityMult(MarketAPI currMarket) {
+    private static float getMarketQualityMult(MarketAPI currMarket) {
         float qualityMult = 1;
         if(currMarket.hasIndustry("heavyindustry")) {
             qualityMult+=0.5;
@@ -162,10 +185,43 @@ public class Es_ShipQualityDialog extends ESDialog {
         return qualityMult;
     }
 
-    private float getQualityUpgradePrice(FleetMemberAPI selectedShip, float shipQuality, float upgradeQualityMult) {
+    private static float getQualityUpgradePrice(FleetMemberAPI selectedShip, float shipQuality, float upgradeQualityMult) {
         float shipBaseValue = Math.min(Math.min(selectedShip.getBaseDeployCost(), 1) * 40000, selectedShip.getBaseValue());
         return Math.round(shipBaseValue * (float) Math.pow(shipQuality, 2) / (2f + 0.25f * (upgradeQualityMult - 1)) * 100f) / 100f;
     }
 
+    public static class QualityOption extends Es_ShipDialog.ShipOption {
+        public QualityOption(int order) {
+            super(order);
+        }
 
+        @Override
+        public Object addOption(OptionPanelAPI options, FleetMemberAPI fm, ExtraSystems es, MarketAPI market) {
+            options.addOption(StringUtils.getString("QualityDialog", "OpenQualityOptions"), RULE_DIALOG_OPTION, null);
+            if(!es.canUpgradeQuality(fm)) {
+                options.setEnabled(RULE_DIALOG_OPTION, false);
+                options.setTooltip(RULE_DIALOG_OPTION, StringUtils.getString("QualityDialog", "QualityFullyUpgraded"));
+            }
+
+            return RULE_DIALOG_OPTION;
+        }
+
+        @Override
+        public void modifyTextPanel(TextPanelAPI textPanel, FleetMemberAPI fm, ExtraSystems es, MarketAPI market) {
+            float shipQuality = es.getQuality(fm);
+
+            String shipQualityText = QualityUtil.getQualityString(shipQuality);
+            textPanel.addParagraph(
+                    StringUtils.getTranslation("QualityDialog", "QualityForShip")
+                        .format("quality", shipQualityText)
+                        .toString());
+            textPanel.highlightLastInLastPara(shipQualityText, getQualityColor(shipQuality));
+
+            String qualityBonusFromMarket = QualityUtil.getRoundedQuality(getMarketQualityMult(market));
+            textPanel.addParagraph(StringUtils.getTranslation("QualityDialog", "QualityBonusFromMarket")
+                    .format("bonus", qualityBonusFromMarket)
+                    .toString());
+            textPanel.highlightInLastPara(qualityBonusFromMarket);
+        }
+    }
 }

@@ -8,6 +8,6 @@ import extrasystemreloaded.systems.augments.impl.DriveFluxVent;
 public class DriveVentItem extends AugmentSpecialItem {
     @Override
     public Augment getAugment() {
-        return AugmentsHandler.AUGMENTS.get(DriveFluxVent.AUGMENT_KEY);
+        return AugmentsHandler.AUGMENTS.get("DriveFluxVent");
     }
 }

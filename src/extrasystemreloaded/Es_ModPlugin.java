@@ -6,11 +6,13 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import extrasystemreloaded.campaign.rulecmd.Es_ShipDialog;
 import extrasystemreloaded.integration.indevo.IndEvoUtil;
 import extrasystemreloaded.systems.augments.AugmentsHandler;
 import extrasystemreloaded.campaign.CampaignListener;
 import extrasystemreloaded.campaign.salvage.SalvageListener;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
+import extrasystemreloaded.systems.quality.QualityHandler;
 import extrasystemreloaded.systems.upgrades.UpgradesHandler;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.FleetMemberUtils;
@@ -37,8 +39,12 @@ public class Es_ModPlugin extends BaseModPlugin {
 
 		ESModSettings.loadModSettings();
 		StatUtils.loadStatCurves();
-		UpgradesHandler.populateUpgrades();
-		AugmentsHandler.populateAugments();
+
+		Es_ShipDialog.SHIP_OPTIONS.clear();
+
+		QualityHandler.initialize();
+		UpgradesHandler.initialize();
+		AugmentsHandler.initialize();
 
 		if(Global.getSettings().getModManager().isModEnabled("IndEvo")) {
 			IndEvoUtil.loadIntegration();

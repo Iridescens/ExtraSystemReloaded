@@ -6,8 +6,8 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.systems.upgrades.Upgrade;
+import extrasystemreloaded.util.StringUtils;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
 
@@ -21,24 +21,12 @@ public class Durability extends Upgrade {
     private static float ARMOR_QUALITY_MULT;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    protected void loadConfig(JSONObject upgradeSettings) throws JSONException {
-        NAME = upgradeSettings.getString("name");
-
+    protected void loadConfig() throws JSONException {
         HULL_MULT = (float) upgradeSettings.getDouble("hullUpgradeScalar");
         ENGINE_HEALTH_MULT = (float) upgradeSettings.getDouble("engineHealthScalar");
         EMP_TAKEN_MULT = (float) upgradeSettings.getDouble("empTakenScalar");
         ARMOR_SCALAR = (float) upgradeSettings.getDouble("armorUpgradeScalar");
         ARMOR_QUALITY_MULT = (float) upgradeSettings.getDouble("armorQualityMult");
-    }
-
-    @Override
-    public String getDescription() {
-        return "Improve hull, armor, EMP resistance, weapon health, engine health.";
     }
 
     @Override
@@ -61,19 +49,22 @@ public class Durability extends Upgrade {
             if(expand) {
                 tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Hull durability: +%s (%s)",
+                this.addIncreaseWithFinalToTooltip(tooltip,
+                        "hullIncrease",
                         fm.getStats().getHullBonus().getPercentBonus(this.getBuffId()).getValue(),
                         fm.getVariant().getHullSpec().getHitpoints());
 
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Armor durability: +%s (%s)",
+                this.addIncreaseWithFinalToTooltip(tooltip,
+                        "armorIncrease",
                         fm.getStats().getArmorBonus().getPercentBonus(this.getBuffId()).getValue(),
                         fm.getVariant().getHullSpec().getArmorRating());
 
-
-                StatUtils.addPercentBonusToTooltip(tooltip, "  Engines durability: +%s",
+                this.addIncreaseToTooltip(tooltip,
+                        "engineHealthIncrease",
                         fm.getStats().getEngineHealthBonus().getPercentBonus(this.getBuffId()).getValue());
 
-                StatUtils.addMultBonusToTooltip(tooltip, "  EMP damage taken: %s",
+                this.addDecreaseToTooltip(tooltip,
+                        "empDamageDecrease",
                         fm.getStats().getEmpDamageTakenMult().getMultStatMod(this.getBuffId()).getValue());
             } else {
                 tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));

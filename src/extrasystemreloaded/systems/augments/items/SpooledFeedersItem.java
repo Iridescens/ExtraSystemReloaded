@@ -8,6 +8,6 @@ import extrasystemreloaded.systems.augments.impl.SpooledFeeders;
 public class SpooledFeedersItem extends AugmentSpecialItem {
     @Override
     public Augment getAugment() {
-        return AugmentsHandler.AUGMENTS.get(SpooledFeeders.AUGMENT_KEY);
+        return AugmentsHandler.AUGMENTS.get("SpooledFeeders");
     }
 }

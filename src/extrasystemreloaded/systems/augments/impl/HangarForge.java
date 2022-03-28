@@ -7,55 +7,25 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
+import extrasystemreloaded.util.StringUtils;
 import extrasystemreloaded.util.Utilities;
 import extrasystemreloaded.systems.augments.Augment;
+import lombok.Getter;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
 
 public class HangarForge extends Augment {
-    public static final String AUGMENT_KEY = "HangarForge";
-    public static final Color MAIN_COLOR = Color.GREEN;
     private static final String ITEM = "esr_hangarforge";
-    private static final Color[] tooltipColors = {MAIN_COLOR, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
+    private static final Color[] tooltipColors = {Color.GREEN, ExtraSystemHM.infoColor, ExtraSystemHM.infoColor};
 
-    private static String NAME = "Hangar Forge";
     private static float RATE_DECREASE_MODIFIER = -35f;
     private static float FIGHTER_REPLACEMENT_TIME_BONUS = -15f;
 
-    @Override
-    public String getKey() {
-        return AUGMENT_KEY;
-    }
+    @Getter private final Color mainColor = Color.GREEN;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    public Color getMainColor() {
-        return MAIN_COLOR;
-    }
-
-    @Override
-    public String getDescription() {
-        return "A Hangar Forge can be used to produce fightercraft at a rate far faster than comparatively-" +
-                "primitive mechanics and other automated equipment ever could. In addition, the forge is much more " +
-                "resilient to the effects of extreme fighter losses, although the crew loss in such a scenario is " +
-                "always unfortunate.";
-    }
-
-    @Override
-    public String getTooltip() {
-        return "Decreases fighter replacement time. Reduces the rate at which the replacement rate decreases as well.";
-    }
-
-    @Override
-    public void loadConfig(String augmentKey, JSONObject augmentSettings) throws JSONException {
-        NAME = augmentSettings.getString("name");
-
+    public void loadConfig() throws JSONException {
         RATE_DECREASE_MODIFIER = (float) augmentSettings.getDouble("replacementRateDecreaseSpeed");
         FIGHTER_REPLACEMENT_TIME_BONUS = (float) augmentSettings.getDouble("fighterReplacementBuff");
     }
@@ -80,12 +50,11 @@ public class HangarForge extends Augment {
     public void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand) {
         if (systems.hasAugment(this.getKey())) {
             if (expand) {
-                tooltip.addPara("%s: Reduces fighter replacement rates by %s. " +
-                                "Reduces the rate at which replacement rate degrades by %s.", 5,
-                        tooltipColors,
-                        this.getName(),
-                        Math.abs(FIGHTER_REPLACEMENT_TIME_BONUS) + "%",
-                        Math.abs(RATE_DECREASE_MODIFIER) + "%");
+                StringUtils.getTranslation(this.getKey(), "longDescription")
+                        .format("augmentName", this.getName())
+                        .format("replacementRateIncrease", FIGHTER_REPLACEMENT_TIME_BONUS)
+                        .format("rateDecreaseBuff", RATE_DECREASE_MODIFIER)
+                        .addToTooltip(tooltip, tooltipColors);
             } else {
                 tooltip.addPara(this.getName(), tooltipColors[0], 5);
             }

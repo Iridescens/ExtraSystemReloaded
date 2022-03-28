@@ -4,8 +4,8 @@ ESMainDialog,PopulateOptions,"$hasMarket
 $menuState == main
 $tradeMode == OPEN
 RepairAvailable","SetShortcut ESMainMenu ""U"" true",,"25:ESMainMenu:Consider upgrading your ships (ExtraSystem)",
-ESMainMenu,DialogOptionSelected,"$option==ESMainMenu","ShowDefaultVisual
-$menuState = ESMainMenu","Welcome to ExtraSystem Reloaded!
+ESMainMenu,DialogOptionSelected,"$option==ESMainMenu","$menuState = ESMainMenu
+Es_ShipListDialog","Welcome to ExtraSystem Reloaded!
 Choose the function you want.","15:ESShipList:Consider an overhaul to a ship
 90:ESDialogBack:Back",
 ESShipList,DialogOptionSelected,"$option==ESShipList","Es_ShipListDialog",,,

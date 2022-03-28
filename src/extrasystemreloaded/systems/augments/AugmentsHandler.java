@@ -1,17 +1,26 @@
 package extrasystemreloaded.systems.augments;
 
 import com.fs.starfarer.api.Global;
-import org.apache.log4j.Logger;
+import extrasystemreloaded.campaign.rulecmd.Es_ShipAugmentsDialog;
+import extrasystemreloaded.campaign.rulecmd.Es_ShipDialog;
+import extrasystemreloaded.util.StringUtils;
+import lombok.extern.log4j.Log4j;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.*;
 
+@Log4j
 public class AugmentsHandler {
-    public static final Logger log = Logger.getLogger(AugmentsHandler.class);
+    private static int AUGMENT_OPTION_ORDER = 2;
     public static final Map<String, Augment> AUGMENTS = new HashMap<>();
     public static final List<Augment> AUGMENT_LIST = new ArrayList<>();
+
+    public static void initialize() {
+        Es_ShipDialog.addShipOption(new Es_ShipAugmentsDialog.AugmentOption(AUGMENT_OPTION_ORDER));
+        AugmentsHandler.populateAugments();
+    }
 
     public static void populateAugments() {
         try {
@@ -20,13 +29,21 @@ public class AugmentsHandler {
             Iterator augIterator = settings.keys();
             while(augIterator.hasNext()) {
                 String augKey = (String) augIterator.next();
+
+                if(AUGMENTS.containsKey(augKey)) return;
+
                 JSONObject augObj = (JSONObject) settings.getJSONObject(augKey);
 
                 Class<?> clzz = Global.getSettings().getScriptClassLoader().loadClass(augObj.getString("augmentClass"));
                 Augment augment = (Augment) clzz.newInstance();
 
                 if(augment.shouldLoad()) {
-                    augment.loadConfig(augKey, augObj);
+                    augment.setKey(augKey);
+                    augment.setName(StringUtils.getString(augKey, "name"));
+                    augment.setDescription(StringUtils.getString(augKey, "description"));
+                    augment.setTooltip(StringUtils.getString(augKey, "tooltip"));
+                    augment.setConfig(augObj);
+
                     AugmentsHandler.addAugment(augment);
                 }
             }
@@ -44,7 +61,7 @@ public class AugmentsHandler {
                     continue;
                 }
 
-                augment.loadConfig(augment.getKey(), settings.getJSONObject(augment.getKey()));
+                augment.loadConfig();
             }
         } catch (JSONException | IOException ex) {
             throw new RuntimeException(ex);
@@ -52,8 +69,6 @@ public class AugmentsHandler {
     }
 
     public static void addAugment(Augment augment) {
-        if(AUGMENTS.containsKey(augment.getKey())) return;
-
         AUGMENTS.put(augment.getKey(), augment);
         AUGMENT_LIST.add(augment);
 

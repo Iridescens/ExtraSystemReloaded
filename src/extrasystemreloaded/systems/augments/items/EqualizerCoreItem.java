@@ -8,6 +8,6 @@ import extrasystemreloaded.systems.augments.impl.EqualizerCore;
 public class EqualizerCoreItem extends AugmentSpecialItem {
     @Override
     public Augment getAugment() {
-        return AugmentsHandler.AUGMENTS.get(EqualizerCore.AUGMENT_KEY);
+        return AugmentsHandler.AUGMENTS.get("EqualizerCore");
     }
 }

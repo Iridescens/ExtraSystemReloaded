@@ -8,6 +8,6 @@ import extrasystemreloaded.systems.augments.impl.PhasefieldEngine;
 public class PhasefieldEngineItem extends AugmentSpecialItem {
     @Override
     public Augment getAugment() {
-        return AugmentsHandler.AUGMENTS.get(PhasefieldEngine.AUGMENT_KEY);
+        return AugmentsHandler.AUGMENTS.get("PhasefieldEngine");
     }
 }

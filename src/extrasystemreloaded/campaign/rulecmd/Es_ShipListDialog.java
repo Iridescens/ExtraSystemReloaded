@@ -4,6 +4,8 @@ import com.fs.starfarer.api.campaign.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
+import extrasystemreloaded.util.StringUtils;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -12,6 +14,17 @@ public class Es_ShipListDialog extends ESDialog {
     public static String RULE_DIALOG_OPTION = "ESShipList";
     private static String RULE_PREV_OPTION = "ESShipPickerPREV";
     private static String RULE_NEXT_OPTION = "ESShipPickerNEXT";
+
+    public static Object addReturnOption(OptionPanelAPI options) {
+        options.addOption(StringUtils.getString("ShipListDialog", "BackToShipList"), RULE_DIALOG_OPTION);
+        return RULE_DIALOG_OPTION;
+    }
+
+    public static Object addReturnOptionWithShortcut(OptionPanelAPI options) {
+        Object option = addReturnOption(options);
+        options.setShortcut(option, Keyboard.KEY_ESCAPE, false, false, false, true);
+        return RULE_DIALOG_OPTION;
+    }
 
     @Override
     protected void process(final ESDialogContext context, TextPanelAPI textPanel, OptionPanelAPI options, VisualPanelAPI visual) {
@@ -24,7 +37,11 @@ public class Es_ShipListDialog extends ESDialog {
         int cols = Math.min(validSelectionList.size(), 10);
         cols = Math.max(cols, 4);
 
-        dialog.showFleetMemberPickerDialog("Select ship", "Confirm", "Cancel", rows,
+        dialog.showFleetMemberPickerDialog(
+                StringUtils.getString("ShipListDialog", "SelectShip"),
+                StringUtils.getString("ShipListDialog", "Confirm"),
+                StringUtils.getString("ShipListDialog", "Cancel"),
+                rows,
                 cols, 88f, true, false, validSelectionList, new FleetMemberPickerListener() {
                     @Override
                     public void pickedFleetMembers(List<FleetMemberAPI> members) {
@@ -33,13 +50,13 @@ public class Es_ShipListDialog extends ESDialog {
                             dialog.getPlugin().optionSelected(Es_ShipDialog.RULE_DIALOG_OPTION, Es_ShipDialog.RULE_DIALOG_OPTION);
                         } else {
                             //sue me
-                            dialog.getPlugin().optionSelected("ESMainMenu", "ESMainMenu");
+                            dialog.getPlugin().optionSelected("ESMainMenu", ESDialog.RULE_DIALOG_OPTION);
                         }
                     }
 
                     @Override
                     public void cancelledFleetMemberPicking() {
-                        dialog.getPlugin().optionSelected("ESMainMenu", "ESMainMenu");
+                        dialog.getPlugin().optionSelected("ESMainMenu", ESDialog.RULE_DIALOG_OPTION);
                     }
                 });
     }
