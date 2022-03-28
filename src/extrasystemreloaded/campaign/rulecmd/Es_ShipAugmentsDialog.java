@@ -219,7 +219,9 @@ public class Es_ShipAugmentsDialog extends ESDialog {
 
             boolean canUpgrade = upgrade.canApply(fm.getFleetData().getFleet(), fm);
             if(canUpgrade) {
-                sortedUpgradeList.add(upgrade);
+                if (!buff.hasAugment(upgrade)) {
+                    sortedUpgradeList.add(upgrade);
+                }
             }
         }
 
