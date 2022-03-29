@@ -30,6 +30,7 @@ public class AlphaSubcore extends Augment {
 
     //this mod already has an "alpha core" installation.
     //yunru's does as well, but i'm less worried about that one.
+    /*
     @Override
     public boolean shouldLoad() {
         if (Global.getSettings().getModManager().isModEnabled("mayu_specialupgrades")) {
@@ -37,7 +38,7 @@ public class AlphaSubcore extends Augment {
         }
 
         return super.shouldLoad();
-    }
+    }*/
 
     @Override
     public boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm) {
