@@ -16,9 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ESModSettings {
-    public static String RANDOM_QUALITY = "useRandomQuality";
-    public static String STARTING_QUALITY = "baseQuality";
-    public static String MAX_QUALITY = "maxQuality";
+    public static String RANDOM_BANDWIDTH = "useRandomBandwidth";
+    public static String STARTING_BANDWIDTH = "baseBandwidth";
+    public static String MAX_BANDWIDTH = "maxBandwidth";
 
     public static String SHIPS_KEEP_UPGRADES_ON_DEATH = "shipsKeepUpgradesOnDeath";
     public static String UPGRADE_ALWAYS_SUCCEED = "upgradeAlwaysSucceed";

@@ -2,18 +2,18 @@ package extrasystemreloaded.systems.augments.impl;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import extrasystemreloaded.campaign.rulecmd.ESInteractionDialogPlugin;
 import extrasystemreloaded.systems.augments.Augment;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StringUtils;
 import extrasystemreloaded.util.Utilities;
 import lombok.Getter;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -35,7 +35,7 @@ public class PlasmaFluxCatalyst extends Augment {
 
     @Override
     public boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return Utilities.playerHasSpecialItem(ITEM);
+        return Utilities.hasItem(fleet.getCargo(), ITEM);
     }
 
     public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
@@ -46,7 +46,7 @@ public class PlasmaFluxCatalyst extends Augment {
 
     @Override
     public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        Utilities.removePlayerSpecialItem(ITEM);
+        Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
 
         return true;
     }
@@ -71,7 +71,12 @@ public class PlasmaFluxCatalyst extends Augment {
     }
 
     @Override
-    public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
+    public void modifyResourcesPanel(InteractionDialogAPI dialog, ESInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm) {
+        resourceCosts.put(ITEM, 1f);
+    }
+
+    @Override
+    public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
         if (fm.getFleetCommander() == null) {
             return;
         }
@@ -97,7 +102,7 @@ public class PlasmaFluxCatalyst extends Augment {
     }
 
     @Override
-    public void applyAugmentToShip(FleetMemberAPI fm, ShipAPI ship, float quality, String id) {
+    public void applyAugmentToShip(FleetMemberAPI fm, ShipAPI ship, float bandwidth, String id) {
         int numCaps = ship.getVariant().getNumFluxCapacitors();
         int numVents = ship.getVariant().getNumFluxVents();
 

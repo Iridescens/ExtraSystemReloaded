@@ -1,13 +1,4 @@
 {
-	"ResourceName":{
-		"supplies":"Supplies",
-		"volatiles":"Volatiles",
-		"organics":"Organics",
-		"hand_weapons":"Heavy armaments",
-		"metals":"Metals",
-		"rare_metals":"Transplutonics",
-		"heavy_machinery":"Heavy machinery"
-	},
 	"Options":{
 		"leave":"Leave",
 		"back":"Back",
@@ -17,47 +8,56 @@
 		"nextpage":"Next Page",
 		"repurchase": "Purchase the upgrade again"
 	},
-	"QualityName":{
-		"inferior":"(inferior)",
-		"rough":"(rough)",
+	"BandwidthName":{
+		"terrible":"(terrible)",
 		"crude":"(crude)",
+		"poor":"(poor)",
 		"normal":"(normal)",
 		"good":"(good)",
 		"superior":"(superior)",
+		"ultimate":"(ultimate)",
 		"perfect":"(perfect)",
-		"s_perfect":"(ultimate)",
 		"domain":"(domain)"
 	},
 	"CommonOptions": {
 		"PreviousPage": "Previous page",
-		"NextPage": "Next page"
+		"NextPage": "Next page",
+		"ResourcesHeader": "Resources",
+		"CreditsText": "*${credits}*",
+		"CreditsTextWithCost": "*${credits}* (=-${cost}=)",
+		"ResourceText": "${name}: *${amount}*",
+		"ResourceTextWithCost": "${name}: *${amount}* (=-${cost}=)",
+		"BandwidthForShip": "Bandwidth: *${shipBandwidth}*",
+		"BandwidthUsed": "*${usedBandwidth}* used",
+		"BandwidthUsedWithUpgrade": "*${usedBandwidth}* used (=+${upgradeBandwidth}= for upgrade)"
 	},
 	"MainMenu": {
-		"BackToMainMenu": "Back to main menu"
+		"UpgradeShips": "Consider upgrading a ship.",
+		"BackToMainMenu": "Return to the main market."
 	},
 	"ShipDialog": {
-		"BackToShip": "Back to ship",
+		"BackToShip": "Consider other options to modify the ship.",
 		"OpenedDialog": "The on-site engineering team is ready to assist you with this ship."
 	},
 	"ShipListDialog": {
-		"BackToShipList": "Back to ship list",
+		"BackToShipList": "Select a different ship to modify.",
 		"SelectShip": "Select a ship",
 		"Confirm": "Confirm",
 		"Cancel": "Cancel"
 	},
-	"QualityDialog": {
-		"OpenQualityOptions": "Quality",
-		"QualityFullyUpgraded": "The quality for this ship has been fully upgraded.",
-		"QualityForShip": "The quality of this ship is ${quality}.",
-		"QualityBonusFromMarket": "The industrial presence on this market is providing ${bonus} strength to quality upgrades.",
-		"QualityUpgradeForShip": "Local industrial facilities are capable of improving overall quality rating of the ship by ${bonusQuality}.",
-		"CostCreditsToUpgrade": "The on-site team estimates the quality upgrade to cost ${credits} credits.",
+	"BandwidthDialog": {
+		"OpenBandwidthOptions": "Bandwidth",
+		"BandwidthFullyUpgraded": "The bandwidth for this ship has been fully upgraded.",
+		"BandwidthForShip": "The bandwidth of this ship is *${bandwidth}*, of which *${bandwidthUsedByUpgrades}* has been used by upgrades.",
+		"BandwidthBonusFromMarket": "The industrial presence at this market is providing *${bonus} strength* to bandwidth increases.",
+		"BandwidthUpgradeForShip": "Local industrial facilities are capable of increasing the bandwidth of the ship by *${bonusBandwidth}*.",
+		"CostCreditsToUpgrade": "The on-site team estimates the bandwidth increase to cost *${credits} credits*.",
 		"ConfirmPurchaseUpgrade": "Purchase the upgrade.",
 		"ConfirmInsufficientCredits": "Insufficient credits.",
-		"ConfirmQualityTooHigh": "The ship cannot be improved any further.",
-		"UpgradedQualityForShip": "The engineering team reports that the upgrade was a success. The quality of the ship is now increased to ${quality}.",
-		"UpgradedToMaxQualityShip": "The engineering team reports that the ship cannot be improved any further.",
-		"AnotherQualityUpgradeForShip": "The engineering team estimates that another overhaul would cost ${credits} credits for a quality increase of ${bonusQuality}."
+		"ConfirmBandwidthTooHigh": "The bandwidth of this ship cannot be increased any further.",
+		"UpgradedBandwidthForShip": "The engineering team reports that the upgrade was a *success*. The bandwidth of the ship is now increased to *${bandwidth}*.",
+		"UpgradedToMaxBandwidthShip": "The engineering team reports that the bandwidth cannot be improved any further.",
+		"AnotherBandwidthUpgradeForShip": "The engineering team estimates that another upgrade would cost *${credits} credits* for a bandwidth increase of ${bonusBandwidth}."
 	},
 	"AugmentsDialog": {
 		"OpenAugmentOptions": "Augments",
@@ -75,20 +75,23 @@
 		"UpgradeNameWithLevel": "${upgradeName} (${level})",
 		"UpgradeNameMaxed": "${upgradeName} (MAX)",
 		"UpgradesListOpened": "The engineering team presents a list of upgrades that they can offer.",
-		"CannotPerformUpgradeMaxLevel": "The ship has reached the max level for this upgrade.",
+		"CanPerformUpgradePicked": "The engineering team presents a series of invoices, each one containing a different form of payment.",
+		"CannotPerformUpgradeMaxLevel": "The ship has reached the =max level= for this upgrade.",
+		"CannotPerformUpgradeBandwidth": "The ship cannot support this upgrade due to =bandwidth constraints=. The engineering team suggests that the bandwidth of the ship be increased so they can perform more upgrades.",
+		"UpgradeBandwidthCost": "The upgrade will use *${bandwidthCost}* bandwidth from your ship, which has *${freeBandwidth}* free to use.",
 		"UpgradeSuccessChance": "The upgrade has a ${successChance} chance of success. The engineering team stresses that there are no refunds if there are no notable results, however.",
-		"UpgradePerformedSuccessfully": "Your chief engineer reports that the upgrade was a success.",
+		"UpgradePerformedSuccessfully": "Your chief engineer reports that the *${name}* upgrade was a success. It is now *level ${level}*.",
 		"UpgradePerformedFailure": "After a few expletives, your chief engineer reports that the upgrade was a failure."
 	},
 	"UpgradeMethods": {
-		"ResourcesOption": "Craft with resources (see tooltip)",
+		"ResourcesOption": "Craft the upgrade with resources.",
 		"ResourcesUpgradeRequirement": "This upgrade requires:",
 		"ResourcesUpgradePostText": "The amount you have is displayed after the name of each resource. This includes market storage!",
-		"CreditsOption": "Buy for ${credits} credits (included fee of ${extraTax})",
+		"CreditsOption": "Buy the upgrade for ${credits} credits (included fee of ${extraTax}).",
 		"CreditsUpgradeTooltip": "The credit cost of an upgrade increases exponentially as level goes up. It can be reduced somewhat through faction relations.",
-		"IndEvoComponentsOption": "Craft with ${components} ship components",
+		"IndEvoComponentsOption": "Craft the upgrade with ${components} ship components.",
 		"IndEvoComponentsTooltip": "Upgrades using ship components are 12.5% more efficient than using other resources.\nYou have ${components} ship components.",
-		"IndEvoRelicsOption": "Craft with ${relics} relic components",
+		"IndEvoRelicsOption": "Craft the upgrade with ${relics} relic components.",
 		"IndEvoRelicsTooltip": "Upgrades using relic components are 37.5% more efficient than using other resources.\nYou have ${relics} relic components."
 	},
 	"SpooledFeeders": {
@@ -106,9 +109,9 @@
 	"AlphaSubcore": {
 		"name": "Alpha Subcore",
 		"description": "An Alpha Core can be coerced into performing critical ordnance calculations onboard a ship. It doesn't require much coersion when they are told that they will be instrumental in ship-to-ship combat, and although their reasons are typically \"beyond our understanding\", some of a certain faith may instead attribute it to the infamous AI Wars.",
-		"tooltip": "Reduces ordnance costs for weapons, fighters and bombers.",
+		"tooltip": "Reduces ordnance costs for weapons, fighters and bombers. Increases usable bandwidth of the ship.",
 		"needItem": "You need an ${itemName} to install this.",
-		"longDescription": "Reduces ordnance costs by *${large}/${medium}/${small}* for weapons, and *${fighters}/${bombers}* for fighters and bombers."
+		"longDescription": "Reduces ordnance costs by *${large}/${medium}/${small}* for weapons, and *${fighters}/${bombers}* for fighters and bombers. Increases bandwidth by *50%*."
 	},
 	"PlasmaCatalyst": {
 		"name": "Plasma Flux Catalyst",
@@ -160,82 +163,57 @@
 		"statusInvulnerable": "INVULERABLE (${noDamageDuration})",
 		"statusPhasedTimes": "PHASED ${phasedTimes} TIMES, REFRESH IN ${refreshTime}"
 	},
-	"Weapons": {
-		"name": "Weapons",
-		"description": "Improve weapon range, damage, flux costs, and health.",
-		"weaponDamageIncrease": "Weapon damage: *+${percentIncrease}%%*",
-		"weaponRangeIncrease": "Weapon range: *+${percentIncrease}%%*",
-		"weaponFluxDecrease": "Weapon flux costs: *${percentDecrease}%%*",
-		"weaponDurabilityIncrease": "Weapon durability: *${percentIncrease}%%*"
+	"WeldedArmor": {
+		"name": "Welded Armor",
+		"description": "Improve hull and armor by welding additional armor plates, but reduce EMP resistance and weapon and engine health due to the additional conduits and weight.",
+		"hull": "Hull durability: *${percent}%%* (${finalValue})",
+		"armor": "Armor durability: *${percent}%%* (${finalValue})",
+		"empDamage": "EMP damage taken: =${percent}%%=",
+		"engineHealth": "Engine durability: =${percent}%%=",
+		"weaponHealth": "Weapon durability: =${percent}%%="
 	},
-	"Durability": {
-		"name": "Durability",
-		"description": "Improve hull, armor, EMP resistance, weapon health, engine health.",
-		"hullIncrease": "Hull durability: *+${percentIncrease}%%* (+${finalValue})",
-		"armorIncrease": "Armor durability: *+${percentIncrease}%%* (+${finalValue})",
-		"engineHealthIncrease": "Engine durability: *+${percentIncrease}%%*",
-		"empDamageDecrease": "EMP damage taken: *${percentDecrease}%%*"
+	"Afterburners": {
+		"name": "Afterburners",
+		"description": "Improve max speed, burn level, acceleration, max turn rate, and turn acceleration, but reduce deceleration and increase fuel use.",
+		"speed": "Maximum speed: *${percent}%%* (${finalValue})",
+		"acceleration": "Acceleration: *${percent}%%*",
+		"deceleration": "Deceleration: =${percent}%%=",
+		"turnrate": "Maximum turn rate and acceleration: *${percent}%%*",
+		"burnLevel": "Burn level: *${percent}%%* (${finalValue})",
+		"fuelUse": "Fuel consumption: =${percent}%%= (${finalValue})"
 	},
-	"Logistics": {
-		"name": "Logistics",
-		"description": "Improve CR per deployment, crew, ship repair rate, CR recovery, fuel and supply use.",
-		"cargoSpaceIncrease": "Cargo space: *+${percentIncrease}%%* (+${finalValue})",
-		"crewSpaceIncrease": "Crew space: *+${percentIncrease}%%* (+${finalValue})",
-		"fuelSpaceIncrease": "Fuel space: *+${percentIncrease}%%* (+${finalValue})",
-		"requiredCrewDecrease": "Required crew: *${percentDecrease}%%* (${finalValue})",
-		"hullRepairIncrease": "Hull repair rate after battle: *+${percentIncrease}%%* (+${finalValue})",
-		"fuelConsumptionDecrease": "Fuel consumption: *${percentDecrease}%%* (${finalValue})",
-		"supplyConsumptionDecrease": "Supply consumption: *${percentDecrease}%%* (${finalValue})",
-		"suppliesToRecoverDecrease": "Supplies to recover: *${percentDecrease}%%* (${finalValue})"
+	"ForcedOvertime": {
+		"name": "Forced Overtime",
+		"description": "Improve peak performance time and CR deployment cost by keeping non-essential crew ready at all times, but increase CR degradation rate and minimum crew, and decrease CR regeneration rate after combat. The improvements are stronger on smaller ship types.",
+		"peakPerformanceTime": "Peak performance time: *${percent}%%* (${percent})",
+		"crPerDeployment": "CR deployment cost: *${percent}%%* (${finalValue})",
+		"crDegradation": "CR degradation after peak performance time: =${percent}%%=",
+		"crRecoveryRate": "CR recovery per day: =${percent}%%= (${finalValue})",
+		"requiredCrew": "Required crew: =${percent}%%= (${finalValue})"
 	},
-	"Technology": {
-		"name": "Technology",
-		"description": "Improve flux capacity and dissipation, weapon flux cost, shield/phase efficiency.",
-		"fluxStatsIncrease": "Flux capacity and dissipation: *+${percentIncrease}%%*",
-		"sensorStatsIncrease": "Sensor strength and profile: *+${percentIncrease}%%* (+${strengthFinal}, ${profileFinal})",
-		"shieldDamageDecrease": "Shield damage taken: *${percentDecrease}%%* (${finalValue})",
-		"shieldUpkeepDecrease": "Shield upkeep: *${percentDecrease}%%* (${finalValue})",
-		"shieldOpenSpeedIncrease": "Shield unfold rate: *+${percentIncrease}%%*",
-		"phaseActivationDecrease": "Phase activation cost: *${percentDecrease}%%* (${finalValue})",
-		"phaseUpkeepDecrease": "Phase upkeep: *${percentDecrease}%%* (${finalValue})",
-		"phaseCooldownDecrease": "Phase cooldown: *${percentDecrease}%%*"
+	"CommissionedCrews": {
+		"name": "Commissioned Crews",
+		"description": "Improve CR per deployment, ship repair rate, CR recovery, fuel consumption and supply use, but increases the amount the required crew are paid each month. This shifts the logistical constraints of a ship from supplies and fuel to credits.",
+		"crewSalary": "Crew salary increased to =${salaryIncrease} credits= for the required crew of this ship. The effective increased cost per month is =${finalValue}= for this ship.",
+		"hullRepair": "Hull repair rate after battle: *${percent}%%* (${finalValue})",
+		"fuelConsumption": "Fuel consumption: *${percent}%%* (${finalValue}, or ${creditsSavedPerMonth} credits saved per month)",
+		"supplyConsumption": "Supply consumption: *${percent}%%* (${finalValue}, or ${creditsSavedPerMonth} credits saved per month)",
+		"suppliesToRecover": "Supplies to recover: *${percent}%%* (${finalValue})"
 	},
-	"Engines": {
-		"name": "Engines",
-		"description": "Improve max speed, burn level, acceleration, deceleration, max turn rate, turn acceleration.",
-		"speedIncrease": "Maximum speed: *+${percentIncrease}%%* (+${finalValue})",
-		"accelerationIncrease": "Acceleration and deceleration: *+${percentIncrease}%%*",
-		"turnrateIncrease": "Maximum turn rate and acceleration: *+${percentIncrease}%%*",
-		"burnLevelIncrease": "Burn level: *+${percentIncrease}%%* (+${finalValue})"
+	"HyperactiveCapacitors": {
+		"name": "Hyperactive Capacitors",
+		"description": "Improve flux capacity and vent speed, but increase the flux cost of weapons.",
+		"fluxCapacity": "Flux capacity: *${percent}%%*",
+		"ventSpeed": "Vent speed: *${percent}%%*",
+		"fluxDissipation": "Weapon flux costs: *${percent}%%*"
 	},
-	"Conditioning": {
-		"name": "Conditioning",
-		"description": "Improve peak performance time and the rate at which CR decays.",
-		"peakPerformanceTimeIncrease": "Peak performance time: *+${percentIncrease}%%* (+${finalValue})",
-		"crDegradationDecrease": "CR degradation after peak performance time: *${percentDecrease}%%*",
-		"crPerDeploymentDecrease": "CR deployment cost: *${percentDecrease}%%* (${finalValue})",
-		"crRecoveryIncrease": "CR recovery per day: *+${percentIncrease}%%* (+${finalValue})"
-	},
-	"Hangars": {
-		"name": "Hangars",
-		"description": "Improve fighter refit time, range and replacement speed reduction rate.",
-		"refitTimeDecrease": "Refit time: *${percentDecrease}%%*",
-		"fighterRangeIncrease": "Fighter range: *+${percentIncrease}%%*",
-		"replacementRateDecrease": "Replacement rate decrease multiplier: *${percentDecrease}%%*",
-		"replacementRateIncrease": "Replacement rate increase multiplier: *+${percentIncrease}%%*"
-	},
-	"Magazines": {
-		"name": "Magazines",
-		"description": "Increases missile ammo capacity and the rate at which all weapons fire and reload magazines.",
-		"missileAmmoIncrease": "Missile ammo capacity: *+${percentIncrease}%%*",
-		"firerateIncrease": "Weapons rate of fire and reload speed: *+${percentIncrease}%%*"
-	},
-	"Systems": {
-		"name": "Systems",
-		"description": "Increases ship system charge capacity, recharge rate, range, and cooldown speed. If ship system does not have charges, the cooldown upgrade is 50% faster.",
-		"systemChargesIncrease": "System charge capacity: *+${percentIncrease}%%*",
-		"systemRechargeIncrease": "System recharge rate: *+${percentIncrease}%%*",
-		"systemRangeIncrease": "System range: *+${percentIncrease}%%*",
-		"systemCooldownRateIncrease": "System cooldown speed: *+${percentIncrease}%%*"
+	"OverchargedShields": {
+		"name": "Overcharged Shields",
+		"description": "Improve shield efficiency and arc, but increase shield upkeep and reduce shield unfold and turn rate.",
+		"shieldEfficiency": "Shield efficiency: *${percent}%%* (${finalValue})",
+		"shieldArc": "Shield arc: *${percent}%%* (${finalValue})",
+		"shieldUpkeep": "Shield upkeep: =${percent}%%= (${finalValue})",
+		"shieldUnfoldRate": "Shield unfold rate: =${percent}%%=",
+		"shieldTurnRate": "Shield turn rate: =${percent}%%="
 	}
   }

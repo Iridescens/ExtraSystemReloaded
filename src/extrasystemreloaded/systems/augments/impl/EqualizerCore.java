@@ -1,12 +1,14 @@
 package extrasystemreloaded.systems.augments.impl;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.WeaponRangeModifier;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import extrasystemreloaded.campaign.rulecmd.ESInteractionDialogPlugin;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StringUtils;
@@ -16,6 +18,7 @@ import lombok.Getter;
 import org.json.JSONException;
 
 import java.awt.*;
+import java.util.Map;
 
 public class EqualizerCore extends Augment {
     private static final String ITEM = "esr_equalizercore";
@@ -44,7 +47,7 @@ public class EqualizerCore extends Augment {
 
     @Override
     public boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return Utilities.playerHasSpecialItem(ITEM);
+        return Utilities.hasItem(fleet.getCargo(), ITEM);
     }
 
     public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
@@ -53,9 +56,14 @@ public class EqualizerCore extends Augment {
 
     @Override
     public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        Utilities.removePlayerSpecialItem(ITEM);
+        Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
 
         return true;
+    }
+
+    @Override
+    public void modifyResourcesPanel(InteractionDialogAPI dialog, ESInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm) {
+        resourceCosts.put(ITEM, 1f);
     }
 
     @Override
@@ -78,7 +86,7 @@ public class EqualizerCore extends Augment {
     }
 
     @Override
-    public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
+    public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
         stats.getAutofireAimAccuracy().modifyPercent(this.getBuffId(), 1000f);
         stats.getMaxRecoilMult().modifyMult(this.getBuffId(), Math.abs(RECOIL_REDUCTION) / 100f);
         stats.getRecoilDecayMult().modifyMult(this.getBuffId(), Math.abs(RECOIL_REDUCTION) / 100f);
@@ -89,7 +97,7 @@ public class EqualizerCore extends Augment {
     }
 
     @Override
-    public void advanceInCombat(ShipAPI ship, float amount, float quality) {
+    public void advanceInCombat(ShipAPI ship, float amount, float bandwidth) {
         if (!ship.hasListenerOfClass(ESR_EqualizerCoreListener.class)) {
             ship.addListener(new ESR_EqualizerCoreListener());
         }

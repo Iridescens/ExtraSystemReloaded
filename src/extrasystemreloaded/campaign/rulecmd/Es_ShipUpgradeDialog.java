@@ -1,15 +1,21 @@
 package extrasystemreloaded.campaign.rulecmd;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.*;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.OptionPanelAPI;
+import com.fs.starfarer.api.campaign.TextPanelAPI;
+import com.fs.starfarer.api.campaign.VisualPanelAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.util.Misc;
 import extrasystemreloaded.ESModSettings;
 import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.ESDialogContext;
 import extrasystemreloaded.campaign.ESRuleUtils;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
+import extrasystemreloaded.systems.bandwidth.Bandwidth;
+import extrasystemreloaded.systems.bandwidth.BandwidthUtil;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import extrasystemreloaded.systems.upgrades.UpgradesHandler;
 import extrasystemreloaded.systems.upgrades.methods.UpgradeMethod;
@@ -17,7 +23,7 @@ import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StringUtils;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,47 +120,90 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
         List<Upgrade> sortedUpgradeList = getSortedUpgradeList(selectedShip, buff, currMarket);
 
-        for (int i = upgradePageIndex * 5; i < Math.min(upgradePageIndex * 5 + 5, sortedUpgradeList.size()); i++) {
-            Upgrade upgrade = sortedUpgradeList.get(i);
-            int level = buff.getUpgrade(upgrade.getKey());
-            int max = upgrade.getMaxLevel(hullSize);
+        if(sortedUpgradeList.size() >= 7) {
+            for (int i = upgradePageIndex * 5; i < Math.min(upgradePageIndex * 5 + 5, sortedUpgradeList.size()); i++) {
+                Upgrade upgrade = sortedUpgradeList.get(i);
+                int level = buff.getUpgrade(upgrade.getKey());
+                int max = upgrade.getMaxLevel(hullSize);
 
-            if (buff.isMaxLevel(selectedShip, upgrade)) {
-                options.addOption(
-                        StringUtils.getTranslation("UpgradesDialog", "UpgradeNameMaxed")
-                                .format("upgradeName", upgrade.getName())
-                                .toString(),
-                        upgrade.getKey(), new Color(173, 166, 94), upgrade.getDescription());
-            } else if (!canUseUpgradeMethods(selectedShip, buff, hullSize, upgrade, playerFleet, currMarket)) {
-                options.addOption(
-                        StringUtils.getTranslation("UpgradesDialog", "UpgradeNameWithLevelAndMax")
-                                .format("upgradeName", upgrade.getName())
-                                .format("level", level)
-                                .format("max", max)
-                                .toString(),
-                        upgrade.getKey(), new Color(173, 94, 94), upgrade.getDescription());
-            } else {
-                options.addOption(
-                        StringUtils.getTranslation("UpgradesDialog", "UpgradeNameWithLevelAndMax")
-                                .format("upgradeName", upgrade.getName())
-                                .format("level", level)
-                                .format("max", max)
-                                .toString(),
-                        upgrade.getKey(), upgrade.getDescription());
+                if (buff.isMaxLevel(selectedShip, upgrade)) {
+                    options.addOption(
+                            StringUtils.getTranslation("UpgradesDialog", "UpgradeNameMaxed")
+                                    .format("upgradeName", upgrade.getName())
+                                    .toString(),
+                            upgrade.getKey(), new Color(173, 166, 94), upgrade.getDescription());
+                } else if (!canUseUpgradeMethods(selectedShip, buff, hullSize, upgrade, playerFleet, currMarket)) {
+                    options.addOption(
+                            StringUtils.getTranslation("UpgradesDialog", "UpgradeNameWithLevelAndMax")
+                                    .format("upgradeName", upgrade.getName())
+                                    .format("level", level)
+                                    .format("max", max)
+                                    .toString(),
+                            upgrade.getKey(), new Color(173, 94, 94), upgrade.getDescription());
+                } else {
+                    options.addOption(
+                            StringUtils.getTranslation("UpgradesDialog", "UpgradeNameWithLevelAndMax")
+                                    .format("upgradeName", upgrade.getName())
+                                    .format("level", level)
+                                    .format("max", max)
+                                    .toString(),
+                            upgrade.getKey(), upgrade.getDescription());
+                }
             }
-        }
 
-        options.addOption(StringUtils.getString("CommonOptions", "PreviousPage"), OPTION_PREVPAGE);
-        options.addOption(StringUtils.getString("CommonOptions", "NextPage"), OPTION_NEXTPAGE);
-        if (upgradePageIndex == 0) {
-            options.setEnabled(OPTION_PREVPAGE, false);
-        }
-        if (upgradePageIndex * NumUpgradesPerPage + 5 >= UpgradesHandler.UPGRADES_LIST.size()) {
-            options.setEnabled(OPTION_NEXTPAGE, false);
+            options.addOption(StringUtils.getString("CommonOptions", "PreviousPage"), OPTION_PREVPAGE);
+            options.addOption(StringUtils.getString("CommonOptions", "NextPage"), OPTION_NEXTPAGE);
+
+            if (upgradePageIndex == 0) {
+                options.setEnabled(OPTION_PREVPAGE, false);
+            }
+            if (upgradePageIndex * NumUpgradesPerPage + 5 >= UpgradesHandler.UPGRADES_LIST.size()) {
+                options.setEnabled(OPTION_NEXTPAGE, false);
+            }
+        } else {
+            for (int i = 0; i < sortedUpgradeList.size(); i++) {
+                Upgrade upgrade = sortedUpgradeList.get(i);
+                int level = buff.getUpgrade(upgrade.getKey());
+                int max = upgrade.getMaxLevel(hullSize);
+
+                if (buff.isMaxLevel(selectedShip, upgrade)) {
+                    options.addOption(
+                            StringUtils.getTranslation("UpgradesDialog", "UpgradeNameMaxed")
+                                    .format("upgradeName", upgrade.getName())
+                                    .toString(),
+                            upgrade.getKey(), new Color(173, 166, 94), upgrade.getDescription());
+                } else if (!canUseUpgradeMethods(selectedShip, buff, hullSize, upgrade, playerFleet, currMarket)) {
+                    options.addOption(
+                            StringUtils.getTranslation("UpgradesDialog", "UpgradeNameWithLevelAndMax")
+                                    .format("upgradeName", upgrade.getName())
+                                    .format("level", level)
+                                    .format("max", max)
+                                    .toString(),
+                            upgrade.getKey(), new Color(173, 94, 94), upgrade.getDescription());
+                } else {
+                    String upgKey = upgrade.getKey();
+
+                    options.addOption(
+                            StringUtils.getTranslation("UpgradesDialog", "UpgradeNameWithLevelAndMax")
+                                    .format("upgradeName", upgrade.getName())
+                                    .format("level", level)
+                                    .format("max", max)
+                                    .toString(),
+                            upgKey, upgrade.getDescription());
+                }
+            }
         }
     }
 
     private boolean canUseUpgradeMethods(FleetMemberAPI selectedShip, ExtraSystems buff, ShipAPI.HullSize hullSize, Upgrade upgrade, CampaignFleetAPI fleet, MarketAPI currMarket) {
+        //get rid of rounding errors
+        int potentialBandwidthUsage = Math.round((buff.getUsedBandwidth() + upgrade.getBandwidthUsage()));
+        int shipBandwidthRounded = Math.round(buff.getBandwidth(selectedShip));
+
+        if(potentialBandwidthUsage > shipBandwidthRounded) {
+            return false;
+        }
+
         for (UpgradeMethod method : UpgradesHandler.UPGRADE_METHODS) {
             if (method.canShow(selectedShip, buff, upgrade, currMarket)
                 && method.canUse(selectedShip, buff, upgrade, currMarket)) {
@@ -170,7 +219,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         FleetMemberAPI selectedShip = context.getSelectedShip();
         ExtraSystems buff = context.getBuff();
         Upgrade abilitySelected = context.getSelectedUpgrade();
-        float quality = buff.getQuality(selectedShip);
+        float bandwidthCapacity = buff.getBandwidth(selectedShip);
 
         if (selectedShip != null && abilitySelected != null) {
             ShipAPI.HullSize hullSize = selectedShip.getHullSpec().getHullSize();
@@ -178,9 +227,23 @@ public class Es_ShipUpgradeDialog extends ESDialog {
             int level = buff.getUpgrade(abilitySelected);
 
             if(level >= max) {
-                textPanel.addParagraph(StringUtils.getString("UpgradesDialog", "CannotPerformUpgradeMaxLevel"));
+                StringUtils.getTranslation("UpgradesDialog", "CannotPerformUpgradeMaxLevel")
+                        .addToTextPanel(textPanel);
                 return;
             }
+
+            float bandwidthUsage = abilitySelected.getBandwidthUsage();
+            float freeBandwidth = bandwidthCapacity - buff.getUsedBandwidth();
+            if(freeBandwidth < bandwidthUsage) {
+                StringUtils.getTranslation("UpgradesDialog", "CannotPerformUpgradeBandwidth")
+                                .addToTextPanel(textPanel);
+                return;
+            }
+
+            StringUtils.getTranslation("UpgradesDialog", "UpgradeBandwidthCost")
+                    .format("bandwidthCost", BandwidthUtil.getFormattedBandwidth(bandwidthUsage))
+                    .format("freeBandwidth", BandwidthUtil.getFormattedBandwidth(freeBandwidth))
+                    .addToTextPanel(textPanel, Misc.getHighlightColor(), Bandwidth.getBandwidthColor(bandwidthCapacity));
 
             appendUpgradeSuccessChance(context, textPanel, options, visual, level, max);
 
@@ -197,21 +260,23 @@ public class Es_ShipUpgradeDialog extends ESDialog {
         MarketAPI market = context.getCurrMarket();
         ExtraSystems es = context.getBuff();
         Upgrade upgrade = context.getSelectedUpgrade();
-        float quality = es.getQuality(fm);
+        float bandwidth = es.getBandwidth(fm);
 
         if (fm != null && upgrade != null) {
             ShipAPI.HullSize hullSize = fm.getHullSpec().getHullSize();
             int max = upgrade.getMaxLevel(hullSize);
             int level = es.getUpgrade(upgrade.getKey());
 
-            textPanel.addParagraph(StringUtils.getTranslation("UpgradesDialog", "UpgradeNameWithLevelAndMax")
+            StringUtils.getTranslation("UpgradesDialog", "UpgradeNameWithLevelAndMax")
                     .format("upgradeName", upgrade.getName())
                     .format("level", level)
                     .format("max", max)
-                    .toString());
+                    .addToTextPanel(textPanel);
 
             if (level >= max) {
                 textPanel.addParagraph(StringUtils.getString("UpgradesDialog", "CannotPerformUpgradeMaxLevel"));
+            } else if (es.getUsedBandwidth() + upgrade.getBandwidthUsage() > bandwidth) {
+                textPanel.addParagraph(StringUtils.getString("UpgradesDialog", "CannotPerformUpgradeBandwidth"));
             } else {
                 for(UpgradeMethod method : UpgradesHandler.UPGRADE_METHODS) {
                     if(method.canShow(fm, es, upgrade, market)) {
@@ -271,10 +336,9 @@ public class Es_ShipUpgradeDialog extends ESDialog {
             }
 
             String successChance = Math.round(possibility * 1000f) / 10f + "%";
-            textPanel.addParagraph(
-                    StringUtils.getTranslation("UpgradesDialog", "UpgradeSuccessChance")
-                            .format("successChance", successChance)
-                            .toString());
+            StringUtils.getTranslation("UpgradesDialog", "UpgradeSuccessChance")
+                    .format("successChance", successChance)
+                    .addToTextPanel(textPanel);
             textPanel.highlightInLastPara(successChance);
         }
     }
@@ -284,7 +348,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
         //can afford an upgrade, and actually perform it.
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            if(!upgrade.shouldShow(buff)) {
+            if(!upgrade.shouldShow(fm, buff)) {
                 continue;
             }
 
@@ -300,7 +364,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
         //can not afford an upgrade
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            if(!upgrade.shouldShow(buff)) {
+            if(!upgrade.shouldShow(fm, buff)) {
                 continue;
             }
 
@@ -313,7 +377,7 @@ public class Es_ShipUpgradeDialog extends ESDialog {
 
         //cannot do an upgrade
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            if(!upgrade.shouldShow(buff)) {
+            if(!upgrade.shouldShow(fm, buff)) {
                 continue;
             }
 

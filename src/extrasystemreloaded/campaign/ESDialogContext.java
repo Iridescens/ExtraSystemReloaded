@@ -43,7 +43,7 @@ public class ESDialogContext {
     private ExtraSystems buff;
     private Augment selectedAugment;
     private Upgrade selectedUpgrade;
-    private float shipQuality;
+    private float shipBandwidth;
 
 
     public ESDialogContext(InteractionDialogAPI dialog, List<Misc.Token> params, Map<String, MemoryAPI> memoryMap) {
@@ -56,7 +56,6 @@ public class ESDialogContext {
         this.memoryMap = memoryMap;
 
         if(params.size() > 0) {
-            //used for ship quality and ship module dialogs
             String newFunctionType = params.get(0).getString(memoryMap);
             if (newFunctionType != null) {
                 FunctionType = newFunctionType;
@@ -82,12 +81,11 @@ public class ESDialogContext {
             selectedShip = getSelectedShip(shipSelectedId);
             if(selectedShip != null) {
                 buff = ExtraSystems.getForFleetMember(selectedShip);
-                shipQuality = buff.getQuality(selectedShip);
+                shipBandwidth = buff.getBandwidth(selectedShip);
             }
         }
 
         Object extraUpgradeId = localMemory.get(Es_UpgradePicked.MEM_KEY);
-        System.out.printf("Upgrade ID: %s\n", extraUpgradeId);
         if(extraUpgradeId != null) {
             for(String upgradeKey : UPGRADES.keySet()) {
                 if(upgradeKey.equals((String) extraUpgradeId)) {
@@ -97,7 +95,6 @@ public class ESDialogContext {
         }
 
         Object coreId = localMemory.get(Es_AugmentPicked.MEM_KEY);
-        System.out.printf("Augment ID: %s\n", coreId);
         if(coreId != null) {
             for(Augment augment : AUGMENT_LIST) {
                 if(augment.getKey().equals((String) coreId)) {
@@ -169,8 +166,8 @@ public class ESDialogContext {
         return ShipList;
     }
 
-    public float getShipQuality() {
-        return shipQuality;
+    public float getShipBandwidth() {
+        return shipBandwidth;
     }
 
     public MemoryAPI getLocalMemory() {

@@ -6,10 +6,13 @@ import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
+import extrasystemreloaded.campaign.rulecmd.ESInteractionDialogPlugin;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import extrasystemreloaded.systems.upgrades.methods.UpgradeMethod;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StringUtils;
+
+import java.util.Map;
 
 public class ShipComponentUpgradeMethod implements UpgradeMethod {
     private static final String OPTION = "ESShipExtraUpgradeApplyIndEvoComponents";
@@ -20,26 +23,21 @@ public class ShipComponentUpgradeMethod implements UpgradeMethod {
     }
 
     @Override
-    public void addOption(OptionPanelAPI options, FleetMemberAPI fm, ExtraSystems es, Upgrade upgrade, MarketAPI market) {
-        int level = es.getUpgrade(upgrade);
-
-        String option = StringUtils.getTranslation("UpgradeMethods", "IndEvoComponentsOption")
-                .format("components", IndEvoUtil.getUpgradeShipComponentPrice(fm, upgrade, level))
+    public String getOptionText(FleetMemberAPI fm, ExtraSystems es, Upgrade upgrade, MarketAPI market) {
+        return StringUtils.getTranslation("UpgradeMethods", "IndEvoComponentsOption")
+                .format("components", IndEvoUtil.getUpgradeShipComponentPrice(fm, upgrade, es.getUpgrade(upgrade)))
                 .toString();
+    }
 
-        String tooltip = StringUtils.getTranslation("UpgradeMethods", "IndEvoComponentsTooltip")
+    @Override
+    public String getOptionTooltip(FleetMemberAPI fm, ExtraSystems es, Upgrade upgrade, MarketAPI market) {
+        return StringUtils.getTranslation("UpgradeMethods", "IndEvoComponentsTooltip")
                 .format("components", getTotalComponents(fm.getFleetData().getFleet(), market))
                 .toString();
+    }
 
-        options.addOption(
-                option,
-                getOptionId(),
-                tooltip
-        );
-
-        if(!canUse(fm, es, upgrade, market)) {
-            options.setEnabled(getOptionId(), false);
-        }
+    @Override
+    public void addOption(OptionPanelAPI options, FleetMemberAPI fm, ExtraSystems es, Upgrade upgrade, MarketAPI market) {
     }
 
     @Override
@@ -72,10 +70,21 @@ public class ShipComponentUpgradeMethod implements UpgradeMethod {
         }
 
         CargoAPI fleetCargo = fm.getFleetData().getFleet().getCargo();
-        if(upgradeCost > 0) {
+        if (upgradeCost > 0) {
             removeCommodity(fleetCargo, IndEvoUtil.SHIP_COMPONENT_ITEM_ID, upgradeCost);
         }
+
         es.putUpgrade(upgrade);
+    }
+
+    @Override
+    public void modifyResourcesPanel(ESInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm, Upgrade upgrade, boolean hovered) {
+        float cost = 0;
+        if (hovered) {
+            cost = IndEvoUtil.getUpgradeShipComponentPrice(fm, upgrade, plugin.getExtraSystems().getUpgrade(upgrade));
+        }
+
+        resourceCosts.put(IndEvoUtil.SHIP_COMPONENT_ITEM_ID, cost);
     }
 
     private Integer getTotalComponents(CampaignFleetAPI fleet, MarketAPI market) {

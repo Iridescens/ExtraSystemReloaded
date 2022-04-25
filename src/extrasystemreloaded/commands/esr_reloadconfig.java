@@ -14,7 +14,6 @@ public class esr_reloadconfig implements BaseCommand {
         if (context.isInCampaign()) {
 
             ESModSettings.loadModSettings();
-            StatUtils.loadStatCurves();
             UpgradesHandler.loadConfigs();
             AugmentsHandler.loadConfigs();
 

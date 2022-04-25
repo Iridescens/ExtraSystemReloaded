@@ -2,11 +2,14 @@ package extrasystemreloaded.systems.augments.impl;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
+import extrasystemreloaded.campaign.rulecmd.ESInteractionDialogPlugin;
 import extrasystemreloaded.systems.augments.Augment;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
@@ -16,6 +19,7 @@ import lombok.Getter;
 import org.json.JSONException;
 
 import java.awt.*;
+import java.util.Map;
 
 public class HangarForgeMissiles extends Augment {
     public static final String AUGMENT_KEY = "HangarForgeMissiles";
@@ -36,7 +40,7 @@ public class HangarForgeMissiles extends Augment {
 
     @Override
     public boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return Utilities.playerHasSpecialItem(ITEM)
+        return Utilities.hasItem(fleet.getCargo(), ITEM)
                 && fleet.getCargo().getCredits().get() >= COST_CREDITS;
     }
 
@@ -56,8 +60,14 @@ public class HangarForgeMissiles extends Augment {
     @Override
     public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
         fleet.getCargo().getCredits().subtract(150000);
-        Utilities.removePlayerSpecialItem(ITEM);
+        Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
         return true;
+    }
+
+    @Override
+    public void modifyResourcesPanel(InteractionDialogAPI dialog, ESInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm) {
+        resourceCosts.put(ITEM, 1f);
+        resourceCosts.put(Commodities.CREDITS, 150000f);
     }
 
     @Override
@@ -94,7 +104,7 @@ public class HangarForgeMissiles extends Augment {
     }
 
     @Override
-    public void advanceInCombat(ShipAPI ship, float amount, float quality) {
+    public void advanceInCombat(ShipAPI ship, float amount, float bandwidth) {
         IntervalUtil reloadInterval = getReloadInterval(ship);
         if (reloadInterval == null) {
             reloadInterval = createReloadInterval(ship);

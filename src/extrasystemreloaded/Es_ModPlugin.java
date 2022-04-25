@@ -7,18 +7,17 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.campaign.rulecmd.Es_ShipDialog;
+import extrasystemreloaded.dialog.modifications.SystemOptionsHandler;
 import extrasystemreloaded.integration.indevo.IndEvoUtil;
 import extrasystemreloaded.systems.augments.AugmentsHandler;
-import extrasystemreloaded.campaign.CampaignListener;
-import extrasystemreloaded.campaign.salvage.SalvageListener;
+import extrasystemreloaded.campaign.listeners.CampaignListener;
+import extrasystemreloaded.campaign.listeners.SalvageListener;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
-import extrasystemreloaded.systems.quality.QualityHandler;
+import extrasystemreloaded.systems.bandwidth.BandwidthHandler;
 import extrasystemreloaded.systems.upgrades.UpgradesHandler;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.FleetMemberUtils;
-import extrasystemreloaded.util.StatUtils;
 import lombok.extern.log4j.Log4j;
-import org.apache.log4j.Logger;
 import org.lazywizard.console.Console;
 
 import java.util.HashMap;
@@ -36,13 +35,13 @@ public class Es_ModPlugin extends BaseModPlugin {
 	@Override
     public void onGameLoad(boolean newGame) {
 		FleetMemberUtils.moduleMap.clear();
+		SystemOptionsHandler.getValidSystemsOptions().clear();
 
 		ESModSettings.loadModSettings();
-		StatUtils.loadStatCurves();
 
 		Es_ShipDialog.SHIP_OPTIONS.clear();
 
-		QualityHandler.initialize();
+		BandwidthHandler.initialize();
 		UpgradesHandler.initialize();
 		AugmentsHandler.initialize();
 

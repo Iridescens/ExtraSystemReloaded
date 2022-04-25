@@ -22,7 +22,7 @@ public class Es_ShipDialog extends ESDialog {
     public static final List<ShipOption> SHIP_OPTIONS = new ArrayList<>();
 
     public static void addShipOption(ShipOption option) {
-        SHIP_OPTIONS.add(option.getOrder(), option);
+        SHIP_OPTIONS.add(Math.min(SHIP_OPTIONS.size(), option.getOrder()), option);
     }
 
     public static Object addReturnOption(OptionPanelAPI options) {

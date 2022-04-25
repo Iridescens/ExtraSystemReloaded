@@ -1,0 +1,14 @@
+{
+  "extrasystemsreloaded": {
+    "industryBandwidthBonuses": {
+      "heavyindustry": 0.5,
+      "orbitalworks": 1.0,
+      "IndEvo_Scrapyard": 0.25,
+      "IndEvo_EngHub": 0.25,
+      "ms_modularFac": 0.25,
+      "ms_massIndustry": 0.25,
+      "ms_militaryProduction": 0.5,
+      "ms_orbitalShipyard": 1.0
+    }
+  }
+}

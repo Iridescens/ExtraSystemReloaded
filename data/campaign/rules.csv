@@ -5,19 +5,18 @@ $menuState == main
 $tradeMode == OPEN
 RepairAvailable","SetShortcut ESMainMenu ""U"" true",,"25:ESMainMenu:Consider upgrading your ships (ExtraSystem)",
 ESMainMenu,DialogOptionSelected,"$option==ESMainMenu","$menuState = ESMainMenu
-Es_ShipListDialog","Welcome to ExtraSystem Reloaded!
-Choose the function you want.","15:ESShipList:Consider an overhaul to a ship
+ESInteractionDialogPlugin","The Extra Systems engineering team welcomes you! They ask you to pick a ship.","15:ESShipList:Consider an overhaul to a ship
 90:ESDialogBack:Back",
 ESShipList,DialogOptionSelected,"$option==ESShipList","Es_ShipListDialog",,,
 ,,,,,,
 ESShipPicked,DialogOptionSelected,"$option==ESShipPicked","$menuState = ESShipPicked
 $ExtraUpgradePageIndex = 0
 Es_ShipDialog",,,
-ESShipQualityPicked,DialogOptionSelected,"$option==ESShipQualityPicked
-Es_ShipPicked get","$menuState = ESQuality
-Es_ShipQualityDialog QualityUpgradeSelected",,,
-ESShipQualityApply,DialogOptionSelected,"$option==ESShipQualityApply
-Es_ShipPicked get","Es_ShipQualityDialog ApplyQualityUpgrade",,,
+ESShipBandwidthPicked,DialogOptionSelected,"$option==ESShipBandwidthPicked
+Es_ShipPicked get","$menuState = ESBandwidth
+Es_ShipBandwidthDialog BandwidthUpgradeSelected",,,
+ESShipBandwidthApply,DialogOptionSelected,"$option==ESShipBandwidthApply
+Es_ShipPicked get","Es_ShipBandwidthDialog ApplyBandwidthUpgrade",,,
 ,,,,,,
 ESShipExtraUpgradesPicked,DialogOptionSelected,"$option==ESShipExtraUpgradesPicked
 Es_ShipPicked get","$menuState = ESUpgrades

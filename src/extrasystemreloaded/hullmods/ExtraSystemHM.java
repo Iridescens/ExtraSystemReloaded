@@ -11,22 +11,21 @@ import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import extrasystemreloaded.systems.quality.QualityUtil;
-import extrasystemreloaded.util.ExtraSystems;
-import extrasystemreloaded.util.FleetMemberUtils;
 import extrasystemreloaded.systems.augments.Augment;
 import extrasystemreloaded.systems.augments.AugmentsHandler;
+import extrasystemreloaded.systems.bandwidth.Bandwidth;
+import extrasystemreloaded.systems.bandwidth.BandwidthUtil;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import extrasystemreloaded.systems.upgrades.UpgradesHandler;
+import extrasystemreloaded.util.ExtraSystems;
+import extrasystemreloaded.util.FleetMemberUtils;
 import lombok.extern.log4j.Log4j;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import static extrasystemreloaded.util.StatUtils.formatFloat;
 
 @Log4j
 public class ExtraSystemHM extends BaseHullMod {
@@ -42,8 +41,8 @@ public class ExtraSystemHM extends BaseHullMod {
         ExtraSystems levels = ExtraSystems.getForFleetMember(fm);
         ShipVariantAPI shipVariant = fm.getVariant();
 
-        if(shipVariant.hasHullMod("es_shiplevelHM")) {
-            shipVariant.removePermaMod("es_shiplevelHM");
+        if(shipVariant.hasHullMod("extrasystemsHM")) {
+            shipVariant.removePermaMod("extrasystemsHM");
         }
 
         if (levels.shouldApplyHullmod()) {
@@ -55,7 +54,7 @@ public class ExtraSystemHM extends BaseHullMod {
                 fm.setVariant(shipVariant, false, false);
             }
 
-            shipVariant.addPermaMod("es_shiplevelHM");
+            shipVariant.addPermaMod("extrasystemsHM");
 
             List<String> slots = shipVariant.getModuleSlots();
 
@@ -72,7 +71,7 @@ public class ExtraSystemHM extends BaseHullMod {
                         shipVariant.setModuleVariant(moduleVariantId, moduleVariant);
                     }
 
-                    moduleVariant.addPermaMod("es_shiplevelHM");
+                    moduleVariant.addPermaMod("extrasystemsHM");
                 }
             }
 
@@ -106,6 +105,18 @@ public class ExtraSystemHM extends BaseHullMod {
     }
 
     @Override
+    public void advanceInCampaign(FleetMemberAPI fm, float amount) {
+        ExtraSystems extraSystems = this.getExtraSystems(fm);
+        if(extraSystems == null) return;
+
+        for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+            int level = extraSystems.getUpgrade(upgrade);
+            if(level <= 0) continue;
+            upgrade.advanceInCampaign(fm, level, upgrade.getMaxLevel(fm));
+        }
+    }
+
+    @Override
     public void advanceInCombat(ShipAPI ship, float amount) {
         FleetMemberAPI fm = FleetMemberUtils.findMemberFromShip(ship);
         if(fm == null) return;
@@ -114,16 +125,16 @@ public class ExtraSystemHM extends BaseHullMod {
         if(extraSystems == null) return;
 
         ShipAPI.HullSize hullSize = ship.getHullSize();
-        float quality = extraSystems.getQuality(fm);
+        float bandwidth = extraSystems.getBandwidth(fm);
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = extraSystems.getUpgrade(upgrade);
             if(level <= 0) continue;
-            upgrade.advanceInCombat(ship, amount, level, quality, extraSystems.getHullSizeFactor(hullSize));
+            upgrade.advanceInCombat(ship, amount, level, bandwidth, extraSystems.getHullSizeFactor(hullSize));
         }
 
         for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
             if(!extraSystems.hasAugment(augment)) continue;
-            augment.advanceInCombat(ship, amount, quality);
+            augment.advanceInCombat(ship, amount, bandwidth);
         }
     }
 
@@ -151,23 +162,23 @@ public class ExtraSystemHM extends BaseHullMod {
         ExtraSystems extraSystems = this.getExtraSystems(fm);
 
         if (extraSystems == null) {
-            fm.getVariant().removePermaMod("es_shiplevelHM");
+            fm.getVariant().removePermaMod("extrasystemsHM");
             return;
         }
 
-        float quality = extraSystems.getQuality(fm);
+        float bandwidth = extraSystems.getBandwidth(fm);
 
         for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
             if(!extraSystems.hasAugment(augment)) continue;
 
-            augment.applyAugmentToStats(fm, stats, quality, id);
+            augment.applyAugmentToStats(fm, stats, bandwidth, id);
         }
 
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
             int level = extraSystems.getUpgrade(upgrade);
             if(level <= 0) continue;
 
-            upgrade.applyUpgradeToStats(fm, stats, extraSystems.getHullSizeFactor(hullSize), level, quality);
+            upgrade.applyUpgradeToStats(fm, stats, level, upgrade.getMaxLevel(fm));
         }
     }
 
@@ -179,11 +190,11 @@ public class ExtraSystemHM extends BaseHullMod {
         ExtraSystems extraSystems = this.getExtraSystems(fm);
         if(extraSystems == null) return;
 
-        float quality = extraSystems.getQuality(fm);
+        float bandwidth = extraSystems.getBandwidth(fm);
 
         for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
             if(!extraSystems.hasAugment(augment)) continue;
-            augment.applyAugmentToShip(fm, ship, quality, id);
+            augment.applyAugmentToShip(fm, ship, bandwidth, id);
         }
     }
 
@@ -208,10 +219,10 @@ public class ExtraSystemHM extends BaseHullMod {
 
         ExtraSystems extraSystems = this.getExtraSystems(fm);
         if (extraSystems == null) return;
-        float quality = extraSystems.getQuality(fm);
-        String qname = QualityUtil.getQualityName(quality);
+        float bandwidth = extraSystems.getBandwidth(fm);
+        String bandwidthString = BandwidthUtil.getFormattedBandwidthWithName(bandwidth);
 
-        hullmodTooltip.addPara("The ship is of %s %s quality.", 0, QualityUtil.getQualityColor(quality), formatFloat(quality * 100) + "%", qname);
+        hullmodTooltip.addPara("The ship has %s bandwidth.", 0, Bandwidth.getBandwidthColor(bandwidth),  bandwidthString);
 
         boolean expand = Keyboard.isKeyDown(Keyboard.getKeyIndex("F1"));
 
@@ -273,7 +284,7 @@ public class ExtraSystemHM extends BaseHullMod {
     }
 
     public static void removeESHullModsFromVariant(ShipVariantAPI v) {
-        v.removePermaMod("es_shiplevelHM");
+        v.removePermaMod("extrasystemsHM");
 
         List<String> slots = v.getModuleSlots();
         if (slots == null || slots.isEmpty()) return;

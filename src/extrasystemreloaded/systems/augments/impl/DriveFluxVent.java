@@ -2,11 +2,13 @@ package extrasystemreloaded.systems.augments.impl;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.IntervalUtil;
+import extrasystemreloaded.campaign.rulecmd.ESInteractionDialogPlugin;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StringUtils;
@@ -40,7 +42,7 @@ public class DriveFluxVent extends Augment {
 
     @Override
     public boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return Utilities.playerHasSpecialItem(ITEM);
+        return Utilities.hasItem(fleet.getCargo(), ITEM);
     }
 
     public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
@@ -51,9 +53,14 @@ public class DriveFluxVent extends Augment {
 
     @Override
     public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        Utilities.removePlayerSpecialItem(ITEM);
+        Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
 
         return true;
+    }
+
+    @Override
+    public void modifyResourcesPanel(InteractionDialogAPI dialog, ESInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm) {
+        resourceCosts.put(ITEM, 1f);
     }
 
     @Override
@@ -74,7 +81,7 @@ public class DriveFluxVent extends Augment {
     }
 
     @Override
-    public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float quality, String id) {
+    public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
         stats.getVentRateMult().modifyPercent(this.getBuffId(), VENT_SPEED_INCREASE);
     }
 
@@ -87,7 +94,7 @@ public class DriveFluxVent extends Augment {
     }
 
     @Override
-    public void advanceInCombat(ShipAPI ship, float amount, float quality) {
+    public void advanceInCombat(ShipAPI ship, float amount, float bandwidth) {
         Map<String, Object> customData = Global.getCombatEngine().getCustomData();
         if(!customData.containsKey(getDriveStateId(ship))) {
             customData.put(getDriveStateId(ship), DriveState.NONE);

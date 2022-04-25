@@ -3,7 +3,6 @@ package extrasystemreloaded.systems.upgrades;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.ESModSettings;
@@ -19,18 +18,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Upgrade {
-    @Getter @Setter protected String key;
+    @Getter @Setter public String key;
     @Getter @Setter protected String name;
     @Getter @Setter protected String description;
     @Getter @Setter protected String tooltip;
     @Getter protected JSONObject upgradeSettings;
     @Getter protected Map<String, Float> resourceRatios = new HashMap<>();
 
+    public abstract float getBandwidthUsage();
+
     public boolean shouldLoad() {
         return true;
     }
 
-    public boolean shouldShow(ExtraSystems es) {
+    public boolean shouldShow(FleetMemberAPI fm, ExtraSystems es) {
         if (es.getUpgrade(this) > 0) {
             return true;
         }
@@ -42,7 +43,7 @@ public abstract class Upgrade {
         return true;
     }
 
-    public void setConfig(JSONObject upgradeSettings) throws JSONException {
+    public final void setConfig(JSONObject upgradeSettings) throws JSONException {
         this.upgradeSettings = upgradeSettings;
         loadConfig();
 
@@ -72,15 +73,28 @@ public abstract class Upgrade {
         return getMaxLevel() != -1 ? getMaxLevel() : ESModSettings.getHullSizeToMaxLevel().get(hullSize);
     }
 
+    /**
+     * note: overrides should be done to the HullSize method
+     * @param fm
+     * @return
+     */
+    public int getMaxLevel(FleetMemberAPI fm) {
+        return getMaxLevel(fm.getHullSpec().getHullSize());
+    }
+
     public int getLevel(ESUpgrades upgrades) {
         return upgrades.getUpgrade(this.getKey());
     }
 
-    public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float hullSizeFactor, int level, float quality) {
+    public void applyUpgradeToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, int level, int maxLevel) {
 
     }
 
-    public void advanceInCombat(ShipAPI ship, float amount, int level, float quality, float hullSizeFactor) {
+    public void advanceInCombat(ShipAPI ship, float amount, int level, float bandwidth, float hullSizeFactor) {
+
+    }
+
+    public void advanceInCampaign(FleetMemberAPI fm, int level, int maxLevel) {
 
     }
 
@@ -88,28 +102,28 @@ public abstract class Upgrade {
 
     protected void addIncreaseWithFinalToTooltip(TooltipMakerAPI tooltip, String translation, Float increase, Float base) {
         StringUtils.getTranslation(this.getKey(), translation)
-                .formatWithOneDecimal("percentIncrease", increase)
-                .formatWithOneDecimal("finalValue", base * increase / 100f)
+                .formatWithOneDecimalAndModifier("percent", increase)
+                .formatWithOneDecimalAndModifier("finalValue", base * increase / 100f)
                 .addToTooltip(tooltip, 2f);
     }
 
     protected void addDecreaseWithFinalToTooltip(TooltipMakerAPI tooltip, String translation, Float decrease, Float base) {
         float finalMult = -(1f - decrease);
         StringUtils.getTranslation(this.getKey(), translation)
-                .formatWithOneDecimal("percentDecrease", finalMult * 100f)
-                .formatWithOneDecimal("finalValue", base * finalMult)
+                .formatWithOneDecimalAndModifier("percent", finalMult * 100f)
+                .formatWithOneDecimalAndModifier("finalValue", base * finalMult)
                 .addToTooltip(tooltip, 2f);
     }
 
     protected void addIncreaseToTooltip(TooltipMakerAPI tooltip, String translation, Float increase) {
         StringUtils.getTranslation(this.getKey(), translation)
-                .formatWithOneDecimal("percentIncrease", increase)
+                .formatWithOneDecimalAndModifier("percent", increase)
                 .addToTooltip(tooltip, 2f);
     }
 
     protected void addDecreaseToTooltip(TooltipMakerAPI tooltip, String translation, Float decrease) {
         StringUtils.getTranslation(this.getKey(), translation)
-                .formatWithOneDecimal("percentDecrease", -(1f - decrease) * 100f)
+                .formatWithOneDecimalAndModifier("percent", -(1f - decrease) * 100f)
                 .addToTooltip(tooltip, 2f);
     }
 
@@ -117,26 +131,33 @@ public abstract class Upgrade {
         int max = getMaxLevel(shipSelected.getHullSpec().getHullSize());
 
         float hullBaseValue = shipSelected.getHullSpec().getBaseValue();
-        float baseValueFactor = ESModSettings.getFloat(ESModSettings.HULL_COST_BASE_FACTOR);
-        float maxShipValue = ESModSettings.getFloat(ESModSettings.HULL_COST_DIMINISHING_MAXIMUM);
-        float adjustedHullValue =
-                hullBaseValue * baseValueFactor
-                        + ((1 - baseValueFactor) * hullBaseValue * (maxShipValue / (hullBaseValue + maxShipValue)));
+        if(hullBaseValue > 450000) {
+            hullBaseValue = 225000;
+        } else {
+            hullBaseValue = (float) (hullBaseValue - (1d / 900000d) * Math.pow(hullBaseValue, 2));
+        }
+        hullBaseValue *= 0.01f;
 
-        float upgradeCostMinFactor = ESModSettings.getFloat(ESModSettings.UPGRADE_COST_MIN_FACTOR);
-        float upgradeCostMaxFactor = ESModSettings.getFloat(ESModSettings.UPGRADE_COST_MAX_FACTOR);
-        float upgradeCostDivisor = ESModSettings.getFloat(ESModSettings.UPGRADE_COST_DIVIDING_RATIO);
-        float upgradeCostRatioByLevel = upgradeCostMinFactor + upgradeCostMaxFactor * ((float) level) / ((float) max);
-        float upgradeCostByHull = adjustedHullValue * upgradeCostRatioByLevel / upgradeCostDivisor;
+        float upgradeCostRatioByLevel = 0.25f + 0.75f * (float) (level / max);
+        float upgradeCostByHull = hullBaseValue * upgradeCostRatioByLevel;
 
         Map<String, Integer> resourceCosts = new HashMap<>();
         Map<String, Float> resourceRatios = getResourceRatios();
         for (Map.Entry<String, Float> ratio : resourceRatios.entrySet()) {
-            int commodityCost = Math.round(Global.getSector().getEconomy().getCommoditySpec(ratio.getKey()).getBasePrice());
+            int commodityCost = Math.round(Utilities.getItemPrice(ratio.getKey()));
             int finalCost = Math.round(ratio.getValue() * upgradeCostByHull / commodityCost);
             resourceCosts.put(ratio.getKey(), finalCost);
         }
 
         return resourceCosts;
+    }
+
+    protected static <T extends Upgrade> T getInstance(Class<T> test) {
+        for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+            if(upgrade.getClass().equals(test)) {
+                return (T) upgrade;
+            }
+        }
+        return null;
     }
 }

@@ -1,14 +1,17 @@
 package extrasystemreloaded.systems.upgrades;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.ESModSettings;
-import extrasystemreloaded.campaign.rulecmd.Es_ShipDialog;
-import extrasystemreloaded.campaign.rulecmd.Es_ShipUpgradeDialog;
+import extrasystemreloaded.dialog.modifications.SystemOptionsHandler;
+import extrasystemreloaded.systems.upgrades.dialog.UpgradesPickerState;
 import extrasystemreloaded.systems.upgrades.methods.CreditsMethod;
 import extrasystemreloaded.systems.upgrades.methods.ResourcesMethod;
 import extrasystemreloaded.systems.upgrades.methods.UpgradeMethod;
+import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StringUtils;
 import lombok.extern.log4j.Log4j;
 import org.json.JSONException;
@@ -22,6 +25,7 @@ public class UpgradesHandler {
     private static int UPGRADE_OPTION_ORDER = 1;
     public static final Map<String, Upgrade> UPGRADES = new HashMap<>();
     public static final List<Upgrade> UPGRADES_LIST = new ArrayList<>();
+    public static final UpgradesPickerState UPGRADE_PICKER_DIALOG = new UpgradesPickerState();
 
     public static List<UpgradeMethod> UPGRADE_METHODS = new ArrayList<UpgradeMethod>();
 
@@ -34,7 +38,7 @@ public class UpgradesHandler {
         UPGRADE_METHODS.add(new CreditsMethod());
         UPGRADE_METHODS.add(new ResourcesMethod());
 
-        Es_ShipDialog.addShipOption(new Es_ShipUpgradeDialog.UpgradeOption(UPGRADE_OPTION_ORDER));
+        SystemOptionsHandler.addOption(UPGRADE_PICKER_DIALOG);
         UpgradesHandler.populateUpgrades();
     }
 
@@ -102,4 +106,19 @@ public class UpgradesHandler {
         return upgrades;
     }
 
+    //can upgrade
+    public static boolean canUseUpgradeMethods(FleetMemberAPI fm, ExtraSystems es, ShipAPI.HullSize hullSize, Upgrade upgrade, CampaignFleetAPI fleet, MarketAPI currMarket) {
+        if(es.getUsedBandwidth() + upgrade.getBandwidthUsage() > es.getBandwidth(fm)) {
+            return false;
+        }
+
+        for (UpgradeMethod method : UpgradesHandler.UPGRADE_METHODS) {
+            if (method.canShow(fm, es, upgrade, currMarket)
+                    && method.canUse(fm, es, upgrade, currMarket)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

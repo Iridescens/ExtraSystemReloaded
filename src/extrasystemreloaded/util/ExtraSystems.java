@@ -1,15 +1,18 @@
 package extrasystemreloaded.util;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.ESModSettings;
 import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.systems.augments.Augment;
+import extrasystemreloaded.systems.augments.AugmentsHandler;
 import extrasystemreloaded.systems.augments.ESAugments;
+import extrasystemreloaded.systems.bandwidth.Bandwidth;
 import extrasystemreloaded.systems.upgrades.ESUpgrades;
 import extrasystemreloaded.systems.upgrades.Upgrade;
+import extrasystemreloaded.systems.upgrades.UpgradesHandler;
+import org.lazywizard.lazylib.MathUtils;
 
 import java.util.Random;
 import java.util.UUID;
@@ -22,16 +25,16 @@ public class ExtraSystems {
         return new ExtraSystems(fm);
     }
 
-    public ExtraSystems(ESUpgrades upgrades, ESAugments modules, float quality) {
+    public ExtraSystems(ESUpgrades upgrades, ESAugments modules, float bandwidth) {
         this.upgrades = upgrades != null ? upgrades : new ESUpgrades();
         this.modules = modules != null ? modules : new ESAugments();
-        this.qualityFactor = quality >= 0 ? quality : -1;
+        this.bandwidth = bandwidth >= 0 ? bandwidth : -1;
     }
 
     public ExtraSystems(FleetMemberAPI fm) {
         this.upgrades = new ESUpgrades();
         this.modules = new ESAugments();
-        this.qualityFactor = generateQuality(fm);
+        this.bandwidth = generateBandwidth(fm);
     }
 
     public boolean shouldApplyHullmod() {
@@ -43,33 +46,53 @@ public class ExtraSystems {
         Es_ModPlugin.saveData(fm.getId(), this);
     }
 
-    //quality
-    private float qualityFactor = 0f;
+    //bandwidth
+    private float bandwidth = 0f;
 
-    public void putQuality(float qualityFactor) {
-        this.qualityFactor = qualityFactor;
+    public void putBandwidth(float bandwidthFactor) {
+        this.bandwidth = bandwidthFactor;
     }
 
-    public float getQuality(FleetMemberAPI fm) {
-        if(qualityFactor < 0) {
-            qualityFactor = generateQuality(fm);
+    public float getBandwidth(FleetMemberAPI fm) {
+        if(bandwidth < 0) {
+            bandwidth = generateBandwidth(fm);
         }
-        return qualityFactor;
-    }
 
-    public static float generateQuality(FleetMemberAPI fm) {
-        if (ESModSettings.getBoolean(ESModSettings.RANDOM_QUALITY)) {
-            Random random = new Random();
-            random.setSeed(UUID.nameUUIDFromBytes((Global.getSector().getSeedString() + fm.getId()).getBytes()).getMostSignificantBits());
+        float returnedBandwidth = bandwidth;
 
-            float sum = 0.5f + 0.05f * random.nextInt(20);
-            return sum;
+        for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
+            if(this.hasAugment(augment)) {
+                returnedBandwidth += augment.getExtraBandwidth(fm, this);
+            }
         }
-        return ESModSettings.getFloat(ESModSettings.STARTING_QUALITY);
+
+        return returnedBandwidth;
     }
 
-    public boolean canUpgradeQuality(FleetMemberAPI fm) {
-        return ESModSettings.getFloat(ESModSettings.MAX_QUALITY) > getQuality(fm);
+    public static float generateBandwidth(FleetMemberAPI fm) {
+        if (ESModSettings.getBoolean(ESModSettings.RANDOM_BANDWIDTH)) {
+            return Bandwidth.generate(fm.getId().hashCode()).getRandomInRange();
+        }
+        return ESModSettings.getFloat(ESModSettings.STARTING_BANDWIDTH);
+    }
+
+    public boolean canUpgradeBandwidth(FleetMemberAPI fm) {
+        float maxBandwidth = ESModSettings.getFloat(ESModSettings.MAX_BANDWIDTH);
+        for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
+            if(this.hasAugment(augment)) {
+                maxBandwidth += augment.getExtraBandwidthPurchaseable(fm, this);
+            }
+        }
+        return maxBandwidth > getBandwidth(fm);
+    }
+
+    public float getUsedBandwidth() {
+        float usedBandwidth = 0f;
+        for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
+            usedBandwidth += upgrade.getBandwidthUsage() * this.getUpgrade(upgrade);
+        }
+
+        return usedBandwidth;
     }
 
     //augments

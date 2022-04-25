@@ -1,8 +1,8 @@
 package extrasystemreloaded.systems.augments;
 
 import com.fs.starfarer.api.Global;
-import extrasystemreloaded.campaign.rulecmd.Es_ShipAugmentsDialog;
-import extrasystemreloaded.campaign.rulecmd.Es_ShipDialog;
+import extrasystemreloaded.dialog.modifications.SystemOptionsHandler;
+import extrasystemreloaded.systems.augments.dialog.AugmentsPickerState;
 import extrasystemreloaded.util.StringUtils;
 import lombok.extern.log4j.Log4j;
 import org.json.JSONException;
@@ -16,9 +16,10 @@ public class AugmentsHandler {
     private static int AUGMENT_OPTION_ORDER = 2;
     public static final Map<String, Augment> AUGMENTS = new HashMap<>();
     public static final List<Augment> AUGMENT_LIST = new ArrayList<>();
+    public static final AugmentsPickerState AUGMENTS_PICKER_DIALOG = new AugmentsPickerState();
 
     public static void initialize() {
-        Es_ShipDialog.addShipOption(new Es_ShipAugmentsDialog.AugmentOption(AUGMENT_OPTION_ORDER));
+        SystemOptionsHandler.addOption(AUGMENTS_PICKER_DIALOG);
         AugmentsHandler.populateAugments();
     }
 

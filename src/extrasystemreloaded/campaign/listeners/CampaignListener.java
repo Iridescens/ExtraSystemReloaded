@@ -1,4 +1,4 @@
-package extrasystemreloaded.campaign;
+package extrasystemreloaded.campaign.listeners;
 
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;

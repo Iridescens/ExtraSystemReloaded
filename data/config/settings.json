@@ -5,9 +5,9 @@
 		"baseFailureMinFactor":0.4, #a multiplier applied to the chance to fail. the first upgrade always succeeds, but failure chance increases for every upgrade after.
 	"shipsKeepUpgradesOnDeath":true, #whether ships keep upgrades if they are disabled/destroyed in battle.
 
-	"useRandomQuality":true, #quality based on fleet member ID
-		"baseQuality":1.0, #flat quality used if the above value is false
-	"maxQuality":3.0, #max quality for any ship
+	"useRandomBandwidth":true, #bandwidth based on fleet member ID
+		"baseBandwidth":0, #flat bandwidth used if the above value is false
+	"maxBandwidth":300, #max bandwidth for any ship
 
 
 	# below settings used to determine upgrade costs. see upgrade_resource_ratio.csv for item ratios used for each upgrade.
@@ -32,36 +32,6 @@
 	"cruiserMaxUpgrades": 10,
 	"capitalMaxUpgrades": 10,
 	#the amount each upgrade contributes will scale to these values (so frigate at max level gets same buff as capital at max)
-
-	#quality scaling
-
-
-	#diminishing return curves
-	#below are the scaling curves used for the mod (also known as diminishing returns)
-	#these can be used to apply a flat buff to all upgrade values just by raising the scalar values.
-	#scalar defines the multiplier applied to the final value of the algorithm.
-	#percentOfLevels is the percentage of levels that the scalar applies for. setting it to 1 will make all upgrades
-	# that have not already been applied apply at that level. setting it to -1 does the same, except that if you somehow
-	# break the max level limit it will completely ignore that. i recommend always having a -1 in there.
-	"scalingCurves": [
-		{
-			"scalar": 1,         #100% power
-			"percentOfLevels": 0.35 #applies for 35% of the first levels
-		},
-		{
-			"scalar": 0.66,          #66% power
-			"percentOfLevels": 0.25 #applies for 25% of the next levels
-		},
-		{
-			"scalar": 0.33,          #33% power
-			"percentOfLevels": 0.1  #applies for 10% of the next levels.
-		},
-		{
-			"scalar": 0.1,         #10% power
-			"percentOfLevels": -1   #applies for any remaining levels (by default, the last 35%)
-		}
-	],
-
 
 	# do not touch.
 	"ruleCommandPackages":[

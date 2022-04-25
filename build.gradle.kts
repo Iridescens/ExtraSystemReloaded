@@ -85,6 +85,7 @@ dependencies {
         //    exclude("**/$jarFileName", "**/lib/*", "**/libs/*")
         //})
         compileOnly(fileTree("$starsectorModDirectory/LazyLib/jars") { include("*.jar") })
+        compileOnly(fileTree("$starsectorModDirectory/MagicLib/jars") { include("*.jar") })
         compileOnly(fileTree("$starsectorModDirectory/Console Commands/jars") { include("*.jar") })
         compileOnly(fileTree("$starsectorModDirectory/DroneLib/jars") { include("*.jar") })
     } else {

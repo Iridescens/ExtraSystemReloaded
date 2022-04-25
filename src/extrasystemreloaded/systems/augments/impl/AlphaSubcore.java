@@ -2,19 +2,20 @@ package extrasystemreloaded.systems.augments.impl;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import extrasystemreloaded.campaign.rulecmd.ESInteractionDialogPlugin;
 import extrasystemreloaded.systems.augments.Augment;
 import extrasystemreloaded.hullmods.ExtraSystemHM;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StringUtils;
 import extrasystemreloaded.util.Utilities;
 import lombok.Getter;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.awt.*;
+import java.util.Map;
 
 public class AlphaSubcore extends Augment {
     private static final String ITEM = "alpha_core";
@@ -28,21 +29,9 @@ public class AlphaSubcore extends Augment {
 
     @Getter private final Color mainColor = Color.cyan;
 
-    //this mod already has an "alpha core" installation.
-    //yunru's does as well, but i'm less worried about that one.
-    /*
-    @Override
-    public boolean shouldLoad() {
-        if (Global.getSettings().getModManager().isModEnabled("mayu_specialupgrades")) {
-            return false;
-        }
-
-        return super.shouldLoad();
-    }*/
-
     @Override
     public boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return Utilities.playerHasCommodity(ITEM);
+        return Utilities.hasItem(fleet.getCargo(), ITEM);
     }
 
     public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
@@ -53,7 +42,7 @@ public class AlphaSubcore extends Augment {
 
     @Override
     public boolean removeItemsFromFleet(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        Utilities.removePlayerCommodity(ITEM);
+        Utilities.takeItemQuantity(fleet.getCargo(), ITEM, 1);
         return true;
     }
 
@@ -76,9 +65,24 @@ public class AlphaSubcore extends Augment {
     }
 
     @Override
-    public void applyAugmentToShip(FleetMemberAPI fm, ShipAPI ship, float quality, String id) {
+    public void modifyResourcesPanel(InteractionDialogAPI dialog, ESInteractionDialogPlugin plugin, Map<String, Float> resourceCosts, FleetMemberAPI fm) {
+        resourceCosts.put(ITEM, 1f);
+    }
+
+    @Override
+    public void applyAugmentToShip(FleetMemberAPI fm, ShipAPI ship, float bandwidth, String id) {
         if(ship.getVariant() != null && !ship.getVariant().hasHullMod("es_alphasubcore")) {
             ship.getVariant().addMod("es_alphasubcore");
         }
+    }
+
+    /**
+     * extra bandwidth added directly to ship.
+     * @param fm
+     * @param es
+     * @return
+     */
+    public float getExtraBandwidth(FleetMemberAPI fm, ExtraSystems es) {
+        return 50f;
     }
 }
