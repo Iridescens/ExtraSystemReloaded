@@ -84,14 +84,14 @@
 		"UpgradePerformedFailure": "After a few expletives, your chief engineer reports that the upgrade was a failure."
 	},
 	"UpgradeMethods": {
-		"ResourcesOption": "Craft the upgrade with resources.",
+		"ResourcesOption": "Craft with basic resources.",
 		"ResourcesUpgradeRequirement": "This upgrade requires:",
 		"ResourcesUpgradePostText": "The amount you have is displayed after the name of each resource. This includes market storage!",
-		"CreditsOption": "Buy the upgrade for ${credits} credits (included fee of ${extraTax}).",
+		"CreditsOption": "Purchase for ${credits} credits (with ${extraTax} tax).",
 		"CreditsUpgradeTooltip": "The credit cost of an upgrade increases exponentially as level goes up. It can be reduced somewhat through faction relations.",
-		"IndEvoComponentsOption": "Craft the upgrade with ${components} ship components.",
+		"IndEvoComponentsOption": "Craft with ${components} ship components.",
 		"IndEvoComponentsTooltip": "Upgrades using ship components are 12.5% more efficient than using other resources.\nYou have ${components} ship components.",
-		"IndEvoRelicsOption": "Craft the upgrade with ${relics} relic components.",
+		"IndEvoRelicsOption": "Craft with ${relics} relic components.",
 		"IndEvoRelicsTooltip": "Upgrades using relic components are 37.5% more efficient than using other resources.\nYou have ${relics} relic components."
 	},
 	"SpooledFeeders": {

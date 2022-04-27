@@ -38,6 +38,9 @@ public class ShipPickerOption extends DialogOption {
 
         dialog.getVisualPanel().fadeVisualOut();
 
+        plugin.getMemoryMap().get(MemKeys.LOCAL).set(Es_ShipPicked.MEM_KEY, null);
+        plugin.redrawResourcesPanel();
+
         //pick ship then execute next option.
         //if no ship then execute noPickOption if it exists, or return to ESMainMenu otherwise.
         List<FleetMemberAPI> validSelectionList = plugin.getFleetMembers();
