@@ -44,6 +44,7 @@ public class ESInteractionDialogPlugin extends BaseCommandPlugin implements Inte
     public static ShipPickerOption SHIP_PICKER = new ShipPickerOption(SYSTEM_PICKER);
 
     public static final String PAGINATION_KEY = "$ESRPage";
+    public static final String SHIP_MEMKEY = "$ESRshipId";
 
     private InteractionDialogAPI dialog;
     private InteractionDialogPlugin oldPlugin;
@@ -261,7 +262,7 @@ public class ESInteractionDialogPlugin extends BaseCommandPlugin implements Inte
     }
 
     public FleetMemberAPI getShip() {
-        return (FleetMemberAPI) this.getMemoryMap().get(MemKeys.LOCAL).get(Es_ShipPicked.MEM_KEY);
+        return (FleetMemberAPI) this.getMemoryMap().get(MemKeys.LOCAL).get(SHIP_MEMKEY);
     }
 
     public ExtraSystems getExtraSystems() {

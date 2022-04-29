@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import extrasystemreloaded.campaign.rulecmd.Es_ShipDialog;
 import extrasystemreloaded.dialog.modifications.SystemOptionsHandler;
 import extrasystemreloaded.integration.indevo.IndEvoUtil;
 import extrasystemreloaded.systems.augments.AugmentsHandler;
@@ -38,8 +37,6 @@ public class Es_ModPlugin extends BaseModPlugin {
 		SystemOptionsHandler.getValidSystemsOptions().clear();
 
 		ESModSettings.loadModSettings();
-
-		Es_ShipDialog.SHIP_OPTIONS.clear();
 
 		BandwidthHandler.initialize();
 		UpgradesHandler.initialize();

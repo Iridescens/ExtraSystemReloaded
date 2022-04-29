@@ -27,7 +27,7 @@ public class UpgradesHandler {
     public static final List<Upgrade> UPGRADES_LIST = new ArrayList<>();
     public static final UpgradesPickerState UPGRADE_PICKER_DIALOG = new UpgradesPickerState();
 
-    public static List<UpgradeMethod> UPGRADE_METHODS = new ArrayList<UpgradeMethod>();
+    public static Set<UpgradeMethod> UPGRADE_METHODS = new LinkedHashSet<UpgradeMethod>();
 
     public static void addUpgradeMethod(UpgradeMethod method) {
         UPGRADE_METHODS.add(method);

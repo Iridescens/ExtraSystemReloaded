@@ -1,7 +1,6 @@
 package extrasystemreloaded.systems.upgrades.dialog;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
@@ -16,7 +15,6 @@ import extrasystemreloaded.dialog.modifications.SystemState;
 import extrasystemreloaded.systems.bandwidth.Bandwidth;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import extrasystemreloaded.systems.upgrades.UpgradesHandler;
-import extrasystemreloaded.systems.upgrades.methods.UpgradeMethod;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StringUtils;
 import org.lazywizard.lazylib.MathUtils;

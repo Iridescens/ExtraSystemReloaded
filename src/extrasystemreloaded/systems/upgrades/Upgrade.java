@@ -1,6 +1,5 @@
 package extrasystemreloaded.systems.upgrades;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -60,6 +59,7 @@ public abstract class Upgrade {
     }
 
     protected void loadConfig() throws JSONException {};
+
 
     public String getBuffId() {
         return "ESR_" + getName();
@@ -138,7 +138,7 @@ public abstract class Upgrade {
         }
         hullBaseValue *= 0.01f;
 
-        float upgradeCostRatioByLevel = 0.25f + 0.75f * (float) (level / max);
+        float upgradeCostRatioByLevel = 0.25f + 0.75f * ((float)level / (float)max);
         float upgradeCostByHull = hullBaseValue * upgradeCostRatioByLevel;
 
         Map<String, Integer> resourceCosts = new HashMap<>();

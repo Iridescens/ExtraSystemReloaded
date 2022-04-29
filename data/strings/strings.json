@@ -205,7 +205,7 @@
 		"description": "Improve flux capacity and vent speed, but increase the flux cost of weapons.",
 		"fluxCapacity": "Flux capacity: *${percent}%%*",
 		"ventSpeed": "Vent speed: *${percent}%%*",
-		"fluxDissipation": "Weapon flux costs: *${percent}%%*"
+		"weaponFluxCosts": "Weapon flux costs: *${percent}%%*"
 	},
 	"OverchargedShields": {
 		"name": "Overcharged Shields",

@@ -13,21 +13,32 @@ public class IndEvoUtil {
     public static final String SHIP_COMPONENT_ITEM_ID = "IndEvo_parts";
     public static final String RELIC_COMPONENT_ITEM_ID = "IndEvo_rare_parts";
 
-    public static boolean isLoaded() {
+    public static boolean isResourcesLoaded() {
         return Utilities.RESOURCES_LIST.contains(SHIP_COMPONENT_ITEM_ID);
+    }
+
+    public static boolean isUpgradeMethodsLoaded() {
+        for(UpgradeMethod method : UpgradesHandler.UPGRADE_METHODS) {
+            if(method instanceof ShipComponentUpgradeMethod) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static void loadIntegration() {
 
         //already loaded?
-        if(isLoaded()) {
-            return;
+        if(!isResourcesLoaded()) {
+            Utilities.RESOURCES_LIST.add(SHIP_COMPONENT_ITEM_ID);
+            Utilities.RESOURCES_LIST.add(RELIC_COMPONENT_ITEM_ID);
         }
 
-        UpgradesHandler.UPGRADE_METHODS.add(new ShipComponentUpgradeMethod());
-        UpgradesHandler.UPGRADE_METHODS.add(new RelicComponentUpgradeMethod());
-        Utilities.RESOURCES_LIST.add(SHIP_COMPONENT_ITEM_ID);
-        Utilities.RESOURCES_LIST.add(RELIC_COMPONENT_ITEM_ID);
+        if(!isUpgradeMethodsLoaded()) {
+            UpgradesHandler.UPGRADE_METHODS.add(new ShipComponentUpgradeMethod());
+            UpgradesHandler.UPGRADE_METHODS.add(new RelicComponentUpgradeMethod());
+        }
     }
 
     public static int getUpgradeShipComponentPrice(FleetMemberAPI shipSelected, Upgrade abilitySelected, int level) {

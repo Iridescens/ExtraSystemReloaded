@@ -100,6 +100,10 @@ public class Utilities {
                     takenItems = Math.min(quantity, stack.getSize());
                     stack.subtract(takenItems);
 
+                    if(stack.getSize() <= 0) {
+                        cargo.removeStack(stack);
+                    }
+
                     if(quantity <= 0) {
                         break;
                     }

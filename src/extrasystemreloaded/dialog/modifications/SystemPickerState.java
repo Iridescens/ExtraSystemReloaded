@@ -2,12 +2,9 @@ package extrasystemreloaded.dialog.modifications;
 
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
-import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.dialog.DialogState;
 import extrasystemreloaded.campaign.rulecmd.ESInteractionDialogPlugin;
-import extrasystemreloaded.campaign.rulecmd.Es_ShipPicked;
-import extrasystemreloaded.dialog.shippicker.ShipPickerOption;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StringUtils;
 import org.lwjgl.input.Keyboard;
@@ -31,14 +28,6 @@ public class SystemPickerState extends DialogState {
 
         ESInteractionDialogPlugin.SHIP_PICKER.addToOptions(option, plugin, fm, es);
         ESInteractionDialogPlugin.RETURN_TO_MARKET.addToOptions(option, plugin, fm, es, Keyboard.KEY_ESCAPE);
-    }
-
-    @Override
-    public void switchedToDifferentState(InteractionDialogAPI dialog, ESInteractionDialogPlugin plugin, DialogState newState) {
-        if (!(newState instanceof SystemState)
-            && !(plugin.getLastOption() instanceof ShipPickerOption)) {
-            plugin.getMemoryMap().get(MemKeys.LOCAL).set(Es_ShipPicked.MEM_KEY, null);
-        }
     }
 
     @Override

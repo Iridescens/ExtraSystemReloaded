@@ -7,58 +7,6 @@ RepairAvailable","SetShortcut ESMainMenu ""U"" true",,"25:ESMainMenu:Consider up
 ESMainMenu,DialogOptionSelected,"$option==ESMainMenu","$menuState = ESMainMenu
 ESInteractionDialogPlugin","The Extra Systems engineering team welcomes you! They ask you to pick a ship.","15:ESShipList:Consider an overhaul to a ship
 90:ESDialogBack:Back",
-ESShipList,DialogOptionSelected,"$option==ESShipList","Es_ShipListDialog",,,
-,,,,,,
-ESShipPicked,DialogOptionSelected,"$option==ESShipPicked","$menuState = ESShipPicked
-$ExtraUpgradePageIndex = 0
-Es_ShipDialog",,,
-ESShipBandwidthPicked,DialogOptionSelected,"$option==ESShipBandwidthPicked
-Es_ShipPicked get","$menuState = ESBandwidth
-Es_ShipBandwidthDialog BandwidthUpgradeSelected",,,
-ESShipBandwidthApply,DialogOptionSelected,"$option==ESShipBandwidthApply
-Es_ShipPicked get","Es_ShipBandwidthDialog ApplyBandwidthUpgrade",,,
-,,,,,,
-ESShipExtraUpgradesPicked,DialogOptionSelected,"$option==ESShipExtraUpgradesPicked
-Es_ShipPicked get","$menuState = ESUpgrades
-Es_ShipUpgradeDialog ExtraUpgradesSelected",,,
-ESShipExtraUpgradesPREV,DialogOptionSelected,"$option==ESShipExtraUpgradesPREV","$ExtraUpgradePageIndex--
-Es_ShipUpgradeDialog ChangedPage",,,
-ESShipExtraUpgradesNEXT,DialogOptionSelected,"$option==ESShipExtraUpgradesNEXT","$ExtraUpgradePageIndex++
-Es_ShipUpgradeDialog ChangedPage",,,
-ESShipExtraUpgradeConfirm,DialogOptionSelected,"$menuState==ESUpgrades
-Es_ShipPicked get
-Es_UpgradePicked exists $option","Es_UpgradePicked set $option
-Es_ShipUpgradeDialog ConfirmExtraUpgrade",,,
-ESShipExtraUpgradeApplyResources,DialogOptionSelected,"$option==ESShipExtraUpgradeApplyResources
-Es_ShipPicked get
-Es_UpgradePicked get","Es_ShipUpgradeDialog ESShipExtraUpgradeApplyResources",,,
-ESShipExtraUpgradeApplyCredits,DialogOptionSelected,"$option==ESShipExtraUpgradeApplyCredits
-Es_ShipPicked get
-Es_UpgradePicked get","Es_ShipUpgradeDialog ESShipExtraUpgradeApplyCredits",,,
-ESShipExtraUpgradeApplyIndEvoComponents,DialogOptionSelected,"$option==ESShipExtraUpgradeApplyIndEvoComponents
-Es_ShipPicked get
-Es_UpgradePicked get","Es_ShipUpgradeDialog ESShipExtraUpgradeApplyIndEvoComponents",,,
-ESShipExtraUpgradeApplyIndEvoRelics,DialogOptionSelected,"$option==ESShipExtraUpgradeApplyIndEvoRelics
-Es_ShipPicked get
-Es_UpgradePicked get","Es_ShipUpgradeDialog ESShipExtraUpgradeApplyIndEvoRelics",,,
-,,,,,,
-ESShipAugmentsPicked,DialogOptionSelected,"$option==ESShipAugmentsPicked
-Es_ShipPicked get","$menuState = ESAugments
-Es_ShipAugmentsDialog AugmentsSelected",,,
-ESShipAugmentsPREV,DialogOptionSelected,"$option==ESShipAugmentsPREV","$ExtraUpgradePageIndex--
-Es_ShipAugmentsDialog ChangedPage",,,
-ESShipAugmentsNEXT,DialogOptionSelected,"$option==ESShipAugmentsNEXT","$ExtraUpgradePageIndex++
-Es_ShipAugmentsDialog ChangedPage",,,
-ESShipAugmentsConfirm,DialogOptionSelected,"$menuState==ESAugments
-Es_ShipPicked get
-Es_AugmentPicked exists $option","Es_AugmentPicked set $option
-Es_ShipAugmentsDialog ConfirmAugmentPurchase",,,
-ESShipAugmentApply,DialogOptionSelected,"$option==ESShipAugmentApply
-Es_ShipPicked get
-Es_AugmentPicked get","Es_ShipAugmentsDialog ApplyAugment",,,
-ESShipAugmentDestroy,DialogOptionSelected,"$option==ESShipAugmentDestroy
-Es_ShipPicked get
-Es_AugmentPicked get","Es_ShipAugmentsDialog DestroyAugment",,,
 ,,,,,,
 ESDialogBack,DialogOptionSelected,"$option==ESDialogBack","ShowDefaultVisual
 $menuState = main 0

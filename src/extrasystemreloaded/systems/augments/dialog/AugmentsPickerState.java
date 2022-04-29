@@ -14,7 +14,6 @@ import extrasystemreloaded.dialog.modifications.SystemState;
 import extrasystemreloaded.campaign.rulecmd.ESInteractionDialogPlugin;
 import extrasystemreloaded.systems.augments.Augment;
 import extrasystemreloaded.systems.augments.AugmentsHandler;
-import extrasystemreloaded.systems.augments.dialog.ChosenAugmentState;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StringUtils;
 import org.lazywizard.lazylib.MathUtils;

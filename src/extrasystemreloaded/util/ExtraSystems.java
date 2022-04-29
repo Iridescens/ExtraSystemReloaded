@@ -1,6 +1,5 @@
 package extrasystemreloaded.util;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.ESModSettings;
@@ -12,10 +11,6 @@ import extrasystemreloaded.systems.bandwidth.Bandwidth;
 import extrasystemreloaded.systems.upgrades.ESUpgrades;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import extrasystemreloaded.systems.upgrades.UpgradesHandler;
-import org.lazywizard.lazylib.MathUtils;
-
-import java.util.Random;
-import java.util.UUID;
 
 public class ExtraSystems {
     public static ExtraSystems getForFleetMember(FleetMemberAPI fm) {
@@ -47,14 +42,14 @@ public class ExtraSystems {
     }
 
     //bandwidth
-    private float bandwidth = 0f;
+    private float bandwidth = -1f;
 
     public void putBandwidth(float bandwidthFactor) {
         this.bandwidth = bandwidthFactor;
     }
 
     public float getBandwidth(FleetMemberAPI fm) {
-        if(bandwidth < 0) {
+        if(bandwidth < 0f) {
             bandwidth = generateBandwidth(fm);
         }
 

@@ -1,10 +1,8 @@
 package extrasystemreloaded.systems.upgrades.methods;
 
-import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import extrasystemreloaded.campaign.rulecmd.ESInteractionDialogPlugin;
 import extrasystemreloaded.systems.upgrades.Upgrade;
 import extrasystemreloaded.util.ExtraSystems;

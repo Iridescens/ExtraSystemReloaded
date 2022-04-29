@@ -43,7 +43,7 @@ public enum Bandwidth {
             highNumber += b.getWeight();
         }
 
-        MathUtils.getRandom().setSeed(Global.getSector().getSeedString().hashCode() + seed);
+        MathUtils.getRandom().setSeed(seed);
         int chosen = MathUtils.getRandomNumberInRange(0, highNumber);
         for(Bandwidth b : values()) {
             chosen -= b.getWeight();

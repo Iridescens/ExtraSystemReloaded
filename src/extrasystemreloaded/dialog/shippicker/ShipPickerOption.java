@@ -5,11 +5,8 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import extrasystemreloaded.dialog.DialogOption;
-import extrasystemreloaded.campaign.ESDialog;
 import extrasystemreloaded.campaign.rulecmd.ESInteractionDialogPlugin;
 import extrasystemreloaded.dialog.DialogState;
-import extrasystemreloaded.dialog.ESMainMenu;
-import extrasystemreloaded.campaign.rulecmd.Es_ShipPicked;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StringUtils;
 
@@ -38,7 +35,7 @@ public class ShipPickerOption extends DialogOption {
 
         dialog.getVisualPanel().fadeVisualOut();
 
-        plugin.getMemoryMap().get(MemKeys.LOCAL).set(Es_ShipPicked.MEM_KEY, null);
+        plugin.getMemoryMap().get(MemKeys.LOCAL).set(ESInteractionDialogPlugin.SHIP_MEMKEY, null);
         plugin.redrawResourcesPanel();
 
         //pick ship then execute next option.
@@ -57,7 +54,7 @@ public class ShipPickerOption extends DialogOption {
                     @Override
                     public void pickedFleetMembers(List<FleetMemberAPI> members) {
                         if (members != null && !members.isEmpty()) {
-                            plugin.getMemoryMap().get(MemKeys.LOCAL).set(Es_ShipPicked.MEM_KEY, members.get(0));
+                            plugin.getMemoryMap().get(MemKeys.LOCAL).set(ESInteractionDialogPlugin.SHIP_MEMKEY, members.get(0));
                             plugin.optionSelected(members.get(0).getShipName(), nextOption);
                         } else {
                             cancelledFleetMemberPicking();

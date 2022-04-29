@@ -2,11 +2,6 @@ package extrasystemreloaded;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
-import extrasystemreloaded.campaign.rulecmd.Es_ShipDialog;
-import extrasystemreloaded.campaign.rulecmd.Es_ShipUpgradeDialog;
-import extrasystemreloaded.systems.upgrades.UpgradesHandler;
-import extrasystemreloaded.systems.upgrades.methods.CreditsMethod;
-import extrasystemreloaded.systems.upgrades.methods.ResourcesMethod;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
