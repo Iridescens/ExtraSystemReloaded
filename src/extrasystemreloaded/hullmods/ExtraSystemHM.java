@@ -11,6 +11,7 @@ import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import extrasystemreloaded.Es_ModPlugin;
 import extrasystemreloaded.systems.augments.Augment;
 import extrasystemreloaded.systems.augments.AugmentsHandler;
 import extrasystemreloaded.systems.bandwidth.Bandwidth;
@@ -20,6 +21,7 @@ import extrasystemreloaded.systems.upgrades.UpgradesHandler;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.FleetMemberUtils;
 import lombok.extern.log4j.Log4j;
+import org.lazywizard.lazylib.MathUtils;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -106,6 +108,18 @@ public class ExtraSystemHM extends BaseHullMod {
 
     @Override
     public void advanceInCampaign(FleetMemberAPI fm, float amount) {
+        if (fm.getFleetData() == null
+            || fm.getFleetData().getFleet() == null
+            || !fm.getFleetData().getFleet().isAlive()) {
+            fm.getVariant().removePermaMod("extrasystemsHM");
+            return;
+        }
+
+        if (!Es_ModPlugin.hasData(fm.getId())) {
+            fm.getVariant().removePermaMod("extrasystemsHM");
+            return;
+        }
+
         ExtraSystems extraSystems = this.getExtraSystems(fm);
         if(extraSystems == null) return;
 

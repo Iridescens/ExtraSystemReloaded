@@ -34,7 +34,7 @@ public class WeldedArmor extends Upgrade {
         int level = systems.getUpgrade(this);
 
         if (expand) {
-            tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
+            tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
             this.addIncreaseWithFinalToTooltip(tooltip,
                     "hull",
@@ -58,7 +58,7 @@ public class WeldedArmor extends Upgrade {
                     "weaponHealth",
                     fm.getStats().getWeaponHealthBonus().getMultBonus(this.getBuffId()).getValue());
         } else {
-            tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));
+            tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(level));
         }
     }
 }

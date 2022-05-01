@@ -64,7 +64,7 @@ public class IndEvoUtil {
         float creditCost = 0;
 
         for(Map.Entry<String, Integer> resourceCost : resourceCosts.entrySet()) {
-            creditCost += resourceCost.getValue();
+            creditCost += Utilities.getItemPrice(resourceCost.getKey()) * resourceCost.getValue();
         }
         return (int) creditCost;
     }

@@ -1,11 +1,11 @@
 package extrasystemreloaded.util;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import extrasystemreloaded.campaign.listeners.ESCampaignEventListener;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
@@ -55,9 +55,12 @@ public class FleetMemberUtils {
             }
         }
 
-        FleetMemberAPI fm = searchFleetForStats(Global.getSector().getPlayerFleet(), stats);
-        if(fm != null) {
-            return fm;
+        //note: this looks awful, but it actually doesn't go into this loop all that often.
+        for (CampaignFleetAPI fleet : ESCampaignEventListener.getActiveFleets()) {
+            FleetMemberAPI fm = searchFleetForStats(fleet, stats);
+            if(fm != null) {
+                return fm;
+            }
         }
 
         return null;

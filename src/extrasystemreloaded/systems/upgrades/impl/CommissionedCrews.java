@@ -5,6 +5,8 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.econ.MonthlyReport;
 import com.fs.starfarer.api.campaign.listeners.EconomyTickListener;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShieldAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.shared.SharedData;
@@ -26,6 +28,14 @@ public class CommissionedCrews extends Upgrade {
     private static float SUPPLIES_RECOVERY_MAX = 20f;
     private static float REPAIR_RATE_MAX = 20f;
     private static float FUEL_USE_MAX = -20f;
+
+    @Override
+    public boolean canApply(ShipVariantAPI var) {
+        if (var.getHullSpec().getMinCrew() == 0) {
+            return false;
+        }
+        return super.canApply(var);
+    }
 
     public int getIncreasedSalaryForMember(FleetMemberAPI fm, ExtraSystems es) {
         float actualCrew = fm.getMinCrew();
@@ -67,7 +77,7 @@ public class CommissionedCrews extends Upgrade {
         int level = systems.getUpgrade(this);
 
         if (expand) {
-            tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
+            tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
             int salary = 10 + COST_PER_CREW_MAX * level / getMaxLevel(fm);
             int totalCostPerMonth = getIncreasedSalaryForMember(fm, systems);
@@ -106,7 +116,7 @@ public class CommissionedCrews extends Upgrade {
                     fm.getStats().getRepairRatePercentPerDay().getBaseValue());
 
         } else {
-            tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));
+            tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(level));
         }
     }
 

@@ -1,5 +1,6 @@
 package extrasystemreloaded.systems.augments.impl;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -34,8 +35,16 @@ public class HangarForge extends Augment {
     }
 
     @Override
-    public boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return Utilities.hasItem(fleet.getCargo(), ITEM);
+    public boolean canApply(FleetMemberAPI fm) {
+        if (fm.getStats().getNumFighterBays().getModifiedValue() <= 0) {
+            return false;
+        }
+
+        if (!fm.getFleetData().getFleet().equals(Global.getSector().getPlayerFleet())) {
+            return super.canApply(fm);
+        }
+
+        return super.canApply(fm) && Utilities.hasItem(fm.getFleetData().getFleet().getCargo(), ITEM);
     }
 
     @Override

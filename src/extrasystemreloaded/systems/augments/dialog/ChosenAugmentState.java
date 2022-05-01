@@ -1,6 +1,5 @@
 package extrasystemreloaded.systems.augments.dialog;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
@@ -85,7 +84,7 @@ public class ChosenAugmentState extends DialogState {
 
         if (hasAugment) {
             options.setEnabled(installOption, false);
-        } else if (!augment.canApply(Global.getSector().getPlayerFleet(), fm)) {
+        } else if (!augment.canApply(fm)) {
             options.setEnabled(installOption, false);
             options.setEnabled(removeOption, false);
         } else {
@@ -102,7 +101,7 @@ public class ChosenAugmentState extends DialogState {
 
         if (hasAugment) {
             color = new Color(218, 218, 79);
-        } else if (!augment.canApply(Global.getSector().getPlayerFleet(), fm)) {
+        } else if (!augment.canApply(fm)) {
             color = new Color(241, 100, 100);
         }
 

@@ -18,6 +18,7 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import data.scripts.util.MagicTxt;
 import extrasystemreloaded.dialog.*;
 import extrasystemreloaded.dialog.modifications.SystemPickerState;
 import extrasystemreloaded.dialog.shippicker.ShipPickerOption;
@@ -29,6 +30,8 @@ import extrasystemreloaded.util.Utilities;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import org.lazywizard.lazylib.MathUtils;
+import org.lazywizard.lazylib.ui.FontException;
+import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.*;
 import java.util.Iterator;
@@ -52,6 +55,12 @@ public class ESInteractionDialogPlugin extends BaseCommandPlugin implements Inte
 
     private ResourceDisplayPlugin resourceDisplayPlugin = new ResourceDisplayPlugin();
     private float lastCredits = 0xffffffff;
+
+    private static String CREDITS_FONT = Fonts.INSIGNIA_VERY_LARGE;
+    private static String CREDITS_BOLD_FONT = Fonts.INSIGNIA_VERY_LARGE;
+    private static String RESOURCE_FONT = Fonts.INSIGNIA_LARGE;
+    private static String RESOURCE_BOLD_FONT = Fonts.INSIGNIA_LARGE;
+
 
     @Getter
     private List<FleetMemberAPI> fleetMembers;
@@ -157,13 +166,14 @@ public class ESInteractionDialogPlugin extends BaseCommandPlugin implements Inte
 
                 float cost = resourceCost.getValue();
 
-                if (cost == 0) {
-                    resourcesTooltip.setParaFont(Fonts.ORBITRON_20AA);
-                } else {
-                    resourcesTooltip.setParaFont(Fonts.ORBITRON_20AABOLD);
-                }
 
                 if (id.equals(Commodities.CREDITS)) {
+                    if (cost == 0) {
+                        resourcesTooltip.setParaFont(CREDITS_FONT);
+                    } else {
+                        resourcesTooltip.setParaFont(CREDITS_BOLD_FONT);
+                    }
+
                     float quantity = Global.getSector().getPlayerFleet().getCargo().getCredits().get();
                     if (cost > 0) {
                         StringUtils.getTranslation("CommonOptions", "CreditsTextWithCost")
@@ -176,6 +186,12 @@ public class ESInteractionDialogPlugin extends BaseCommandPlugin implements Inte
                                 .addToTooltip(resourcesTooltip);
                     }
                 } else {
+                    if (cost == 0) {
+                        resourcesTooltip.setParaFont(RESOURCE_FONT);
+                    } else {
+                        resourcesTooltip.setParaFont(RESOURCE_BOLD_FONT);
+                    }
+
                     String name = Utilities.getItemName(id);
                     float quantity = Global.getSector().getPlayerFleet().getCargo().getCommodityQuantity(id);
                     if (cost > 0) {

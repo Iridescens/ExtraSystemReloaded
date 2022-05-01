@@ -1,9 +1,12 @@
 package extrasystemreloaded.systems.upgrades;
 
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import extrasystemreloaded.ESModSettings;
 import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StringUtils;
@@ -13,6 +16,7 @@ import lombok.Setter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +34,7 @@ public abstract class Upgrade {
         return true;
     }
 
-    public boolean shouldShow(FleetMemberAPI fm, ExtraSystems es) {
+    public boolean shouldShow(FleetMemberAPI fm, ExtraSystems es, MarketAPI market) {
         if (es.getUpgrade(this) > 0) {
             return true;
         }
@@ -40,6 +44,18 @@ public abstract class Upgrade {
 
     public boolean shouldShow() {
         return true;
+    }
+
+    public boolean canApply(ShipVariantAPI var) {
+        return true;
+    }
+
+    public boolean canApply(FleetMemberAPI fm) {
+        return canApply(fm.getVariant());
+    }
+
+    public Color getColor() {
+        return Misc.getBasePlayerColor();
     }
 
     public final void setConfig(JSONObject upgradeSettings) throws JSONException {
@@ -78,7 +94,7 @@ public abstract class Upgrade {
      * @param fm
      * @return
      */
-    public int getMaxLevel(FleetMemberAPI fm) {
+    public final int getMaxLevel(FleetMemberAPI fm) {
         return getMaxLevel(fm.getHullSpec().getHullSize());
     }
 
@@ -96,6 +112,10 @@ public abstract class Upgrade {
 
     public void advanceInCampaign(FleetMemberAPI fm, int level, int maxLevel) {
 
+    }
+
+    public float getSpawnChance() {
+        return 0.1f;
     }
 
     public abstract void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand);

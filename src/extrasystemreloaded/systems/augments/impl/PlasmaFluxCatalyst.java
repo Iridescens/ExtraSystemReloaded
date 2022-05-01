@@ -34,8 +34,12 @@ public class PlasmaFluxCatalyst extends Augment {
     @Getter private final Color mainColor = Color.blue;
 
     @Override
-    public boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return Utilities.hasItem(fleet.getCargo(), ITEM);
+    public boolean canApply(FleetMemberAPI fm) {
+        if(!fm.getFleetData().getFleet().equals(Global.getSector().getPlayerFleet())) {
+            return super.canApply(fm);
+        }
+
+        return super.canApply(fm) && Utilities.hasItem(fm.getFleetData().getFleet().getCargo(), ITEM);
     }
 
     public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {
@@ -78,6 +82,10 @@ public class PlasmaFluxCatalyst extends Augment {
     @Override
     public void applyAugmentToStats(FleetMemberAPI fm, MutableShipStatsAPI stats, float bandwidth, String id) {
         if (fm.getFleetCommander() == null) {
+            return;
+        }
+
+        if(!fm.getFleetData().getFleet().equals(Global.getSector().getPlayerFleet())) {
             return;
         }
 

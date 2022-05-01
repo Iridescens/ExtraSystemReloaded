@@ -41,7 +41,7 @@ public class Afterburners extends Upgrade {
 
         if (level > 0) {
             if(expand) {
-                tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
+                tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
                 this.addIncreaseWithFinalToTooltip(tooltip,
                         "speed",
@@ -70,7 +70,7 @@ public class Afterburners extends Upgrade {
                         fm.getStats().getFuelUseMod().getPercentBonus(this.getBuffId()).getValue(),
                         fm.getHullSpec().getFuelPerLY());
             } else {
-                tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));
+                tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(level));
             }
         }
     }

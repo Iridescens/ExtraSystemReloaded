@@ -109,11 +109,12 @@ public class UpgradesPickerState extends SystemState {
 
         //can afford an upgrade, and actually perform it.
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            if(!upgrade.shouldShow(fm, es)) {
+            if(!upgrade.shouldShow(fm, es, market)) {
                 continue;
             }
 
-            boolean canUpgrade = !es.isMaxLevel(fm, upgrade);
+            boolean canUpgrade = (es.hasUpgrade(upgrade) || upgrade.canApply(fm))
+                    && !es.isMaxLevel(fm, upgrade);
             if (canUpgrade) {
                 canUpgrade = UpgradesHandler.canUseUpgradeMethods(fm, es, fm.getHullSpec().getHullSize(), upgrade, fm.getFleetData().getFleet(), market);
             }
@@ -125,12 +126,14 @@ public class UpgradesPickerState extends SystemState {
 
         //can not afford an upgrade
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            if(!upgrade.shouldShow(fm, es)) {
+            if(!upgrade.shouldShow(fm, es, market)) {
                 continue;
             }
 
             if(!sortedUpgradeList.contains(upgrade)) {
-                if (!es.isMaxLevel(fm, upgrade)) {
+                boolean canUpgrade = (es.hasUpgrade(upgrade) || upgrade.canApply(fm))
+                        && !es.isMaxLevel(fm, upgrade);
+                if (canUpgrade) {
                     sortedUpgradeList.add(upgrade);
                 }
             }
@@ -138,11 +141,11 @@ public class UpgradesPickerState extends SystemState {
 
         //cannot do an upgrade
         for(Upgrade upgrade : UpgradesHandler.UPGRADES_LIST) {
-            if(!upgrade.shouldShow(fm, es)) {
+            if(!upgrade.shouldShow(fm, es, market)) {
                 continue;
             }
 
-            if(!sortedUpgradeList.contains(upgrade)) {
+            if(!sortedUpgradeList.contains(upgrade) && (es.hasUpgrade(upgrade) || upgrade.canApply(fm))) {
                 sortedUpgradeList.add(upgrade);
             }
         }

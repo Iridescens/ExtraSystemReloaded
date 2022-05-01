@@ -2,8 +2,10 @@ package extrasystemreloaded.systems.augments;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.campaign.rulecmd.ESInteractionDialogPlugin;
@@ -44,15 +46,19 @@ public abstract class Augment {
     }
 
     protected void loadConfig() throws JSONException {
-    }
-
-    ;
+    };
 
     public String getBuffId() {
         return "ESR_" + getKey();
     }
 
-    public abstract boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm);
+    public boolean canApply(FleetMemberAPI fm) {
+        return canApply(fm.getVariant());
+    }
+
+    public boolean canApply(ShipVariantAPI fm) {
+        return true;
+    }
 
     public abstract String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm);
 
@@ -62,7 +68,7 @@ public abstract class Augment {
         return true;
     }
 
-    public boolean shouldShow(FleetMemberAPI fm, ExtraSystems es) {
+    public boolean shouldShow(FleetMemberAPI fm, ExtraSystems es, MarketAPI market) {
         return true;
     }
 
@@ -105,6 +111,10 @@ public abstract class Augment {
 
     public void advanceInCombat(ShipAPI ship, float amount, float bandwidth) {
 
+    }
+
+    public float getSpawnChance() {
+        return 0.05f;
     }
 
     public abstract void modifyToolTip(TooltipMakerAPI tooltip, FleetMemberAPI fm, ExtraSystems systems, boolean expand);

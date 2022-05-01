@@ -13,4 +13,32 @@ $menuState = main 0
 FireAll PopulateOptions
 unset $ExtraUpgradePageIndex",,,
 ,,,,,,
-
+ESFleetEncounterDialog,BeginFleetEncounter,"ESHasUpgrades score:9999998
+!$ziggurat","$player.esrScanFleetOnCommsLinkOpen = true 0
+Highlight ""extra systems""","The other fleet appears to have modified some of their ships with extra systems. They can be scanned through a small change to how a comms link is initialized.",,
+ESFleetEncounterDialogZiggurat,BeginFleetEncounter2,"ESHasUpgrades score:9999998
+$ziggurat
+!$esrHasDrawnTextForZigg","$esrHasDrawnTextForZigg = true 0
+FireBest BeginFleetEncounter2
+AddText ""Your sensor lead informs you that, whatever that thing is, it has the trace signature of some kind of extra systems modifications. They can be scanned through a small change to how a comms link is initialized.""
+Highlight ""extra systems modifications""
+$player.esrScanFleetOnCommsLinkOpen = true 0",,,
+ESOpenScanDialog,OpenCommLink,"$player.esrScanFleetOnCommsLinkOpen score:9999998","FireAll PreCommLinkOption
+Highlight ""extra systems modifications""","The extra systems modifications can be scanned before the communications link is fully established.",,
+ESReopenScanDialog,OpenCommLink,"$player.esrReopenESScanDialog score:9999998","unset $player.esrReopenESScanDialog
+FireAll PreCommLinkOption",,,
+ESScanFleetOption,PreCommLinkOption,,"AddOption 1 ESScanFleet ""Scan the other fleet for extra system modifications.""",,,
+ESScanFleet,DialogOptionSelected,"$option==ESScanFleet","$player.esrReopenESScanDialog = true 0
+ESScanFleet",,,
+ESOpenCommsLinkOption,PreCommLinkOption,,"AddOption 99 ESOpenCommsLink ""Continue opening the comms link.""",,,
+ESOpenCommsLink,DialogOptionSelected,"$option==ESOpenCommsLink","unset $player.esrReopenESScanDialog
+unset $player.esrScanFleetOnCommsLinkOpen
+FireBest OpenCommLink",,,
+,,,,,,
+ESDerelictShipDialog,PopulateSalvageOptions2,"$customType == wreck
+ESHasUpgrades score:9999998","Highlight ""extra systems modifications""","Upon closer inspection, the derelict appears to have signs of extra systems modifications.","11:ESScanDerelict:Scan the derelict for extra systems modifications.",
+ESScanDerelict,DialogOptionSelected,"$option==ESScanDerelict",ESScanDerelict,,,
+ESDebrisFieldGen,PopulateSalvageOptions1,"$customType == debris_field_shared
+!$entity.esrGeneratedESForDebrisField","ESGenerateForDebrisField
+$entity.esrGeneratedESForDebrisField = true 0",,15:ESScanDebrisField:Scan the debris field for extra systems modifications.,
+ESScanDebrisField,DialogOptionSelected,"$option==ESScanDebrisField",ESScanDebrisField,,,

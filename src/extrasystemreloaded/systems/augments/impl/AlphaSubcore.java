@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.campaign.rulecmd.ESInteractionDialogPlugin;
 import extrasystemreloaded.systems.augments.Augment;
@@ -30,8 +31,17 @@ public class AlphaSubcore extends Augment {
     @Getter private final Color mainColor = Color.cyan;
 
     @Override
-    public boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return Utilities.hasItem(fleet.getCargo(), ITEM);
+    public boolean canApply(FleetMemberAPI fm) {
+        if(!fm.getFleetData().getFleet().equals(Global.getSector().getPlayerFleet())) {
+            if(fm.getFleetData().getFleet().getFaction().equals(Factions.HEGEMONY)
+                    || fm.getFleetData().getFleet().getFaction().equals(Factions.LUDDIC_CHURCH)
+                    || fm.getFleetData().getFleet().getFaction().equals(Factions.LUDDIC_PATH)) {
+                return false;
+            }
+            return super.canApply(fm);
+        }
+
+        return super.canApply(fm) && Utilities.hasItem(fm.getFleetData().getFleet().getCargo(), ITEM);
     }
 
     public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {

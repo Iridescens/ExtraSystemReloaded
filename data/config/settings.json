@@ -36,5 +36,8 @@
 	# do not touch.
 	"ruleCommandPackages":[
 		"extrasystemreloaded.campaign.rulecmd"
-	]
+	],
+	"plugins": {
+		"ESCampaignPlugin":"extrasystemreloaded.campaign.listeners.ESCampaignPlugin"
+	}
 }

@@ -31,6 +31,13 @@
 		"BandwidthUsed": "*${usedBandwidth}* used",
 		"BandwidthUsedWithUpgrade": "*${usedBandwidth}* used (=+${upgradeBandwidth}= for upgrade)"
 	},
+	"FleetScanner": {
+		"ShipHasBandwidth": "*${name}* has a usable bandwidth of *${bandwidth}*. It doesn't have any other modifications.",
+		"ShipHasUpgrades": "*${name}* has a usable bandwidth of *${bandwidth}*. It may also have other modifications, which are listed below. You can hover over one of them to see a description of the modification.",
+		"UpgradeNameWithLevelAndMax": "*${upgradeName}* (${level}/${max})",
+		"DebrisFieldHasNotableExtraSystems": "Upon closer inspection, the ships in the debris field appear to have signs of *extra systems modifications*.",
+
+	},
 	"MainMenu": {
 		"UpgradeShips": "Consider upgrading a ship.",
 		"BackToMainMenu": "Return to the main market."
@@ -205,7 +212,7 @@
 		"description": "Improve flux capacity and vent speed, but increase the flux cost of weapons.",
 		"fluxCapacity": "Flux capacity: *${percent}%%*",
 		"ventSpeed": "Vent speed: *${percent}%%*",
-		"weaponFluxCosts": "Weapon flux costs: *${percent}%%*"
+		"weaponFluxCosts": "Weapon flux costs: =${percent}%%="
 	},
 	"OverchargedShields": {
 		"name": "Overcharged Shields",
@@ -215,5 +222,12 @@
 		"shieldUpkeep": "Shield upkeep: =${percent}%%= (${finalValue})",
 		"shieldUnfoldRate": "Shield unfold rate: =${percent}%%=",
 		"shieldTurnRate": "Shield turn rate: =${percent}%%="
+	},
+	"AdvancedFluxCoils": {
+		"name": "Advanced Flux Coils",
+		"description": "Improve flux capacity, vent speed, and decrease the flux cost of weapons.",
+		"fluxCapacity": "Flux capacity: *${percent}%%*",
+		"ventSpeed": "Vent speed: *${percent}%%*",
+		"weaponFluxCosts": "Weapon flux costs: *${percent}%%*"
 	}
-  }
+}

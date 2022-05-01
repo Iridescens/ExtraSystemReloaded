@@ -46,8 +46,12 @@ public class SpooledFeeders extends Augment {
     }
 
     @Override
-    public boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return Utilities.hasItem(fleet.getCargo(), ITEM);
+    public boolean canApply(FleetMemberAPI fm) {
+        if(!fm.getFleetData().getFleet().equals(Global.getSector().getPlayerFleet())) {
+            return super.canApply(fm);
+        }
+
+        return super.canApply(fm) && Utilities.hasItem(fm.getFleetData().getFleet().getCargo(), ITEM);
     }
 
     public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {

@@ -2,6 +2,7 @@ package extrasystemreloaded.systems.upgrades.impl;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import extrasystemreloaded.systems.upgrades.Upgrade;
@@ -9,8 +10,6 @@ import extrasystemreloaded.util.ExtraSystems;
 import extrasystemreloaded.util.StatUtils;
 import extrasystemreloaded.util.StringUtils;
 import lombok.Getter;
-
-import java.awt.*;
 
 public class OverchargedShields extends Upgrade {
     @Getter protected final float bandwidthUsage = 15f;
@@ -21,13 +20,12 @@ public class OverchargedShields extends Upgrade {
     private static float TURNRATE_MAX = -25f;
 
     @Override
-    public boolean shouldShow(FleetMemberAPI fm, ExtraSystems es) {
-        if(!ShieldAPI.ShieldType.FRONT.equals(fm.getHullSpec().getDefenseType())
-            && !ShieldAPI.ShieldType.OMNI.equals(fm.getHullSpec().getDefenseType())) {
+    public boolean canApply(ShipVariantAPI var) {
+        if (!ShieldAPI.ShieldType.FRONT.equals(var.getHullSpec().getDefenseType())
+                && !ShieldAPI.ShieldType.OMNI.equals(var.getHullSpec().getDefenseType())) {
             return false;
         }
-
-        return super.shouldShow(fm, es);
+        return super.canApply(var);
     }
 
     @Override
@@ -46,7 +44,7 @@ public class OverchargedShields extends Upgrade {
 
         if (level > 0) {
             if(expand) {
-                tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
+                tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
                 float shieldEffMod = fm.getStats().getShieldDamageTakenMult().getMultStatMod(this.getBuffId()).getValue();
                 float shieldEffMult = -(1f - shieldEffMod);
@@ -74,7 +72,7 @@ public class OverchargedShields extends Upgrade {
                         "shieldTurnRate",
                         fm.getStats().getShieldTurnRateMult().getMultStatMod(this.getBuffId()).getValue());
             } else {
-                tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));
+                tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(level));
             }
         }
     }

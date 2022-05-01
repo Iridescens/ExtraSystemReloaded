@@ -39,9 +39,14 @@ public class HangarForgeMissiles extends Augment {
     }
 
     @Override
-    public boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        return Utilities.hasItem(fleet.getCargo(), ITEM)
-                && fleet.getCargo().getCredits().get() >= COST_CREDITS;
+    public boolean canApply(FleetMemberAPI fm) {
+        if(!fm.getFleetData().getFleet().equals(Global.getSector().getPlayerFleet())) {
+            return super.canApply(fm);
+        }
+
+        return super.canApply(fm)
+                && Utilities.hasItem(fm.getFleetData().getFleet().getCargo(), ITEM)
+                && fm.getFleetData().getFleet().getCargo().getCredits().get() >= COST_CREDITS;
     }
 
     @Override

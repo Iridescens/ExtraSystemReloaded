@@ -52,7 +52,7 @@ public class ForcedOvertime extends Upgrade {
         int level = systems.getUpgrade(this);
 
         if (expand) {
-            tooltip.addPara(this.getName() + " (%s):", 5, Color.green, String.valueOf(level));
+            tooltip.addPara(this.getName() + " (%s):", 5, this.getColor(), String.valueOf(level));
 
             this.addIncreaseWithFinalToTooltip(tooltip,
                     "peakPerformanceTime",
@@ -79,7 +79,7 @@ public class ForcedOvertime extends Upgrade {
                     fm.getStats().getMinCrewMod().getPercentBonus(this.getBuffId()).getValue(),
                     fm.getHullSpec().getMinCrew());
         } else {
-            tooltip.addPara(this.getName() + " (%s)", 5, Color.green, String.valueOf(level));
+            tooltip.addPara(this.getName() + " (%s)", 5, this.getColor(), String.valueOf(level));
         }
     }
 }

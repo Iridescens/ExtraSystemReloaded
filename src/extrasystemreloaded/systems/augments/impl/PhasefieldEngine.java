@@ -49,12 +49,22 @@ public class PhasefieldEngine extends Augment {
     }
 
     @Override
-    public boolean canApply(CampaignFleetAPI fleet, FleetMemberAPI fm) {
-        if(fm.getHullSpec().getShieldType() != ShieldAPI.ShieldType.PHASE) {
+    public boolean canApply(ShipVariantAPI var) {
+        if(var.getHullSpec().getShieldType() != ShieldAPI.ShieldType.PHASE) {
             return false;
         }
+        return true;
+    }
 
-        return Utilities.hasItem(fleet.getCargo(), ITEM);
+    @Override
+    public boolean canApply(FleetMemberAPI fm) {
+
+        if(!fm.getFleetData().getFleet().equals(Global.getSector().getPlayerFleet())) {
+            return super.canApply(fm);
+        }
+
+        return super.canApply(fm)
+                && Utilities.hasItem(fm.getFleetData().getFleet().getCargo(), ITEM);
     }
 
     public String getUnableToApplyTooltip(CampaignFleetAPI fleet, FleetMemberAPI fm) {

@@ -159,10 +159,19 @@ public class StringUtils {
         protected final String key;
         protected List<String> formats = new ArrayList<>();
         protected List<Object> values = new ArrayList<>();
+        protected List<Color> colors = new ArrayList<>();
 
         public Translation format(String flag, Object value) {
             formats.add(flag);
             values.add(StringUtils.formatValue(value));
+
+            return this;
+        }
+
+        public Translation format(String flag, Object value, Color color) {
+            formats.add(flag);
+            values.add(StringUtils.formatValue(value));
+            colors.add(color);
 
             return this;
         }
@@ -227,20 +236,28 @@ public class StringUtils {
             this.addToTooltip(tooltip, 0f);
         }
 
-        public void addToTooltip(TooltipMakerAPI tooltip, Color[] colors) {
+        public void addToTooltip(TooltipMakerAPI tooltip, Color... colors) {
             this.addToTooltip(tooltip, 0f, colors);
         }
 
         public void addToTooltip(TooltipMakerAPI tooltip, float pad) {
-            StringUtils.addToTooltip(tooltip, this.toString(), pad);
+            if (!colors.isEmpty()) {
+                this.addToTooltip(tooltip, colors.toArray(new Color[0]));
+            } else {
+                StringUtils.addToTooltip(tooltip, this.toString(), pad);
+            }
         }
 
-        public void addToTooltip(TooltipMakerAPI tooltip, float pad, Color[] colors) {
+        public void addToTooltip(TooltipMakerAPI tooltip, float pad, Color... colors) {
             StringUtils.addToTooltip(tooltip, this.toString(), pad, colors);
         }
 
         public void addToTextPanel(TextPanelAPI textPanel) {
-            StringUtils.addToTextPanel(textPanel, this.toString());
+            if (!colors.isEmpty()) {
+                this.addToTextPanel(textPanel, colors.toArray(new Color[0]));
+            } else {
+                StringUtils.addToTextPanel(textPanel, this.toString());
+            }
         }
 
         public void addToTextPanel(TextPanelAPI textPanel, Color... highlightColors) {

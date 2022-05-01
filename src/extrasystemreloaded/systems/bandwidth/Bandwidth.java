@@ -1,10 +1,8 @@
 package extrasystemreloaded.systems.bandwidth;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.util.Pair;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.lazywizard.lazylib.LazyLib;
 import org.lazywizard.lazylib.MathUtils;
 
 import java.awt.Color;
@@ -37,7 +35,7 @@ public enum Bandwidth {
         return Math.round(MathUtils.getRandomNumberInRange(bandwidth, nextBandwidth));
     }
 
-    public static Bandwidth generate(int seed) {
+    public static Bandwidth generate(long seed) {
         int highNumber = 0;
         for(Bandwidth b : values()) {
             highNumber += b.getWeight();
@@ -52,7 +50,25 @@ public enum Bandwidth {
                 return b;
             }
         }
-        return NORMAL;
+        return DOMAIN;
+    }
+
+    public static Bandwidth generate(long seed, float mult) {
+        int highNumber = 0;
+        for(Bandwidth b : values()) {
+            highNumber += b.getWeight();
+        }
+
+        MathUtils.getRandom().setSeed(seed);
+        int chosen = (int) (MathUtils.getRandomNumberInRange(0, highNumber) * mult);
+        for(Bandwidth b : values()) {
+            chosen -= b.getWeight();
+
+            if(chosen <= 0) {
+                return b;
+            }
+        }
+        return DOMAIN;
     }
 
     public static Map<Float, Bandwidth> getBandwidthMap() {

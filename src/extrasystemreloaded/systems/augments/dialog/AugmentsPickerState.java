@@ -1,6 +1,5 @@
 package extrasystemreloaded.systems.augments.dialog;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
@@ -89,7 +88,7 @@ public class AugmentsPickerState extends SystemState {
 
             if (hasAugment) {
                 color = new Color(196, 189, 56);
-            } else if (!augment.canApply(Global.getSector().getPlayerFleet(), fm)) {
+            } else if (!augment.canApply(fm)) {
                 color = new Color(173, 94, 94);
             }
 
@@ -108,7 +107,7 @@ public class AugmentsPickerState extends SystemState {
 
         //can afford an upgrade, and actually perform it.
         for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
-            if(!augment.shouldShow(fm, buff)) {
+            if(!augment.shouldShow(fm, buff, market)) {
                 continue;
             }
 
@@ -116,14 +115,14 @@ public class AugmentsPickerState extends SystemState {
                 continue;
             }
 
-            if(augment.canApply(fm.getFleetData().getFleet(), fm)) {
+            if(augment.canApply(fm)) {
                 sortedAugmentList.add(augment);
             }
         }
 
         //can not afford an upgrade
         for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
-            if(!augment.shouldShow(fm, buff)) {
+            if(!augment.shouldShow(fm, buff, market)) {
                 continue;
             }
 
@@ -138,7 +137,7 @@ public class AugmentsPickerState extends SystemState {
 
         //cannot do an upgrade
         for(Augment augment : AugmentsHandler.AUGMENT_LIST) {
-            if(!augment.shouldShow(fm, buff)) {
+            if(!augment.shouldShow(fm, buff, market)) {
                 continue;
             }
 
